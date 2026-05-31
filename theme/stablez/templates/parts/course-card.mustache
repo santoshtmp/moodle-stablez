@@ -1,0 +1,71 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_stablez/parts/course-card
+
+    @variables:
+        id
+        categoryid
+        datatype
+        shortname
+        fullname
+        categoryname
+        course_url
+        category_url
+        enrollment_link
+        course_image_url
+        summary
+        enrollment_methods_info
+
+    This is used in /course and /homepage courses card section
+}}
+{{#datatype}}
+<div class="stablez-course-card course-card " data-courseid="{{id}}" data-type="{{datatype}}">
+{{/datatype}}
+    <div class="card-head">
+        <a class="category-link" id="category-{{categoryid}}" href="{{category_url}}">
+            <h4 class="course-category-name">{{categoryname}}</h4>
+        </a>
+         <a class="course-card-thumbnail" href="{{course_url}}">            
+            <img src="{{course_image_url}}" class="card-img-top w-100" alt="{{fullname}} image ">
+        </a>
+    </div>
+    <div class="card-body">
+        <h4 class="card-title">
+            <a class="course-name" href="{{course_url}}">
+                {{fullname}}
+            </a>
+        </h4>
+        {{#summary}}
+        <div class="summary">
+            <div class="no-overflow summary-truncate">
+                {{{summary}}}
+            </div>
+        </div>
+        {{/summary}}
+    </div>
+    <div class="card-footer">
+        <a class="btn view-card-link" href="{{course_url}}">
+            <span class="label"> {{#str}} view_course, theme_stablez {{/str}}</span>
+            {{#pix_svg_icon}}
+            {{{pix_svg_icon}}}
+            {{/pix_svg_icon}}
+        </a>
+    </div>
+{{#datatype}}
+</div>
+{{/datatype}}

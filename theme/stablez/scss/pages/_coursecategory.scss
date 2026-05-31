@@ -1,0 +1,17 @@
+#page-course-index-category {
+    .stablez-subcategories {
+        .categoryname {
+            margin-bottom: 14px;
+            font-weight: 500;
+            font-size: larger;
+
+            a {
+                margin: 0.5rem;
+            }
+        }
+
+        >.category:not(:first-child) {
+            margin-top: 24px;
+        }
+    }
+}

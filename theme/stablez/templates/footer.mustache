@@ -1,0 +1,157 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_boost/footer
+
+    Page footer.
+}}
+
+<footer id="page-footer" class="stablez-footer bg-white">
+    <div class="px-3">
+        <div class="footer-wrapper container">
+            <div class="footer-items">
+                <div class="site-name footer-desc">
+                    <div class="logo-wrapper">
+                        {{# output.get_logo_url_out }}
+                            <img src="{{output.get_logo_url_out}}" class="logo me-1" alt="{{sitename}}">
+                            {{# output.get_theme_stablez_logo_description }}
+                            <div class="logo-description">  
+                            {{{output.get_theme_stablez_logo_description}}}
+                            </div>
+                            {{/ output.get_theme_stablez_logo_description }}
+                        {{/ output.get_logo_url_out }}
+                        {{^ output.get_logo_url_out }}
+                            {{{ sitename }}}
+                        {{/ output.get_logo_url_out }}
+                    </div>
+                    {{#footersettings.footer_description}}
+                    <div class="footer_description">{{footersettings.footer_description}}</div>
+                    {{/footersettings.footer_description}}
+                </div>
+                {{#footersettings.footer_menu}}
+                <div class="footer-menu {{label_class}} ">
+                    <div class="label">
+                        {{label}}
+                    </div>
+                    {{#items_present}}
+                    <ul class="items">
+                    {{#items}}
+                        <li>
+                            <a href="{{link}}">{{title}}</a>
+                        </li>
+                    {{/items}}
+                    </ul>
+                    {{/items_present}}
+                </div>
+                {{/footersettings.footer_menu}}
+                {{#footersettings.footer_contact_section}}
+                {{^contacstettings.isEmpty}}
+                <div class="footer-menu contact-detail">
+                    <div class="label">
+                        {{#footersettings.footer_contact_section_label}}
+                        {{footersettings.footer_contact_section_label}}
+                        {{/footersettings.footer_contact_section_label}}
+                        {{^footersettings.footer_contact_section_label}}
+                        Contact Detail
+                        {{/footersettings.footer_contact_section_label}}
+                    </div>
+                    <ul class="items">
+                        {{#contacstettings.location_address}}
+                        <li class="location-address">
+                            {{contacstettings.location_address}}
+                        </li>
+                        {{/contacstettings.location_address}}
+                        {{#contacstettings.mail}}
+                        <li class="mail">
+                           Email: <a href="mailto:{{mail}}">{{contacstettings.mail}}</a>
+                        </li>
+                        {{/contacstettings.mail}}
+                        {{#contacstettings.website}}
+                        <li class="website">
+                            <a href="{{contacstettings.website}}">{{contacstettings.website}}</a>
+                        </li>
+                        {{/contacstettings.website}}
+                        {{#contacstettings.phone_number_exist}}
+                        <li class="phone_number">
+                            Phone: 
+                            {{#contacstettings.phone_number}}
+                            <a href="tel:{{.}}">{{.}}</a>
+                            {{/contacstettings.phone_number}}
+                        </li>
+                        {{/contacstettings.phone_number_exist}}
+                        {{#contacstettings.other_contact_info}}
+                        <li class="other_contact_info">
+                            {{{contacstettings.other_contact_info}}}
+                        </li>
+                        {{/contacstettings.other_contact_info}}
+                    </ul>
+                    {{#contacstettings.social_link}}
+                    <div class="social_link">
+                        {{#facebook}}
+                        <div class="facebook social_icon">
+                            <a href="{{facebook}}" > 
+                                <img src="{{{ output.wwwpath}}}/theme/stablez/pix/icons/facebook.svg" alt="facebook-icon">
+                            </a>
+                        </div>
+                        {{/facebook}}
+                        {{#twitter}}
+                        <div class="twitter social_icon">
+                            <a href="{{twitter}}" > 
+                                <img src="{{{ output.wwwpath}}}/theme/stablez/pix/icons/twitter.svg" alt="twitter-icon">
+                            </a>    
+                        </div>
+                        {{/twitter}}
+                        {{#linkedin}}
+                        <div class="linkedin social_icon">
+                            <a href="{{linkedin}}" > 
+                                <img src="{{{ output.wwwpath}}}/theme/stablez/pix/icons/linkedin.svg" alt="linkedin-icon">
+                            </a>
+                        </div>
+                        {{/linkedin}}
+                        {{#instagram}}
+                        <div class="instagram social_icon">
+                            <a href="{{instagram}}" > 
+                                <img src="{{{ output.wwwpath}}}/theme/stablez/pix/icons/instagram.svg" alt="instagram-icon">
+                            </a>
+                        </div>
+                        {{/instagram}}
+                    </div>
+                    {{/contacstettings.social_link}}
+                </div>
+                {{/contacstettings.isEmpty}}
+                {{/footersettings.footer_contact_section}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="copyright px-3">
+        <div class="container footer-copyright">
+        {{footersettings.copyright}}
+        </div>    
+    </div>
+
+    {{{ output.standard_footer_html }}}
+    {{{ output.standard_end_of_body_html }}}
+
+    <div class="footer-content-debugging footer-dark bg-dark text-light">
+        <div class="container-fluid footer-dark-inner">
+            {{{ output.debug_footer_html }}}
+        </div>
+    </div>
+
+</footer>
+

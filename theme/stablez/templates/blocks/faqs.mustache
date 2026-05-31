@@ -1,0 +1,57 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_stablez/blocks/faqs
+}}
+
+
+<div {{#block_stablez_id}}id="block-stablez-{{block_stablez_id}}" {{/block_stablez_id}}
+    class="block-stablez-testimonial">
+    <div class="faqs-wrapper">
+        <div class="header-container d-flex" style="justify-content: space-between;">
+            <div class="title">
+                <h3>
+                   {{#title}}{{title}}{{/title}}
+                   {{^title}} {{#str}} faq, theme_stablez {{/str}} {{/title}} 
+                </h3>
+            </div>
+            {{> theme_stablez/parts/search-form}}
+        </div>
+        <div class="faqs-content-wrapper">
+            {{#faq_datas}}
+            <div class="faqs-item">
+                <div class="title">
+                    {{title}}
+                </div>
+                <div class="faqs-category">
+                    {{#faq_category_fullname}}
+                    <span>{{.}}</span>
+                    {{/faq_category_fullname}}
+                </div>
+                <div class="content">
+                    {{{content}}}
+                </div>
+            </div>
+            {{/faq_datas}}
+            {{^faq_datas}}
+            <div clsss="no-data">
+                {{#str}} faqs_not_available, theme_stablez {{/str}} 
+            </div>
+            {{/faq_datas}}
+        </div>
+    </div>
+</div>

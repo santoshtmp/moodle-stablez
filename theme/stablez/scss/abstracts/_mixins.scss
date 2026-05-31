@@ -1,0 +1,59 @@
+// Convert px into rem
+
+// // @use '../util' as u;
+
+// @use "sass:math";
+// @function rem($pixel) {
+//   // if $pixel has a unit, throw an error
+//   @if math.is-unitless($pixel) {
+//     // divide $pixel by 16 to return rems
+//     @return math.div($pixel, 16) + rem;
+//   } @else {
+//     @error 'Don\'t use units when using the rem() function';
+//   }
+// }
+
+// Breakpoints map
+$breakpoints: (
+  xxs: 390px,
+  xs: 480px,
+  xsm: 576px,
+  sm: 640px,
+  md: 768px,
+  "md-lg": 992px,
+  lg: 1024px,
+  xl: 1241px,
+  2xl: 1440px,
+);
+
+// Media query mixin
+@mixin mq($width, $type: min) {
+  @if map_has_key($breakpoints, $width) {
+    $width: map_get($breakpoints, $width);
+
+    @if $type == max {
+      $width: $width - 1px;
+    } @else if $type != min {
+      @error "Invalid type: #{$type}. Use 'min' or 'max'.";
+    }
+
+    @media only screen and (#{$type}-width: #{$width}) {
+      @content;
+    }
+  } @else {
+    @error "Breakpoint '#{$width}' not found in $breakpoints map.";
+  }
+}
+
+/**
+** Example code for max-width
+**/
+
+// .example-header {
+//   padding: 20px;
+//   font-size: 16px;
+//   @include mq(sm, max) {
+//     padding-top: 30px;
+//     font-size: 22px;
+//   }
+// }

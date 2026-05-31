@@ -1,0 +1,80 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_stablez/blocks/testimonial
+
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick.min.css"/>
+        <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.5.9/slick-theme.min.css"/>
+        <scrip src="https://cdn.jsdelivr.net/npm/@splidejs/splide@2.3.1/dist/js/splide.min.js"></scrip> 
+}}
+
+<div {{#block_stablez_id}}id="block-stablez-{{block_stablez_id}}" {{/block_stablez_id}}
+    class="block-stablez-testimonial">
+    <div class="testimonial-wrapper">
+        {{#title}}
+        <div class="testimonial-title">
+            <div class="quote">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                    xmlns="http://www.w3.org/2000/svg">
+                    <path opacity="0.2"
+                        d="M32 0V5.22709C30.4588 5.56707 29.161 6.3745 28.1065 7.6494C27.1331 8.92431 26.403 10.5392 25.9163 12.494C25.5108 14.3639 25.308 16.4462 25.308 18.741H30.9049V32H18.981V20.1434C18.981 15.2138 19.6299 11.3891 20.9278 8.66932C22.3067 5.86454 24.0101 3.8247 26.038 2.54981C28.0659 1.18991 30.0532 0.339974 32 0ZM13.1407 0V5.22709C11.5995 5.56707 10.3016 6.3745 9.24715 7.6494C8.27376 8.92431 7.54372 10.5392 7.05703 12.494C6.65146 14.3639 6.44867 16.4462 6.44867 18.741H11.924V32H0V20.1434C0 15.2138 0.689481 11.3891 2.06844 8.66932C3.4474 5.86454 5.15082 3.8247 7.17871 2.54981C9.20659 1.18991 11.1939 0.339974 13.1407 0Z"
+                        fill="#81ABFB">
+                    </path>
+                </svg>
+            </div>
+            <h3> {{title}} </h3>
+        </div>
+        {{/title}}
+        <div class="testimonial-items-wrapper">
+            {{! Each testimonial person image}}
+            <div class="slider-for testimonial-images">
+            {{#testimonial_datas}}
+                <div id="itemt-img"   class="testimonial-img slide-container">
+                    <img src="{{image_url}}" alt="{{name}} image">
+                </div>
+            {{/testimonial_datas}}
+            </div>
+
+            {{! Each testimonial person detail }}
+            <div class="slider-nav testimonial-descriptions">
+            {{#testimonial_datas}}
+                <div class="testimonial-detail slide-btn">
+                    <div class="testimonial-item-title">
+                        <div class="name">
+                            {{name}}
+                        </div>
+                        {{#designation}}
+                        <div class="designation">
+                            {{designation}}
+                        </div>
+                        {{/designation}}
+                     </div>
+                    <div class="testimonial-text">
+                        <div class="quote">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path opacity="0.5" d="M16 0V2.61355C15.2294 2.78353 14.5805 3.18725 14.0532 3.8247C13.5665 4.46215 13.2015 5.26959 12.9582 6.24701C12.7554 7.18194 12.654 8.22311 12.654 9.37052H15.4525V16H9.49049V10.0717C9.49049 7.60691 9.81495 5.69456 10.4639 4.33466C11.1534 2.93227 12.0051 1.91235 13.019 1.2749C14.033 0.594955 15.0266 0.169987 16 0ZM6.57034 0V2.61355C5.79975 2.78353 5.15082 3.18725 4.62357 3.8247C4.13688 4.46215 3.77186 5.26959 3.52852 6.24701C3.32573 7.18194 3.22433 8.22311 3.22433 9.37052H5.96198V16H0V10.0717C0 7.60691 0.34474 5.69456 1.03422 4.33466C1.7237 2.93227 2.57541 1.91235 3.58935 1.2749C4.60329 0.594955 5.59696 0.169987 6.57034 0Z" fill="#81ABFB"/>
+                            </svg>                        
+                        </div>
+                        <p>{{content}}</p>
+                    </div>
+                </div>
+            {{/testimonial_datas}}
+            </div>
+        </div>
+    </div>
+</div>

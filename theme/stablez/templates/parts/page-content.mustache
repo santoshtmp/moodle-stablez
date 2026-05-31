@@ -1,0 +1,75 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_stablez/parts/page-content
+
+    This is used in all layout page-content
+}}
+
+
+
+
+{{#stablez_block_region}}
+{{{ addblockbutton_abovecontent }}}
+{{{ abovecontentblockHTML }}}
+{{/stablez_block_region}}
+
+ <div id="page-content" class="px-3 d-print-block">
+    <div id="region-main-box" class="container ">
+
+        {{#hasregionmainsettingsmenu}}
+        <div id="region-main-settings-menu" class="d-print-none">
+            <div> {{{ regionmainsettingsmenu }}} </div>
+        </div>
+        {{/hasregionmainsettingsmenu}}
+
+        <section id="region-main" aria-label="{{#str}}content{{/str}}">
+
+            {{#hasregionmainsettingsmenu}}
+                <div class="region_main_settings_menu_proxy"></div>
+            {{/hasregionmainsettingsmenu}}
+
+            <div class="stablez-session-message px-3">
+                <div class="container">
+                    {{{ output.course_content_header }}}
+                </div>
+            </div>
+
+            {{#headercontent}}
+                {{> core/activity_header }}
+            {{/headercontent}}
+            
+            {{#overflow}}
+                <div class="container-fluid tertiary-navigation">
+                    <div class="navitem">
+                        {{> core/tertiary_navigation_selector}}
+                    </div>
+                </div>
+            {{/overflow}}
+
+            {{{ output.main_content }}}
+            {{{ output.activity_navigation }}}
+            {{{ output.course_content_footer }}}
+
+        </section>
+    </div>
+</div>
+
+{{#stablez_block_region}}
+{{{ addblockbutton_belowcontent }}}
+{{{ belowcontentblockHTML }}}
+{{/stablez_block_region}}

@@ -1,0 +1,132 @@
+#region-main-box {
+  #region-main {
+    background-color: transparent;
+
+    div[role="main"] {
+      padding-left: unset;
+      padding-right: unset;
+    }
+  }
+}
+
+.stablez-secondary-navigation .navigation {
+  margin: unset;
+  border-radius: 8px;
+}
+
+.drawers .admin-blocks-region {
+  background-color: transparent;
+  border: 0;
+  padding-inline: 0;
+
+  .block-pos-desc {
+    margin-bottom: 8px;
+  }
+
+  .admin-blocks-inner {
+    .px-3 {
+      padding-inline: 0 !important;
+    }
+  }
+}
+
+// Course card background
+
+.page-content:has(#frontpage-available-course-list) {
+  background: $B-0;
+}
+
+#frontpage-available-course-list {
+  h2 {
+    font-size: 36px;
+    font-weight: 600;
+    color: $N-50;
+    margin-bottom: 24px;
+  }
+}
+
+@media (max-width: 640px) {
+  #frontpage-available-course-list {
+    h2 {
+      font-size: 28px;
+    }
+  }
+}
+
+// Start Guidline
+
+.block_stablez-start-guideline {
+  background-color: transparent;
+  padding-inline: 16px;
+  border: 0;
+  border-radius: 0;
+
+  .block-header {
+    padding-top: 0 !important;
+    margin-bottom: 40px;
+  }
+
+  .card-title {
+    font-size: 36px;
+    font-weight: 400;
+  }
+
+  .card-body {
+    padding: 0 !important;
+  }
+}
+
+.start-guideline {
+  .row {
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(23rem, 100%), 1fr));
+    gap: 32px;
+  }
+}
+.start-guideline-item {
+  padding: 20px;
+  text-align: center;
+  box-shadow: 10px 10px 50px 3px rgba(95, 95, 99, 0.11);
+  border-radius: 12px;
+  background: $white;
+
+  img {
+    width: 72px;
+    height: 72px;
+  }
+  p {
+    color: $N-30;
+    font-size: 14px;
+    line-height: 1.4;
+  }
+
+  .title {
+    margin-top: 30px;
+    color: $N-40;
+    font-size: 22px;
+    line-height: 1.4;
+    font-weight: 500;
+  }
+}
+
+@include mq(sm, max) {
+  .block_stablez-start-guideline {
+    .card-title {
+      font-size: 24px;
+    }
+  }
+}
+
+// @include mq(md, max) {
+//   .block_stablez-start-guideline {
+//   }
+// }
+
+@include mq(xl, min) {
+  .start-guideline {
+    .row {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+}

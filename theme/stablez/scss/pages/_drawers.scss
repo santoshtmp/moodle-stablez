@@ -1,0 +1,47 @@
+// Drawers-page
+
+.stablez-drawers-page {
+  margin-bottom: 60px;
+
+  .block_myoverview {
+    &.card {
+      border-radius: 2px;
+      border-top: solid 2px #1e88e5;
+    }
+
+    .card-body {
+      padding: 1rem !important;
+
+      .card-title {
+        color: $N-30;
+        font-weight: 500;
+      }
+
+      .card-text {
+        margin-top: 24px !important;
+        hr {
+          display: none;
+        }
+
+        div[role="search"] {
+          .row {
+            gap: 12px;
+          }
+
+          input,
+          .dropdown-toggle {
+            border-radius: 2px !important;
+          }
+        }
+      }
+
+      .stablez-courses-wrapper {
+        margin-top: 32px;
+      }
+    }
+  }
+}
+
+.stablez-body-wrapper {
+  margin-top: 60px;
+}

@@ -1,0 +1,92 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_stablez/blocks/course_info
+}}
+
+
+{{#duration}}
+<div class="course-field course-{{classname}}">
+    <img src="{{{ output.wwwpath}}}/theme/stablez/pix/icons/time.svg" alt="duration-time-img">
+    <span class="info-label">{{label}}</span> 
+    <span class="info-value">{{value}}</span>
+</div>
+{{/duration}}
+
+{{#skill_level}}
+<div class="course-field course-{{classname}}">
+    <img src="{{{ output.wwwpath}}}/theme/stablez/pix/icons/skill-level.svg" alt="skill-level-img">
+    <span class="info-label">{{label}}</span> 
+    <span class="info-value">{{value}}</span>
+</div>
+{{/skill_level}}
+
+{{#language}}
+<div class="course-field course-{{classname}}">
+    <img src="{{{ output.wwwpath}}}/theme/stablez/pix/icons/language.svg" alt="language-img">
+    <span class="info-label">{{label}}</span> 
+    <span class="info-value">{{value}}</span>    </div>
+{{/language}}
+
+{{#intro_video}}
+<div class="course-field course-{{classname}}">
+    <div class="title">{{label}}</div> 
+    {{#value}}
+    <div class="row">
+        <iframe id="about-course-video-iframe"
+            src="{{value}}"
+            title="YouTube video player" frameborder="0"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+            allowfullscreen>
+        </iframe>
+    </div>
+    {{/value}}
+</div>
+{{/intro_video}}
+
+{{#description_summary}}
+<div class="course-field course-{{classname}}">
+    <div class="summary">
+        <div class="title">{{label}}</div> 
+        <div class="no-overflow summary-truncate">
+            {{{value}}}
+        </div>
+    </div>
+</div>
+{{/description_summary}}
+
+{{#target_audiences}}
+<div class="course-field course-{{classname}}">
+    <span class="title">{{label}}</span> 
+    <span class="content">{{{value}}}</span>
+</div>
+{{/target_audiences}}
+
+{{#learning_objective}}
+<div class="course-field course-{{classname}}">
+    <span class="title">{{label}}</span> 
+    <span class="content">{{{value}}}</span>
+</div>
+{{/learning_objective}}
+
+{{#otherfield}}
+<div class="course-field course-{{classname}} course-other-field">
+    <div class="title">{{label}}</div> 
+    <div class="content">{{{value}}}</div>
+</div>
+{{/otherfield}}
+    

@@ -1,0 +1,108 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_stablez/parts/hero-banner
+}}
+
+{{#hero_banner}}
+<div class="hero-banner">
+    {{#hero_banner_slider}}
+    <div class="banner-slider-wrapper container">
+        {{#banner_slider}}
+            <div class="banner-slide">
+                <div class="banner-title">
+                    {{#banner_title}}
+                        {{banner_title}}
+                    {{/banner_title}}
+                    {{^banner_title}}
+                        {{{ sitename }}}
+                    {{/banner_title}}
+                </div>
+                <div class="banner-image">
+                    {{#banner_image}}
+                        <img src="{{banner_image}}" alt="banner-image">
+                    {{/banner_image}}
+                    {{^banner_image}}
+                        <img src="{{{ config.wwwroot }}}/theme/stablez/pix/images/background.webp" alt="banner-image">
+                    {{/banner_image}}
+                </div>
+            </div>
+        {{/banner_slider}}
+    </div>
+    {{/hero_banner_slider}}
+    {{^hero_banner_slider}}
+         <div class="banner-image">
+            {{#banner_image_1}}
+                <img src="{{banner_image_1}}" alt="banner-image">
+            {{/banner_image_1}}
+            {{^banner_image_1}}
+                <img src="{{{ config.wwwroot }}}/theme/stablez/pix/images/background.webp" alt="banner-image">
+            {{/banner_image_1}}
+        </div>
+    <div class="banner-wrapper px-3">
+        <div class="container">
+            <div class="banner-content-wrapper">
+                <div class="banner-information relative z-10">
+                    <div class="banner-title">
+                        {{#banner_title_1}}
+                            {{banner_title_1}}
+                        {{/banner_title_1}}
+                        {{^banner_title_1}}
+                            {{{ sitename }}}
+                        {{/banner_title_1}}
+                    </div>
+                    {{#banner_description_1}}
+                    <div class="banner-description">
+                        {{{banner_description_1}}}
+                    </div>
+                    {{/banner_description_1}}
+                    {{#banner_cta_count}}
+                    <div class="banner-cta d-flex gap-3">
+                        {{#banner_cta}}
+                        {{#label}}
+                        <a href="{{{link}}}" class="banner-cta-link"> 
+                            {{{label}}} 
+                            <svg width="19" height="20" viewBox="0 0 19 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M15.1575 4.34302L3.84375 15.6567" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path><path d="M15.157 11.4142C15.157 11.4142 16.0887 5.2748 15.157 4.34311C14.2253 3.41142 8.08594 4.34314 8.08594 4.34314" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                        </a>
+                        {{/label}}
+                        {{/banner_cta}}
+                    </div>
+                    {{/banner_cta_count}}
+                </div>
+
+                {{#islogged_in}}
+                {{!
+                <div class="continue-last-course">
+                    continue-last-course
+                </div>
+                }}
+                {{/islogged_in}}
+                
+                {{^islogged_in}}
+                {{#hero_banner_login_card}}
+                <div class="hero-banner-login-card">
+                    {{>theme_stablez/parts/login-card}}
+                </div>
+                {{/hero_banner_login_card}}
+                {{/islogged_in}}
+                
+            </div>
+        </div>
+    </div>
+    {{/hero_banner_slider}}
+</div>
+{{/hero_banner}}

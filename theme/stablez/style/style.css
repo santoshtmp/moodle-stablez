@@ -1,0 +1,14 @@
+/** stablez-css **/
+
+.admin-blocks-region {
+    border: 1px solid #cdd0d35c;
+    padding: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    background-color: #cdd0d35c;
+    border-radius: 7px;
+}
+
+#testimonial-list-admin-table td>img {
+    max-width: 150px;
+}

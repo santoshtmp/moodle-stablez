@@ -1,0 +1,314 @@
+.navbar.header-navbar {
+  height: unset;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+  border: none;
+
+  .navbar-brand {
+    padding-block: 0.5rem !important;
+
+    @include mq(md, max) {
+      flex: 1;
+    }
+  }
+
+  .primary-navigation {
+    display: flex;
+    height: 100%;
+
+    @include mq(md, max) {
+      display: none;
+    }
+
+    .navigation {
+      height: auto;
+
+      &>ul {
+        height: 100%;
+      }
+
+      .nav-link {
+        height: 100%;
+        line-height: 1.4;
+        color: $N-30;
+        transition: all 0.3s ease-in-out;
+        padding-inline: 12px;
+
+        &:hover,
+        &.active {
+          color: $B-20;
+          background-color: transparent;
+          border-color: transparent;
+        }
+      }
+    }
+  }
+
+  // Icon notification and message
+  .navbar-nav {
+    .popover-region {
+      &:focus-visible {
+        outline: none;
+      }
+
+      &>.nav-link {
+        color: $N-20;
+        // opacity: 0.7;
+
+        &:focus-visible,
+        &:focus {
+          outline: none;
+          box-shadow: none;
+        }
+
+        // For message active color change
+
+        // &:has(+ .sr-only[tabindex="0"]) {
+        //   color: $B-20;
+        //   opacity: 1;
+        // }
+      }
+
+      // &:not(.collapsed) {
+      //   & > .nav-link {
+      //     color: $B-20;
+      //     opacity: 1;
+      //   }
+      // }
+    }
+  }
+
+  // For nav Toggle
+
+  .navbar-toggler {
+    margin-right: 0.25rem;
+
+    .navbar-toggler-icon {
+      mask: url(/theme/stablez/pix/icons/hamburger-menu.svg) no-repeat;
+      background: $N-30;
+    }
+  }
+}
+
+// For Notification DropDown Styling
+
+.navbar-nav #nav-notification-popover-container .popover-region-container {
+  top: calc(100% - 2px);
+  transition: all 0.2s ease;
+
+  &[aria-expanded="true"] {
+    opacity: 1;
+  }
+
+  .popover-region-header-container {
+    transition: all 0.3s ease;
+    height: 40px;
+    // padding: 11px 20px 15px;
+    padding: 8px 20px;
+    border-bottom: 1px solid rgba(120, 130, 140, 0.13);
+    color: $N-30;
+
+    .popover-region-header-text {
+      font-weight: normal;
+    }
+
+    .normal-icon,
+    .icon {
+      color: $N-30;
+      font-size: 14px;
+    }
+
+    .icon {
+      margin-right: 0;
+    }
+  }
+
+  .popover-region-footer-container {
+    height: 50px;
+    padding: 15px 20px;
+    border: 1px solid #ddd;
+    margin: 0 -1px;
+    color: $N-30;
+  }
+}
+
+// logo Text
+.logo-description {
+  .logo-top {
+    margin-bottom: 2px;
+
+    >div {
+      font-size: 8px;
+      line-height: 1.4;
+      color: $N-40;
+    }
+  }
+
+  .logo-bottom {
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.4;
+    color: $N-40;
+  }
+}
+
+.navbar-nav {
+
+  .usermenu,
+  .dropdown {
+    &:focus-visible {
+      outline: none;
+    }
+
+    .dropdown-toggle {
+      border: 0;
+    }
+  }
+
+  .usermenu-container {
+    .dropdown-menu-right {
+      border-radius: 2px;
+      transition: all 0.3s ease;
+      margin-top: 0;
+      padding-block: 0;
+
+      .dropdown-item {
+        padding: 10px 24px !important;
+        color: $N-30;
+
+        &:hover {
+          color: $white;
+        }
+      }
+    }
+  }
+}
+
+// Pop-up login
+.unauthenticated-user {
+  .dropdown-menu {
+    display: inline-block;
+  }
+
+  .login-card-popup {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    inset: 0;
+    background: rgba(54, 53, 53, 0.9);
+    padding-inline: 16px;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+
+    &.show {
+      visibility: visible;
+      opacity: 1;
+    }
+  }
+
+  .wrap-login-popup {
+    max-width: 480px;
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: transparent;
+    border: 0;
+
+    .close {
+      position: absolute;
+      right: -22px;
+      top: -20px;
+      opacity: 1;
+      cursor: pointer;
+    }
+  }
+
+  .wrapper-login-form {
+    background: $white;
+    padding: 40px;
+    border-radius: 8px;
+  }
+
+  .login-card {
+    h3 {
+      font-size: 28px;
+      font-weight: 600;
+      line-height: 1.2;
+      color: $N-50;
+      margin-bottom: 32px;
+    }
+
+    label {
+      font-size: 14px;
+      line-height: 1.4;
+      color: $N-50;
+      margin-bottom: 12px;
+    }
+
+    input {
+      border: 1px solid #c8c6c9;
+      border-radius: 4px;
+      margin-bottom: 24px;
+      padding: 11px 16px;
+      height: 40px;
+      font-size: 16px;
+      line-height: 1.2;
+
+      &#password {
+        margin-bottom: 12px;
+      }
+    }
+
+    .forget-password {
+      margin-bottom: 32px;
+
+      a {
+        font-weight: 400;
+        font-size: 12px;
+        line-height: 16px;
+        color: $B-20;
+        border: 0;
+        padding: 0;
+      }
+    }
+
+    .sign-up-btn {
+      margin-bottom: 32px;
+
+      .btn-primary {
+        padding: 10px;
+        width: 100%;
+        font-weight: 700;
+        font-size: 14px;
+        line-height: 1.4;
+        border-radius: 4px;
+
+        img {
+          margin-left: 8px;
+        }
+      }
+    }
+
+    .create-account {
+      display: flex;
+      align-items: center;
+      font-weight: 400;
+      font-size: 14px;
+      line-height: 1.4;
+      color: $N-30;
+      margin-bottom: 0;
+      padding: 0;
+      text-shadow: none;
+    }
+
+    .btn-register {
+      color: $B-20;
+      padding: 0;
+      border: 0;
+      margin-left: 5px;
+      width: fit-content;
+    }
+  }
+}

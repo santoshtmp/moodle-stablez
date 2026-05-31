@@ -1,0 +1,52 @@
+#theme_boost-drawers-courseindex {
+    // max-width: 340px;
+    // width: 340px;
+
+    .courseindex {
+        >.courseindex-section {
+            font-size: 14px;
+        }
+
+        >.courseindex-section>.courseindex-section-title {
+            font-size: 16px;
+        }
+
+        .courseindex-item {
+            .completioninfo .icon {
+                font-size: unset;
+                top: 2px;
+                position: relative;
+                border-radius: 32px;
+                height: 16px;
+                width: 16px;
+                background: $N-20;
+
+                &::before {
+                    content: "";
+                }
+
+                &::after {
+                    content: "";
+                    position: absolute;
+                    width: 4px;
+                    height: 8px;
+                    border: solid #fff;
+                    border-width: 0px 2px 2px 0;
+                    transform: rotate(45deg) scale(0);
+                    top: 2.5px;
+                    left: 6.5px;
+                }
+            }
+
+            .completioninfo.completion_complete {
+                .icon {
+                    background: #357a32;
+
+                    &::after {
+                        transform: rotate(45deg) scale(1);
+                    }
+                }
+            }
+        }
+    }
+}

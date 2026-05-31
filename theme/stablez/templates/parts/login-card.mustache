@@ -1,0 +1,77 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_stablez/parts/login-card
+}}
+
+<div class="login-card">
+    <h3>{{#str}}login, theme_stablez{{/str}}</h3>
+    {{#maintenance}}
+        <div class="alert alert-danger login-maintenance">
+            {{{maintenance}}}
+        </div>
+    {{/maintenance}}
+    <form class="login-form" action="{{loginurl}}" method="POST" role="form">
+        <input type="hidden" name="logintoken" value="{{logintoken}}">
+        <label for="username">
+            {{^canloginbyemail}}
+                {{#str}}username{{/str}}
+            {{/canloginbyemail}}
+            {{#canloginbyemail}}
+            {{#str}}username{{/str}} / {{#str}}email{{/str}}
+            {{/canloginbyemail}}
+        </label>
+        <div class="input-group">
+            <input type="text" class="form-control" id="username" name="username" placeholder="{{#str}}write_down, theme_stablez{{/str}}" required />
+        </div>
+
+        <label for="password">{{#str}}password{{/str}}</label>
+        <div class="input-group">
+            <input type="password" class="form-control" id="password" name="password" placeholder="{{#str}}write_down, theme_stablez{{/str}}" required />
+        </div>
+        
+        <p class="forget-password"><a href="{{{ config.wwwroot }}}/login/forgot_password.php">{{#str}}forget_password, theme_stablez{{/str}}</a></p>
+
+        <div class="sign-up-btn">
+            <button type="submit" class="btn btn-primary"> {{#str}}login, theme_stablez{{/str}}
+                <img src="{{{config.wwwroot}}}/theme/stablez/pix/icons/arrow-right.svg" alt="right-arrow">
+            </button>
+        </div>
+    </form>
+
+    {{#output.has_identity_providers}}
+        <h5 class="mt-2">{{#str}} potentialidps, auth {{/str}}</h5>
+        <div class="potentialidplist" class="m-t-1">
+            {{#output.get_identity_providers}}
+                <div class="potentialidp">
+                    <a href="{{{url}}}" title={{#quote}}{{name}}{{/quote}} class="btn btn-secondary btn-block">
+                    {{#iconurl}}
+                        <img src="{{iconurl}}" alt="" width="24" height="24"/>
+                    {{/iconurl}}
+                    {{name}}
+                    </a>
+                </div>
+            {{/output.get_identity_providers}}
+        </div>
+    {{/output.has_identity_providers}}
+    {{#cansignup}}
+    <p class="create-account">{{#str}}dont_have_an_account, theme_stablez{{/str}}
+        <a class="btn btn-register" href="{{{ config.wwwroot }}}/login/signup.php?">{{#str}}Create_an_account, theme_stablez{{/str}}</a>
+    </p>
+    {{/cansignup}}
+
+</div>

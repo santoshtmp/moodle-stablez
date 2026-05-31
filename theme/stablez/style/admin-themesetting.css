@@ -1,0 +1,30 @@
+#adminsettings h3.title-tab-pane-toggle {
+    cursor: pointer;
+    padding: 0 12px;
+    background-color: #d9d9d94f;
+}
+
+#adminsettings h3.title-tab-pane-toggle.open {
+    background-color: #d9d9d9;
+}
+
+#adminsettings h3.title-tab-pane-toggle::before {
+    content: "\f107";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    float: right;
+    transition: all 0.3s ease-out 0s;
+    transform: rotate(0);
+}
+
+#adminsettings h3.title-tab-pane-toggle.open::before {
+    transform: rotate(180deg);
+}
+
+#adminsettings .title-tab-pane-content {
+    display: none;
+}
+
+#adminsettings .title-tab-pane-content.open {
+    display: block;
+}

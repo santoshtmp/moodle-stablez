@@ -1,0 +1,71 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_stablez/pages/report/course_report
+}}
+
+<div class="course-report">
+
+    <div class="header-container d-flex mb-3" style="justify-content: space-between;">
+        <div class="title">
+            <h3>
+               Course Lists 
+            </h3>
+        </div>
+        {{> theme_stablez/parts/search-form}}
+       
+    </div>
+
+    <div class="no-overflow">
+    {{#has_data}}
+        <table id="table-course-report" class="stablez-course-report-table flexible generaltable generalbox ">
+            <thead>
+                <tr>
+                    <th>S.N</th>
+                    <th>Courses</th>
+                    <th>Category</th>
+                    <th>Enrol users</th>
+                    <th>In Progress Users</th>
+                    <th>Completed Users</th>
+                    <th>Created Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#course_info}}
+                <tr>
+                    <td>{{sn}}</td>
+                    <td>
+                        <a class="d-flex flex-column justify-content-start" href="{{course_link}}">
+                            <p>{{fullname}}</p>
+                            <img src="{{thumbnail_image_link}}" alt="{{fullname}} image" style="max-width:70px; max-height:70px;"> 
+                        </a>
+                    </td>
+                    <td>{{category_name}}</td>
+                    <td>{{enroll_total_student}}</td>
+                    <td>{{count_active_users}}</td>
+                    <td>{{count_course_completion}}</td>
+                    <td>{{course_timecreated}}</td>
+                </tr>
+                {{/course_info}}
+            </tbody>
+        </table>
+        {{{pagination}}}
+    {{/has_data}}
+    <div></div>
+    </div>
+
+</div>

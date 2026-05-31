@@ -1,0 +1,150 @@
+.stablez-courses-wrapper {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+
+  .course-card {
+    filter: drop-shadow(1px 1px 2px rgba(95, 95, 99, 0.06))
+      drop-shadow(1px 1px 3px rgba(95, 95, 99, 0.1));
+    margin: 0;
+    border-radius: 8px;
+    background: $white;
+    overflow: hidden;
+  }
+
+  .card-head,
+  .dashboard-course-card .card > a {
+    position: relative;
+    padding-top: 55%;
+
+    .category-link .course-category-name {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+      font-weight: 600;
+      font-size: 12px;
+      line-height: 1.3;
+      text-transform: uppercase;
+      color: $M-40;
+      padding: 8px 16px;
+      background: $M-0;
+      border-radius: 4px;
+      z-index: 2;
+      margin-bottom: 0;
+    }
+
+    .card-img-top {
+      position: absolute;
+      inset: 0;
+      height: 100%;
+      width: 100%;
+      object-fit: cover;
+      border-radius: 0;
+    }
+  }
+
+  .card-body {
+    padding: 32px 32px 16px;
+    .card-title a {
+      color: $N-50;
+      font-size: 18px;
+      line-height: 1.3;
+      font-weight: 600;
+    }
+    .summary {
+      .summary-truncate {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+      }
+    }
+  }
+
+  .card-footer {
+    background: $white;
+    border: 0;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    padding: 0 32px 32px;
+  }
+}
+
+@include mq(2xl, max) {
+  .stablez-courses-wrapper {
+    grid-template-columns: repeat(auto-fill, minmax(min(20rem, 100%), 1fr));
+  }
+}
+
+#frontpage-available-course-list {
+  padding-block: 60px;
+  margin-top: 0;
+}
+.courses.frontpage-course-list-all {
+  .stablez-view-more {
+    text-align: center;
+    padding-inline: 0;
+    padding-top: 0;
+    margin-top: 32px;
+  }
+}
+
+.paging-morelink {
+  padding: 0;
+}
+
+// My course Dashboard Card
+
+.page-mycourses .block_myoverview .card-body:has(.stablez-courses-wrapper) {
+  padding-inline: 1rem !important;
+}
+
+.dashboard-course-card {
+  // .course-card {
+  //   overflow: unset;
+  // }
+
+  .course-card {
+    margin-inline: 0;
+  }
+
+  div.card-body .card-footer {
+    padding-inline: 0;
+
+    // .btn.btn-link.btn-icon {
+    //   margin-top: -3px;
+    // }
+  }
+
+  .card-img-top {
+    border-radius: 4px 4px 0 0;
+  }
+  div.card-body.course-info-container {
+    padding: 32px 32px 16px !important;
+  }
+
+  a.coursename {
+    font-size: 18px;
+    font-weight: 600;
+    color: $N-50;
+  }
+
+  .card.course-card .categoryname {
+    position: absolute;
+    background: $M-0;
+    color: $M-40;
+    text-align: center;
+    text-transform: uppercase;
+    width: fit-content;
+    border-radius: 4px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 0;
+    top: 18px;
+    left: 18px;
+    z-index: 1;
+  }
+}
