@@ -25,6 +25,7 @@
 namespace theme_stablez\form;
 
 use admin_setting_configcheckbox;
+use admin_setting_configcolourpicker;
 use admin_setting_confightmleditor;
 use admin_setting_configpasswordunmask;
 use admin_setting_configselect;
@@ -709,19 +710,49 @@ class theme_settings {
      */
     public static function style_script_settings($settings) {
         global $CFG;
-        $general_tab = new admin_settingpage('style_script_settings_tab', 'Style Script');
+        $style_script_tab = new admin_settingpage('style_script_settings_tab', 'Style and Script');
 
         /**
          * -------------------- Setting heading --------------------
          */
         // $setting = new admin_setting_heading('style_script_settings_style_script_hr', '', '<hr>');
-        // $general_tab->add($setting);
+        // $style_script_tab->add($setting);
 
-        $name = 'theme_stablez/style_script';
-        $heading = 'Style Script';
+        $name = 'theme_stablez/layout_style';
+        $heading = 'Layout Style';
         $information = '';
         $setting = new admin_setting_heading($name, $heading, $information);
-        $general_tab->add($setting);
+        $style_script_tab->add($setting);
+
+        // We use an empty default value because the default colour should come from the preset.
+        $name = 'theme_stablez/brandcolor';
+        $title = "Primary Brand Color";
+        $description = "The value is present as '\$primary' variable. This will change the primary brand color of the site which is used in various elements like links, buttons, etc. If you want to change the color of specific element, you can use the custom CSS code section below.";
+        $setting = new admin_setting_configcolourpicker($name, $title, $description, '#2f5d88'); // 
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $style_script_tab->add($setting);
+
+        $name = 'theme_stablez/primarybuttoncolor';
+        $title = "Primary Button Color";
+        $description = "The value is present as '\$primary-btn' variable. This will change the color of all the primary buttons in the site. If you want to change the color of specific button or element, you can use the custom CSS code section below.";
+        $setting = new admin_setting_configcolourpicker($name, $title, $description, '#f58466');
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $style_script_tab->add($setting);
+
+        $name = 'theme_stablez/primarybuttonhovercolor';
+        $title = "Primary Button Hover Color";
+        $description = "The value is present as '\$primary-btn-hover' variable. This will change the hover color of all the primary buttons in the site. If you want to change the color of specific button or element, you can use the custom CSS code section below.";
+        $setting = new admin_setting_configcolourpicker($name, $title, $description, '#e36b4d');
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $style_script_tab->add($setting);
+
+        // ==========================================================================================
+
+        $name = 'theme_stablez/style_script';
+        $heading = 'SCSS and JavaScript code';
+        $information = '';
+        $setting = new admin_setting_heading($name, $heading, $information);
+        $style_script_tab->add($setting);
 
         // Raw SCSS to include after the content.
         $setting = new admin_setting_scsscode(
@@ -732,7 +763,7 @@ class theme_settings {
             PARAM_RAW
         );
         $setting->set_updatedcallback('theme_reset_all_caches');
-        $general_tab->add($setting);
+        $style_script_tab->add($setting);
 
         // Custom JavaScript
         $setting = new admin_setting_configtextarea(
@@ -743,11 +774,11 @@ class theme_settings {
             PARAM_RAW
         );
         $setting->set_updatedcallback('theme_reset_all_caches');
-        $general_tab->add($setting);
+        $style_script_tab->add($setting);
 
 
         // Must add the page after definiting all the settings!
-        $settings->add($general_tab);
+        $settings->add($style_script_tab);
     }
     // 
 }

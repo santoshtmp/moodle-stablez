@@ -95,13 +95,44 @@ function theme_stablez_get_main_scss_content($theme) {
 }
 
 /**
- * Get Pre scss
+ * Get SCSS to prepend.
+ *
  * @param theme_config $theme The theme config object.
  * @return string
  */
 function theme_stablez_get_pre_scss($theme) {
-    $pre_scss = '';
-    return $pre_scss;
+    global $CFG;
+
+    $scss = '';
+    $configurable = [
+        // Config key => [variableName, ...].
+        'brandcolor' => ['primary'],
+        'primarybuttoncolor' => ['primary-btn'],
+        'primarybuttonhovercolor' => ['primary-btn-hover']
+    ];
+
+    // Prepend variables first.
+    foreach ($configurable as $configkey => $targets) {
+        $value = isset($theme->settings->{$configkey}) ? $theme->settings->{$configkey} : null;
+        if (empty($value)) {
+            continue;
+        }
+        array_map(function ($target) use (&$scss, $value) {
+            $scss .= '$' . $target . ': ' . $value . ";\n";
+        }, (array) $targets);
+    }
+
+    // Add a new variable to indicate that we are running behat.
+    if (defined('BEHAT_SITE_RUNNING')) {
+        $scss .= "\$behatsite: true;\n";
+    }
+
+    // Prepend pre-scss.
+    if (!empty($theme->settings->scsspre ?? '')) {
+        $scss .= $theme->settings->scsspre;
+    }
+
+    return $scss;
 }
 
 /**
