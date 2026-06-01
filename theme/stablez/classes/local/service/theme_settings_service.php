@@ -140,7 +140,7 @@ class theme_settings_service {
                     }
 
                     [$title, $link] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
-                    $menu_items[$index]['title'] = format_string($title);
+                    $menu_items[$index]['title'] = html_entity_decode(format_string($title));
                     $menu_items[$index]['link']  = ($link !== '') ? $link : '#';
                     $index++;
                 }
@@ -148,7 +148,7 @@ class theme_settings_service {
 
             $label = $this->theme->settings->$label_key ?? '';
             $templatecontext['footer_menu'][$i] = [
-                'label'         => format_string($label),
+                'label'         => html_entity_decode(format_string($label)),
                 'label_class'   => str_replace([' ', '_'], '-', strtolower($label)),
                 'items'         => $menu_items,
                 'items_present' => !empty($menu_items),
