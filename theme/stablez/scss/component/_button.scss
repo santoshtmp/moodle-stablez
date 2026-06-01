@@ -4,13 +4,13 @@
     line-height: 1.5;
     color: #fff;
     padding: 16px 24px;
-    background: $orange;
+    background: $primary-btn;
     border-radius: 4px;
     display: block;
     width: fit-content;
 
     &:hover {
-        background-color: $orange-hover;
+        background-color: $primary-btn-hover;
     }
 }
 
@@ -28,10 +28,10 @@
     }
 
     &:hover {
-        background-color: $orange-hover;
-        border: 1px solid $orange-hover !important;
+        background-color: $primary-btn-hover;
+        border: 1px solid $primary-btn-hover !important;
         color: #fff;
-        border-color: $orange;
+        border-color: $primary-btn;
     }
 }
 
@@ -45,12 +45,12 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    background-color: $orange;
-    border-color: $orange;
+    background-color: $primary-btn;
+    border-color: $primary-btn;
 
     &:hover {
-        background-color: $orange-hover;
-        border-color: $orange;
+        background-color: $primary-btn-hover;
+        border-color: $primary-btn-hover;
     }
 }
 
@@ -65,17 +65,18 @@
         font-size: 18px;
         font-weight: 400;
         line-height: 1.4;
-        background-color: $orange;
-        border-color: $orange;
+        background-color: $primary-btn;
+        border-color: $primary-btn;
 
         &:hover {
-            background-color: $orange-hover;
+            background-color: $primary-btn-hover;
+            border-color: $primary-btn-hover;
         }
     }
 }
 
 #message-user-button {
-    border: 1px solid $orange !important;
+    border: 1px solid $primary-btn !important;
     font-size: 14px;
     padding: 10px 24px;
     border-radius: 4px;
@@ -86,15 +87,15 @@
     gap: 6px;
     transition: all 0.3s ease;
     cursor: pointer;
-    background: $orange;
+    background: $primary-btn;
 
     .fa-message {
         margin-right: 0;
     }
 
     &:hover {
-        background: $orange;
-        border-color: $orange !important;
+        background: $primary-btn-hover;
+        border-color: $primary-btn-hover !important;
     }
 }
 

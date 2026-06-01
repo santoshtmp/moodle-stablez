@@ -31,7 +31,7 @@ defined('MOODLE_INTERNAL') || die();
 $plugin->component = 'theme_stablez';
 
 // This is the version of the plugin.
-$plugin->version   = 2026052507;
+$plugin->version   = 2026052508;
 
 // This is the named version.
 $plugin->release = '5.2.0';
