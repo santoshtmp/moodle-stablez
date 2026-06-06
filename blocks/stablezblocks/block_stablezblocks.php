@@ -113,7 +113,9 @@ class block_stablezblocks extends block_base {
      */
     public function html_attributes() {
         $block_type = $this->config->stablez_block_type ?? '';
+        $block_background = $this->config->block_background ?? 'default';
         $block_class = $block_type ? str_replace([' ', '_'], '-', strtolower($block_type)) : '';
+        $block_class .= ' stablez-block-bg-'.$block_background;
         $attributes = parent::html_attributes();
         $attributes['class'] .= ' stablez-block stablez-block-' . $block_class;
         $attributes['full_width_section'] = isset($this->config->full_width_section) ? $this->config->full_width_section : false;

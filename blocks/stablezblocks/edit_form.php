@@ -143,6 +143,12 @@ class block_stablezblocks_edit_form extends block_edit_form {
             1 => 'Yes',
         ]);
 
+        // Option to render the block at full page width.
+        $mform->addElement('select', 'config_block_background', 'Block Background', [
+            'default' => 'Default',
+            'transparent' => 'Transparent',
+        ]);
+
         // Initialise the edit form JS module for dynamic show/hide behaviour.
         // $PAGE->requires->js_call_amd('block_stablezblocks/edit-form', 'init');
         $mform->addElement('html', '
