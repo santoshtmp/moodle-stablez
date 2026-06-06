@@ -93,7 +93,7 @@ function theme_setting_tab_panel_title_toggle(theme_name) {
             });
             h3_title.each(function () {
                 $(this).nextUntil('h3.main').wrapAll('<div class="title-tab-pane-content">');
-                let h3_title_id = 'theme-' + theme_name + '-' + ($(this).text().toLowerCase()).replace(" ", "-");
+                let h3_title_id = 'theme-' + theme_name + '-' + ($(this).text().toLowerCase()).replace(/\s+/g, '-');
                 $(this).attr('id', h3_title_id);
                 if (query_title_id == h3_title_id) {
                     query_title_id_true = true;

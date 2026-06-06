@@ -34,7 +34,7 @@ $THEME->sheets = ["style"];
 $THEME->javascripts = ["javascript"];
 $THEME->editor_sheets = [];
 $THEME->editor_scss = [];
-$THEME->usefallback = false;
+$THEME->usefallback = true;
 $THEME->scss = function ($theme) {
     return theme_stablez_get_main_scss_content($theme);
 };
@@ -65,26 +65,26 @@ $block_regions = [
 $THEME->layouts = [
     // The site home page.
     'frontpage' => array(
-        'file' => 'frontpage.php',
+        'file' => 'drawers.php',
         'regions' => $block_regions,
         'defaultregion' => 'side-pre',
         'options' => array('nonavbar' => true),
     ),
     // Main course page.
     'course' => array(
-        'file' => 'course.php',
+        'file' => 'drawers.php',
         'regions' => $block_regions,
         'defaultregion' => 'side-pre',
         'options' => array('langmenu' => true),
     ),
     // Part of course, typical for modules - default page layout if $cm specified in require_login().
     'incourse' => array(
-        'file' => 'incourse.php',
+        'file' => 'drawers.php',
         'regions' => $block_regions,
         'defaultregion' => 'side-pre',
     ),
     'custompages' => array(
-        'file' => 'custompages.php',
+        'file' => 'drawers.php',
         'regions' => $block_regions,
         'defaultregion' => 'side-pre',
     ),

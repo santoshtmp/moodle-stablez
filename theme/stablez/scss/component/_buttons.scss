@@ -1,21 +1,83 @@
-.banner-cta .banner-cta-link {
-    font-weight: 700;
-    font-size: 16px;
-    line-height: 1.5;
-    color: #fff;
-    padding: 16px 24px;
+.btn-primary {
     background: $primary-btn;
-    border-radius: 4px;
-    display: block;
-    width: fit-content;
+    border-color: $primary-btn;
 
     &:hover {
         background-color: $primary-btn-hover;
+        border-color: $primary-btn-hover;
+    }
+}
+
+.btn-outline-primary {
+
+    &:hover {
+        background-color: $primary-btn-hover;
+        border-color: $primary-btn-hover;
+    }
+}
+
+.btn-secondary {
+    background: $secondary-btn;
+    border-color: $secondary-btn;
+
+    &:hover {
+        background-color: $secondary-btn-hover;
+        border-color: $secondary-btn-hover;
+    }
+}
+
+.btn-outline-secondary {
+    &:hover {
+        background-color: $secondary-btn-hover;
+        border-color: $secondary-btn-hover;
+    }
+}
+
+.singlebutton .btn-secondary,
+#toggle-contact-button {
+    border-radius: 4px !important;
+    border: 1px solid $primary;
+    background-color: transparent;
+    padding: 10px 24px;
+    transition: all 0.2s ease;
+    font-size: 14px;
+
+    &:hover {
+        background-color: $primary-btn-hover;
+        border-color: $primary-btn-hover;
+        color: #fff;
+    }
+}
+
+.banner-cta {
+    .banner-cta-link {
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 1.5;
+        color: #fff;
+        padding: 16px 24px;
+        border-radius: 4px;
+        display: block;
+        width: fit-content;
+    }
+
+    .btn-secondary {
+        border-color: $primary-btn-hover;
+    }
+
+    .btn-outline-primary {
+        border-color: $primary-btn-hover;
+        border: 1px solid #fff;
+
+        &:hover {
+            background-color: $primary-btn-hover;
+            border-color: $primary-btn-hover;
+            transition: all 0.2s ease;
+        }
     }
 }
 
 .view-card-link {
-    // display: flex;
     align-items: center;
     border: 1px solid $B-20 !important;
     padding: 10px 24px;
@@ -51,27 +113,6 @@
     &:hover {
         background-color: $primary-btn-hover;
         border-color: $primary-btn-hover;
-    }
-}
-
-.enrol-btn-wrapper .enrol-now {
-    display: flex;
-    justify-content: end;
-
-    .btn-enrol {
-        border-radius: 4px;
-        padding: 12px 48px;
-        transition: all 0.2s ease;
-        font-size: 18px;
-        font-weight: 400;
-        line-height: 1.4;
-        background-color: $primary-btn;
-        border-color: $primary-btn;
-
-        &:hover {
-            background-color: $primary-btn-hover;
-            border-color: $primary-btn-hover;
-        }
     }
 }
 

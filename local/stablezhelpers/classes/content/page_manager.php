@@ -28,6 +28,7 @@ namespace local_stablezhelpers\content;
 use core\exception\moodle_exception;
 use core\output\action_menu;
 use core\output\pix_icon;
+use html_writer;
 use local_stablezhelpers\local\table\stablezhelpers_flexible_table;
 use local_stablezhelpers\datarepository\content_datarepository;
 use local_stablezhelpers\datarepository\usermeta_datarepository;
@@ -390,7 +391,10 @@ class page_manager {
             // Build table row.
             $row = [
                 $datafrom++,
-                format_string($content->title),
+                html_writer::link(
+                    self::get_view_page_url($content->id),
+                    format_string($content->title)
+                ),
                 ($content->status == 1) ? get_string('published', 'local_stablezhelpers') : get_string('draft', 'local_stablezhelpers'),
                 $authorname,
                 userdate($content->timemodified),

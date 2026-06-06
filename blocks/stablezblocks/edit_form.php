@@ -92,8 +92,8 @@ class block_stablezblocks_edit_form extends block_edit_form {
         // ── Informational notices for special block types ─────────────────────
         // These static elements are shown/hidden based on the selected block type.
 
-        // $mform->addElement('static', "contact_us_description", "", "Contact Us data is managed through <a href='/admin/settings.php?section=themesettingstablezblocks#general_setting_tab'> Theme stablezblocks settings</a>");
-        // $mform->hideIf('contact_us_description', 'config_stablez_block_type', 'neq', 'contact_us');
+        $mform->addElement('static', "contact_us_description", "", "Contact Us data is managed through <a href='/admin/settings.php?section=themesettingstablez&tabtitle=theme-stablez-contact-detail#general_setting_tab'> Theme stablez settings - Contact Detail</a>");
+        $mform->hideIf('contact_us_description', 'config_stablez_block_type', 'neq', 'contact_us');
 
 
         // Notice: FAQs block requires the theme FAQs feature to be enabled.
@@ -105,7 +105,7 @@ class block_stablezblocks_edit_form extends block_edit_form {
         $mform->hideIf('testimonial_description', 'config_stablez_block_type', 'neq', 'testimonial');
 
         // Notice: Start Guideline block data is configured in the theme settings.
-        $mform->addElement('static', 'start_guideline_description', '', "Start Guideline data is managed through <a href='/admin/settings.php?section=themesettingstablezblocks#frontpage_setting_tab'>Theme stablezblocks settings</a>.");
+        $mform->addElement('static', 'start_guideline_description', '', "Start Guideline data is managed through <a href='admin/settings.php?section=themesettingstablez&tabtitle=theme-stablez-start-guideline#frontpage_setting_tab'>Theme stablez settings - start guideline</a>.");
         $mform->hideIf('start_guideline_description', 'config_stablez_block_type', 'neq', 'start_guideline');
 
         // ── Section: Block Layout ─────────────────────────────────────────────

@@ -331,18 +331,18 @@ class stablezhelpers {
      *
      * @param string $path URL path
      * @param array $params URL parameters
-     * @param bool $asstring Whether to return the URL as a string (default: false = return moodle_url object)
+     * @param bool $output_as_string Whether to return the URL as a string (default: false = return moodle_url object)
      * @param bool $raw Whether to return raw URL without HTML encoding (default: false = HTML escaped for display)
      * @return \moodle_url|string|false Moodle URL object, URL string, or false if the path is invalid
      */
-    public static function get_moodle_url($path, $params = [], $as_string = false, $raw = false) {
+    public static function get_moodle_url($path, $params = [], $output_as_string = false, $raw_out = false) {
         global $CFG;
 
         if (file_exists($CFG->dirroot . $path)) {
             $moodle_url = new \moodle_url($path, $params);
 
-            if ($as_string) {
-                return $raw ? $moodle_url->raw_out(false) : $moodle_url->out(false);
+            if ($output_as_string) {
+                return $raw_out ? $moodle_url->raw_out(false) : $moodle_url->out(false);
             }
 
             return $moodle_url;

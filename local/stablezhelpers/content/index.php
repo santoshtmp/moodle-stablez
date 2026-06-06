@@ -55,7 +55,7 @@ $context = \context_system::instance();
 // Get current page URL.
 $currentPageURL = page_manager::get_listing_page_url();
 // Set page title.
-$pagetitle = get_string('pluginname', 'local_stablezhelpers');
+$pagetitle = get_string('contentmanagement', 'local_stablezhelpers');
 
 // Setup page information.
 $PAGE->set_context($context);

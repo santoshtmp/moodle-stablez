@@ -100,6 +100,7 @@ $string['testimonial_missing'] = "Testimonial data is missing.";
 // Settings 
 $string['general'] = 'General';
 $string['generalsettings'] = 'General Settings';
+$string['layoutsettings'] = 'Layout Settings';
 $string['settings'] = 'Settings';
 $string['frontpage'] = "Front Page";
 $string['footer'] = "Footer";
@@ -116,10 +117,10 @@ $string['logo_description_des'] = 'This will be shown along with the logo; Also 
 EXample:
 <pre>
 &lt;div class="logo-top"&gt;
-    &lt;div&gt;Government of Nepal&lt;/div&gt;
-    &lt;div&gt;Office of the Prime Minister and Council of Ministers&lt;/div&gt;
+    &lt;div&gt;Your Organization Name&lt;/div&gt;
+    &lt;div&gt;Your Parent Department or Entity&lt;/div&gt;
 &lt;/div&gt;
-&lt;div class="logo-bottom"&gt;National Statistics Office&lt;/div&gt;
+&lt;div class="logo-bottom"&gt;Your Division or Office Name&lt;/div&gt;
 </pre>';
 $string['copyright'] = 'copyright text';
 $string['copyrightdesc'] = 'Copyright © {year} stablez.';

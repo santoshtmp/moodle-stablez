@@ -63,7 +63,7 @@ if ($hassiteconfig) {
     ));
 
     /**
-     * Contact Detail
+     * Front page settings
      */
     $ADMIN->add('stablezadmin', new admin_externalpage(
         'stablezadmin_front_page', // Unique identifier
@@ -87,6 +87,15 @@ if ($hassiteconfig) {
         'stablezadmin_start_guideline', // Unique identifier
         get_string('start_guideline', 'theme_stablez'), // Link name
         new moodle_url('/admin/settings.php?section=themesettingstablez&tabtitle=theme-stablez-start-guideline#frontpage_setting_tab') // External URL
+    ));
+
+    /**
+     * Layout Settings
+     */
+    $ADMIN->add('stablezadmin', new admin_externalpage(
+        'stablezadmin_layout', // Unique identifier
+        get_string('layoutsettings', 'theme_stablez'), // Link name
+        new moodle_url('/admin/settings.php?section=themesettingstablez&tabtitle=theme-stablez-layout-style#style_script_settings_tab') // External URL
     ));
 
     /**

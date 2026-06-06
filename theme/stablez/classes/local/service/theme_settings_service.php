@@ -283,6 +283,7 @@ class theme_settings_service {
                 $templatecontext['banner_cta'][$i] = [
                     'label' => format_string($this->theme->settings->{"banner_cta_label_{$n}"} ?? ''),
                     'link'  => $this->theme->settings->{"banner_cta_link_{$n}"} ?? '',
+                    'type'  => $this->theme->settings->{"banner_cta_type_{$n}"} ?? 'primary',
                 ];
             }
         }

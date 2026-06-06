@@ -63,10 +63,7 @@ $smallBanner-height: 480px;
   }
 
   .banner-title {
-    font-family: Baskervville, sans-serif;
-    font-weight: 400;
-    font-size: 45px;
-    line-height: 1.15;
+    @include baskervville(45px, 1.15, 400);
     color: #fff;
     margin-bottom: 15px;
   }
@@ -368,21 +365,7 @@ $smallBanner-height: 480px;
   margin-top: 24px;
 }
 
-.singlebutton .btn-secondary,
-#toggle-contact-button {
-  border-radius: 4px !important;
-  border: 1px solid #fff;
-  background-color: transparent;
-  padding: 10px 24px;
-  // background: #2460b9;
-  transition: all 0.2s ease;
-  font-size: 14px;
 
-  &:hover {
-    background: #0c589c;
-    border-color: #0c589c;
-  }
-}
 
 .stablez-header-btn-group {
   gap: 12px;

@@ -46,23 +46,35 @@ import $ from 'jquery';
 function rearrangeOptionSpanDisplay(selectedOrder, hiddenInput, containerDiv) {
     if (selectedOrder.length > 0) {
         hiddenInput.value = selectedOrder.join(',');
-
         // Defer reordering to let Moodle's autocomplete widget finish rendering
         // any newly added or removed span elements before we sort them.
-        setTimeout(function () {
+
+        let elapsed = 0;
+        const intervalRearrange = setInterval(function () {
+            elapsed += 100;
+
             const selectionContainer = containerDiv.querySelector('.form-autocomplete-selection');
-            if (!selectionContainer) { return; }
 
-            // Sort the rendered span elements according to selectedOrder.
-            const sortedSpans = Array.from(selectionContainer.children).sort((a, b) => {
-                const aIndex = selectedOrder.indexOf(a.getAttribute('data-value'));
-                const bIndex = selectedOrder.indexOf(b.getAttribute('data-value'));
-                return aIndex - bIndex;
-            });
+            if (selectionContainer) {
+                // Sort the rendered span elements according to selectedOrder.
+                const sortedSpans = Array.from(selectionContainer.children).sort((a, b) => {
+                    const aIndex = selectedOrder.indexOf(a.getAttribute('data-value'));
+                    const bIndex = selectedOrder.indexOf(b.getAttribute('data-value'));
+                    return aIndex - bIndex;
+                });
 
-            // Re-append in sorted order (appendChild moves existing nodes, no cloning needed).
-            sortedSpans.forEach(span => selectionContainer.appendChild(span));
-        }, 500);
+                // Re-append in sorted order.
+                sortedSpans.forEach(span => selectionContainer.appendChild(span));
+
+                clearInterval(intervalRearrange);
+                return;
+            }
+
+            // Stop after 600ms.
+            if (elapsed >= 600) {
+                clearInterval(intervalRearrange);
+            }
+        }, 100);
 
     } else {
         hiddenInput.value = '';
@@ -202,97 +214,17 @@ function manage_course_information_fields() {
     });
 }
 
-export const init = () => {
-    show_hide_course_list_field();
-    manage_course_information_fields();
-
-    /* =============================================================================
-    2. TRACK SELECTION ORDER FOR config_course_fields_order
-    ============================================================================= */
-
-    //     /**
-    //  * Hidden input that stores the user-defined order of course fields as a
-    //  * comma-separated string (e.g. "fullname,shortname,summary").
-    //  * @type {HTMLInputElement}
-    //  */
-    //     const courseFieldsOrderInput = document.querySelector("input[name='config_course_fields_order'][type='hidden']");
-
-    //     /**
-    //      * Tracks the current ordered list of selected course-field values.
-    //      * Initialised from the saved input value if one exists.
-    //      * @type {string[]}
-    //      */
-    //     var courseFieldsSelectedOrder = courseFieldsOrderInput.value
-    //         ? courseFieldsOrderInput.value.split(',')
-    //         : [];
-
-    //     // On page load, re-apply the saved order to the autocomplete UI.
-    //     if (courseFieldsSelectedOrder.length > 0) {
-    //         window.console.log(courseFieldsSelectedOrder);
-
-
-    //         const renderedValues = Array.from(
-    //       document.querySelectorAll('div[id^="fitem_id_config_course_fields_"] .form-autocomplete-selection span[data-value]')
-    //         ).map(el => el.getAttribute('data-value'));
-
-    //         courseFieldsSelectedOrder = courseFieldsSelectedOrder.filter(
-    //             val => renderedValues.includes(val)
-    //         );
-
-    //         const courseFieldsContainer = document.querySelector("div[id^='fitem_id_config_course_fields_']");
-    //         rearrangeOptionSpanDisplay(courseFieldsSelectedOrder, courseFieldsOrderInput, courseFieldsContainer);
-    //         window.console.log(courseFieldsSelectedOrder);
-
-    //     }
-
-    //     /**
-    //      * Handles clicks inside the course-fields autocomplete widget:
-    //      * - Clicking a <li> adds the value to the ordered list.
-    //      * - Clicking a <span> inside .form-autocomplete-selection removes the value.
-    //      */
-    //     document.addEventListener('click', function (event) {
-    //         const courseFieldsContainer = event.target.closest("div[id^='fitem_id_config_course_fields_']");
-    //         if (!courseFieldsContainer) { return; }
-    //         window.console.log(courseFieldsSelectedOrder);
-
-    //         if (event.target.tagName === 'LI') {
-    //             const value = event.target.getAttribute('data-value');
-    //             if (value && !courseFieldsSelectedOrder.includes(value)) {
-    //                 courseFieldsSelectedOrder.push(value);
-    //             }
-    //             window.console.log('clicked li ');
-
-    //             rearrangeOptionSpanDisplay(courseFieldsSelectedOrder, courseFieldsOrderInput, courseFieldsContainer);
-    //         }
-
-    //         if (
-    //             event.target.tagName === 'SPAN' &&
-    //             event.target.closest('.form-autocomplete-selection')
-    //         ) {
-    //             window.console.log('clicked SPAN ');
-
-    //             const value = event.target.getAttribute('data-value');
-    //             courseFieldsSelectedOrder = courseFieldsSelectedOrder.filter(item => item !== value);
-    //             rearrangeOptionSpanDisplay(courseFieldsSelectedOrder, courseFieldsOrderInput, courseFieldsContainer);
-    //         }
-
-    //         window.console.log('clicked');
-    //         // window.console.log(renderedValues);
-    //         window.console.log(courseFieldsSelectedOrder);
-    //     });
-
-
-
-    /* =============================================================================
-       3. TRACK SELECTION ORDER FOR config_course_list_order
-       ============================================================================= */
-
+/**
+ *
+ */
+function manage_config_course_list_order() {
     /**
      * Hidden input that stores the user-defined order of the course list as a
      * comma-separated string.
      * @type {HTMLInputElement}
      */
     const courselistOrderInput = document.querySelector("input[name='config_course_list_order']");
+    const courselistContainer = document.querySelector("div[id^='fitem_id_config_course_list_']");
 
     /**
      * Tracks the current ordered list of selected course-list values.
@@ -305,36 +237,33 @@ export const init = () => {
 
     // On page load, re-apply the saved order to the autocomplete UI.
     if (courselistSelectedOrder.length > 0) {
-        const courselistContainer = document.querySelector("div[id^='fitem_id_config_course_list_']");
         rearrangeOptionSpanDisplay(courselistSelectedOrder, courselistOrderInput, courselistContainer);
     }
 
-    /**
-     * Handles clicks inside the course-list autocomplete widget:
-     * - Clicking a <li> adds the value to the ordered list.
-     * - Clicking a <span> inside .form-autocomplete-selection removes the value.
-     */
-    document.addEventListener('click', function (event) {
-        const courselistContainer = event.target.closest("div[id^='fitem_id_config_course_list_']");
-        if (!courselistContainer) { return; }
+    $(document).on('change', 'select[name="config_course_list[]"]', function () {
+        let val = $(this).val() || []; // Current selected values
 
-        if (event.target.tagName === 'LI') {
-            const value = event.target.getAttribute('data-value');
-            if (value && !courselistSelectedOrder.includes(value)) {
-                courselistSelectedOrder.push(value);
+        // Add newly selected items to the end
+        val.forEach(function (item) {
+            if (!courselistSelectedOrder.includes(item)) {
+                courselistSelectedOrder.push(item);
             }
-            rearrangeOptionSpanDisplay(courselistSelectedOrder, courselistOrderInput, courselistContainer);
-        }
+        });
 
-        if (
-            event.target.tagName === 'SPAN' &&
-            event.target.closest('.form-autocomplete-selection')
-        ) {
-            const value = event.target.getAttribute('data-value');
-            courselistSelectedOrder = courselistSelectedOrder.filter(item => item !== value);
-            rearrangeOptionSpanDisplay(courselistSelectedOrder, courselistOrderInput, courselistContainer);
-        }
+        // Remove unselected items
+        courselistSelectedOrder = courselistSelectedOrder.filter(function (item) {
+            return val.includes(item);
+        });
+
+        rearrangeOptionSpanDisplay(courselistSelectedOrder, courselistOrderInput, courselistContainer);
     });
+}
 
-
+/**
+ *
+ */
+export const init = () => {
+    show_hide_course_list_field();
+    manage_course_information_fields();
+    manage_config_course_list_order();
 };

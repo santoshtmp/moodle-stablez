@@ -1,0 +1,31 @@
+.block-stablez-progress-bar {
+    .my-enrolled-course .course-progress-title {
+        font-weight: 600;
+        font-size: 22px;
+        line-height: 1.2;
+        color: $N-50;
+        margin-bottom: 16px;
+    }
+
+    .progress-percentage {
+        font-weight: 600;
+        font-size: 16px;
+        color: #2f3034;
+        margin-bottom: 1.5rem;
+    }
+
+    .progress {
+        height: 20px;
+        overflow: hidden;
+        background-color: #eef5f9;
+        width: inherit;
+        border-radius: 4px !important;
+
+        .progress-percentage {
+            font-size: 16px;
+            line-height: 24px;
+            font-weight: 600;
+            color: #2f3034;
+        }
+    }
+}
