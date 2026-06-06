@@ -61,3 +61,40 @@ jsconfig.json
 UPGRADING-CURRENT.md
 .phpunit.cache
 tsconfig.aliases.json
+
+# Ignore npm-gulp packages
+node_modules
+
+# Ignore .htaccess
+.htaccess
+
+# Ignore core phpcs.xml and phpunit.xml.
+core/phpcs.xml
+core/phpunit.xml
+.idea
+.vscode
+
+# Ignore OSX files
+._.DS_Store
+.DS_Store
+*.DS_Store
+._*.DS_Store
+.unison*
+.history
+__MACOSX
+
+*.zip
+*.tar.gz
+
+# Secrets
+.env
+tmp
+private
+
+# Miscellanous
+*.sql
+_core
+dl
+
+# When using ddev
+.ddev
