@@ -30,5 +30,3 @@ require_once($CFG->libdir . '/behat/lib.php');
 require_once($CFG->dirroot . '/course/lib.php');
 
 require_once($CFG->dirroot . '/theme/stablez/includes/layout_templatecontext.php');
-
-echo $OUTPUT->render_from_template('theme_stablez/layout/drawers', $templatecontext);

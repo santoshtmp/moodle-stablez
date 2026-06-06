@@ -69,12 +69,14 @@ $strcapability = 'moodle/site:manageblocks';
 
 // Setup page information.
 $PAGE->set_context($context);
+$title = format_string($content->title);
+
 $PAGE->set_url(page_manager::get_view_page_url());
 $PAGE->set_pagelayout('standard');
 $PAGE->set_pagetype('content-view');
 $PAGE->set_subpage((string)$id);
-$PAGE->set_title(format_string($content->title));
-$PAGE->set_heading(get_string('contentmanagement', 'local_stablezhelpers'));
+$PAGE->set_title($title);
+$PAGE->set_heading($title);
 $PAGE->add_body_class(implode(' ', $classes));
 $PAGE->set_blocks_editing_capability($strcapability);
 
@@ -84,7 +86,7 @@ if (is_siteadmin()) {
         get_string('contentmanagement', 'local_stablezhelpers'),
         page_manager::get_listing_page_url()
     );
-    $PAGE->navbar->add(format_string($content->title));
+    $PAGE->navbar->add($title);
 }
 // Add page secondary navigation.
 if (is_siteadmin()) {
@@ -116,6 +118,7 @@ if (is_siteadmin()) {
 // Get author name.
 $author = usermeta_datarepository::get_user_by_id($content->userid);
 $authorname = $author ? fullname($author) : get_string('unknown', 'local_stablezhelpers');
+$managecontent = has_capability('local/stablezhelpers:managecontent', $context);
 
 // Get content type label.
 $contenttypelabel = get_string('contenttype_' . $content->contenttype, 'local_stablezhelpers', $content->contenttype);
@@ -125,6 +128,7 @@ $template_content = [
     'content' => $content,
     'authorname' => $authorname,
     'contenttypelabel' => $contenttypelabel,
+    'managecontent' => ($content->userid == $USER->id || $managecontent || is_siteadmin()) ? true : false,
 ];
 
 // Render content using template.

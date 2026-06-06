@@ -34,6 +34,7 @@ use core\output\html_writer;
 use core\output\theme_config;
 use local_stablezhelpers\local\service\course_service;
 use local_stablezhelpers\local\stablezhelpers;
+use theme_stablez\local\service\theme_settings_service;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -135,7 +136,7 @@ class block_handler {
             $enrolinstances = enrol_get_instances((int)$COURSE->id, true);
             foreach ($enrolinstances as $key => $courseenrolinstance) {
                 if (!in_array($courseenrolinstance->enrol, ['manual', 'guest'])) {
-                    $template_content['enrol_url'] = stablezhelpers::get_moodle_url('/enrol/index.php', ['id' => $COURSE->id], true, true);
+                    $template_content['enrol_url'] = stablezhelpers::get_moodle_url('/enrol/index.php', ['id' => $COURSE->id], true);
                     break;
                 }
             }
@@ -143,7 +144,7 @@ class block_handler {
 
         return $OUTPUT->render_from_template("theme_stablez/blocks/enrol_btn", $template_content);
     }
-    
+
     /**
      * progress_bar
      */
@@ -163,67 +164,67 @@ class block_handler {
         global $OUTPUT, $PAGE, $CFG, $SITE;
         $send_email = optional_param('send_email', 0, PARAM_INT);
         $sesskey = optional_param('sesskey', '', PARAM_RAW);
-        // $template_content = settings_handler::contact_details_settings();
-        // // check if the message is send or not
-        // if ($_POST && $send_email && $sesskey) {
-        //     if ($sesskey == sesskey()) {
-        //         $sendto_email = ($template_content['contact_form_recipient_email']) ?: $CFG->supportemail;
-        //         $sendto_name = ($template_content['contact_form_recipient_name']) ?: $CFG->supportname;
-        //         $form_name = optional_param('name', '', PARAM_TEXT);
-        //         $form_email = optional_param('email', '', PARAM_TEXT);
-        //         $form_subject = optional_param('subject', '', PARAM_TEXT);
-        //         $form_message = optional_param('message', '', PARAM_TEXT);
-        //         if ($form_name && $form_email && $form_message) {
-        //             $msg_subject =  $SITE->shortname  . " : Contact Us Message";
-        //             // 
-        //             $htmlmessage = "";
-        //             $htmlmessage .= html_writer::start_tag('div');
-        //             $htmlmessage .= html_writer::tag(
-        //                 'p',
-        //                 "Contact us form content :: "
-        //             );
-        //             $htmlmessage .= html_writer::tag(
-        //                 'p',
-        //                 html_writer::tag('strong', 'Name : ') . $form_name
-        //             );
-        //             $htmlmessage .= html_writer::tag(
-        //                 'p',
-        //                 html_writer::tag('strong', 'Email : ') . $form_email
-        //             );
-        //             $htmlmessage .= html_writer::tag(
-        //                 'p',
-        //                 html_writer::tag('strong', 'Subject : ') . $form_subject
-        //             );
-        //             $htmlmessage .= html_writer::tag(
-        //                 'p',
-        //                 html_writer::tag('strong', 'Message : ') . $form_message
-        //             );
-        //             $htmlmessage .= html_writer::end_tag('div');
-        //             // 
-        //             $response_msg_send = notify_handler::send_email(
-        //                 $sendto_email,
-        //                 $sendto_name,
-        //                 $msg_subject,
-        //                 $htmlmessage
-        //             );
-        //             if ($response_msg_send) {
-        //                 $redirect_msg = "Your message is send sucessfully. We will Get in touch with you shorthly";
-        //             } else {
-        //                 $redirect_msg = "Email configuration is not completed or Something went wrong !";
-        //             }
-        //         } else {
-        //             $redirect_msg = "Required data is missing.";
-        //         }
-        //     } else {
-        //         $redirect_msg = "Session time out.";
-        //     }
-        //     redirect($PAGE->url->out(), $redirect_msg);
-        // } else {
-        //     $template_content['block_stablez_id'] = $this->block_settings->block_stablez_id;
-        //     $template_content['form_action'] = $PAGE->url->out();
-        //     $template_content['title'] = format_string($this->block_settings->title);
-        //     return $OUTPUT->render_from_template("theme_stablez/blocks/contact-us", $template_content);
-        // }
+        $template_content = theme_settings_service::get_instance()->contact_details_settings();
+        // check if the message is send or not
+        if ($_POST && $send_email && $sesskey) {
+            if ($sesskey == sesskey()) {
+                $sendto_email = ($template_content['contact_form_recipient_email']) ?: $CFG->supportemail;
+                $sendto_name = ($template_content['contact_form_recipient_name']) ?: $CFG->supportname;
+                $form_name = optional_param('name', '', PARAM_TEXT);
+                $form_email = optional_param('email', '', PARAM_TEXT);
+                $form_subject = optional_param('subject', '', PARAM_TEXT);
+                $form_message = optional_param('message', '', PARAM_TEXT);
+                if ($form_name && $form_email && $form_message) {
+                    $msg_subject =  $SITE->shortname  . " : Contact Us Message";
+                    // 
+                    $htmlmessage = "";
+                    $htmlmessage .= html_writer::start_tag('div');
+                    $htmlmessage .= html_writer::tag(
+                        'p',
+                        "Contact us form content :: "
+                    );
+                    $htmlmessage .= html_writer::tag(
+                        'p',
+                        html_writer::tag('strong', 'Name : ') . $form_name
+                    );
+                    $htmlmessage .= html_writer::tag(
+                        'p',
+                        html_writer::tag('strong', 'Email : ') . $form_email
+                    );
+                    $htmlmessage .= html_writer::tag(
+                        'p',
+                        html_writer::tag('strong', 'Subject : ') . $form_subject
+                    );
+                    $htmlmessage .= html_writer::tag(
+                        'p',
+                        html_writer::tag('strong', 'Message : ') . $form_message
+                    );
+                    $htmlmessage .= html_writer::end_tag('div');
+                    // 
+                    $response_msg_send = notify_handler::send_email(
+                        $sendto_email,
+                        $sendto_name,
+                        $msg_subject,
+                        $htmlmessage
+                    );
+                    if ($response_msg_send) {
+                        $redirect_msg = "Your message is send sucessfully. We will Get in touch with you shorthly";
+                    } else {
+                        $redirect_msg = "Email configuration is not completed or Something went wrong !";
+                    }
+                } else {
+                    $redirect_msg = "Required data is missing.";
+                }
+            } else {
+                $redirect_msg = "Session time out.";
+            }
+            redirect($PAGE->url->out(), $redirect_msg);
+        } else {
+            $template_content['block_stablez_id'] = $this->block_settings->block_stablez_id;
+            $template_content['form_action'] = $PAGE->url->out();
+            $template_content['title'] = format_string($this->block_settings->title);
+            return $OUTPUT->render_from_template("theme_stablez/blocks/contact-us", $template_content);
+        }
     }
     /**
      * course_list
@@ -232,10 +233,10 @@ class block_handler {
         global $OUTPUT;
 
         $course_list = '';
-        $courselist_order = isset($this->block_settings->courselist_order) ? explode(',', $this->block_settings->courselist_order) : '';
-        if ($courselist_order) {
+        $course_list_order = isset($this->block_settings->course_list_order) ? explode(',', $this->block_settings->course_list_order) : '';
+        if ($course_list_order) {
             $course_list = [];
-            foreach ($courselist_order as $key => $course_id) {
+            foreach ($course_list_order as $key => $course_id) {
                 $course_list[] = course_service::course_card_info($course_id, true);
             }
         }
@@ -345,26 +346,26 @@ class block_handler {
      * course_rating
      */
     protected function course_rating_block_content() {
-        global $OUTPUT, $PAGE;
-        $courserating = optional_param('courserating', 0, PARAM_INT);
-        if ($courserating == '1') {
-            $rating = optional_param('rating', 0, PARAM_INT);
-            $feedback = optional_param('feedback', 0, PARAM_TEXT);
-            // var_dump($rating);
-            // var_dump($feedback);
-            $data = [
-                'rating' => $rating,
-                'feedback' => $feedback
-            ];
-            courserating_handler::save_data('', $data, $PAGE->url->out());
-        }
-        $get_path = $PAGE->url->get_path();
-        $params = $PAGE->url->params();
-        $params['courserating'] = 1;
-        $template_content = [];
-        $template_content['rating_action'] = (new \moodle_url($get_path, $params))->out(false);
-        $template_content['block_stablez_id'] = $this->block_settings->block_stablez_id;
-        return $OUTPUT->render_from_template("theme_stablez/blocks/course_rating", $template_content);
+        // global $OUTPUT, $PAGE;
+        // $courserating = optional_param('courserating', 0, PARAM_INT);
+        // if ($courserating == '1') {
+        //     $rating = optional_param('rating', 0, PARAM_INT);
+        //     $feedback = optional_param('feedback', 0, PARAM_TEXT);
+        //     // var_dump($rating);
+        //     // var_dump($feedback);
+        //     $data = [
+        //         'rating' => $rating,
+        //         'feedback' => $feedback
+        //     ];
+        //     courserating_handler::save_data('', $data, $PAGE->url->out());
+        // }
+        // $get_path = $PAGE->url->get_path();
+        // $params = $PAGE->url->params();
+        // $params['courserating'] = 1;
+        // $template_content = [];
+        // $template_content['rating_action'] = (new \moodle_url($get_path, $params))->out(false);
+        // $template_content['block_stablez_id'] = $this->block_settings->block_stablez_id;
+        // return $OUTPUT->render_from_template("theme_stablez/blocks/course_rating", $template_content);
     }
 
 
@@ -374,10 +375,10 @@ class block_handler {
     protected function faqs_block_content() {
         global $OUTPUT;
         $template_content = [];
-        $template_content['block_stablez_id'] = $this->block_settings->block_stablez_id;
-        $template_content['title'] = $this->block_settings->title;
-        $template_content['faq_datas'] = faqs_handler::get_faqs_question_data_in_array(-1);
-        return $OUTPUT->render_from_template("theme_stablez/blocks/faqs", $template_content);
+        // $template_content['block_stablez_id'] = $this->block_settings->block_stablez_id;
+        // $template_content['title'] = $this->block_settings->title;
+        // $template_content['faq_datas'] = faqs_handler::get_faqs_question_data_in_array(-1);
+        // return $OUTPUT->render_from_template("theme_stablez/blocks/faqs", $template_content);
     }
 
 
@@ -386,11 +387,11 @@ class block_handler {
      */
     protected function testimonial_block_content() {
         global $OUTPUT;
-        $template_content = [];
-        $template_content['block_stablez_id'] = $this->block_settings->block_stablez_id;
-        $template_content['title'] = $this->block_settings->title;
-        $template_content['testimonial_datas'] = testimonial_handler::get_data_in_array(-1);
-        return $OUTPUT->render_from_template("theme_stablez/blocks/testimonial", $template_content);
+        // $template_content = [];
+        // $template_content['block_stablez_id'] = $this->block_settings->block_stablez_id;
+        // $template_content['title'] = $this->block_settings->title;
+        // $template_content['testimonial_datas'] = testimonial_handler::get_data_in_array(-1);
+        // return $OUTPUT->render_from_template("theme_stablez/blocks/testimonial", $template_content);
     }
 
     /**
@@ -401,7 +402,7 @@ class block_handler {
         $template_content = [];
         $template_content['block_stablez_id'] = $this->block_settings->block_stablez_id;
         $template_content['title'] = $this->block_settings->title;
-        $template_content = array_merge($template_content, settings_handler::start_guideline_settings());
+        $template_content = array_merge($template_content, theme_settings_service::get_instance()->start_guideline_settings());
         return $OUTPUT->render_from_template("theme_stablez/blocks/start-guideline", $template_content);
     }
 

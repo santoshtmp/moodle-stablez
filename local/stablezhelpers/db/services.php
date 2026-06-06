@@ -15,7 +15,7 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * mchelper functions and service definitions.
+ * stablez functions and service definitions.
  *
  * @package    local_stablezhelpers
  * @copyright  2026 https://santoshmagar.com.np/

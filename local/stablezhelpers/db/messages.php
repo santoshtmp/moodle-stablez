@@ -29,5 +29,5 @@
 defined('MOODLE_INTERNAL') || die();
 
 $messageproviders = [
-    'mchelper_notification_handler' => []
+    'stablez_notification_handler' => []
 ];

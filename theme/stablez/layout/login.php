@@ -25,21 +25,5 @@ defined('MOODLE_INTERNAL') || die();
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-global $templatecontext;
-
 require_once($CFG->dirroot . '/theme/stablez/includes/layout_templatecontext.php');
 
-$leftinstructions = !empty($CFG->auth_instructions)
-    ? format_text($CFG->auth_instructions, FORMAT_MOODLE, ['context' => context_system::instance()])
-    : null;
-
-$templatecontext['leftinstructions'] = $leftinstructions;
-
-$items = $PAGE->navbar->get_items();
-if (!empty($items)) {
-    $lastitem = end($items);
-    $PAGE->set_heading($lastitem->text);
-}
-
-// echo $OUTPUT->render_from_template('theme_boost/login', $templatecontext);
-echo $OUTPUT->render_from_template('theme_stablez/layout/login', $templatecontext);

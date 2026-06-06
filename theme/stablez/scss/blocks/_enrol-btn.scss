@@ -1,0 +1,30 @@
+.block-stablez-enrol-btn {
+    .enrol-now {
+        display: flex;
+        justify-content: end;
+
+        .btn-enrol {
+            border-radius: 4px;
+            padding: 12px 48px;
+            transition: all 0.2s ease;
+            font-size: 18px;
+            font-weight: 400;
+            line-height: 1.4;
+            background-color: $primary-btn;
+            border-color: $primary-btn;
+
+            &:hover {
+                background-color: $primary-btn-hover;
+                border-color: $primary-btn-hover;
+            }
+        }
+    }
+
+
+}
+
+@include mq(md, max) {
+    .stablez-course-right-side .enrol-now {
+        justify-content: center;
+    }
+}

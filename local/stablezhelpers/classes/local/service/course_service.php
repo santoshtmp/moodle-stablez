@@ -106,14 +106,13 @@ class course_service {
         if ($modcustomcert) {
             $customcertdata['mod_id'] = $modcustomcert->id;
             $customcertdata['customcert_id'] = $modcustomcert->instance;
-            $customcertdata['certificate_url'] = stablezhelpers::get_moodle_url('/mod/customcert/view.php', ['id' => $modcustomcert->id], true, true);
+            $customcertdata['certificate_url'] = stablezhelpers::get_moodle_url('/mod/customcert/view.php', ['id' => $modcustomcert->id], true);
             $customcertdata['certificate_url_download'] = stablezhelpers::get_moodle_url(
                 '/mod/customcert/view.php',
                 [
                     'id' => $modcustomcert->id,
                     'downloadown' => 1,
                 ],
-                true,
                 true
             );
             if ($userid && $modcustomcert->instance) {
@@ -432,9 +431,9 @@ class course_service {
             $courseinfo['shortname'] = format_string($course->shortname);
             $courseinfo['fullname'] = format_string($course->fullname);
             $courseinfo['categoryname'] = format_string($coursecategories->name);
-            $courseinfo['course_url'] = stablezhelpers::get_moodle_url('/course/view.php', ['id' => $course->id], true, true);
-            $courseinfo['category_url'] = stablezhelpers::get_moodle_url('/course/index.php', ['categoryid' => $course->category], true, true);
-            $courseinfo['enrollment_url'] = stablezhelpers::get_moodle_url('/enrol/index.php', ['id' => $course->id], true, true);
+            $courseinfo['course_url'] = stablezhelpers::get_moodle_url('/course/view.php', ['id' => $course->id], true);
+            $courseinfo['category_url'] = stablezhelpers::get_moodle_url('/course/index.php', ['categoryid' => $course->category], true);
+            $courseinfo['enrollment_url'] = stablezhelpers::get_moodle_url('/enrol/index.php', ['id' => $course->id], true);
             $courseinfo['course_image_url'] = self::get_course_image($course, $defaultvalues);
             $courseinfo['summary'] = self::get_course_formatted_summary($course);
             $courseinfo['short_summary'] = $summary;
@@ -792,9 +791,9 @@ class course_service {
             'categoryname' => format_string($course->categoryname ?? ''),
             'course_url' => stablezhelpers::get_moodle_url('/course/view.php', ['id' => $course->id], true, true),
             'course_image_url' => self::get_course_image($course, $defaultvalues),
-            'category_url' => stablezhelpers::get_moodle_url('/course/index.php', ['categoryid' => $course->category], true, true),
-            'enrollment_url' => stablezhelpers::get_moodle_url('/enrol/index.php', ['id' => $course->id], true, true),
-            'participant_url' => stablezhelpers::get_moodle_url('/user/index.php', ['id' => $course->id], true, true),
+            'category_url' => stablezhelpers::get_moodle_url('/course/index.php', ['categoryid' => $course->category], true),
+            'enrollment_url' => stablezhelpers::get_moodle_url('/enrol/index.php', ['id' => $course->id], true),
+            'participant_url' => stablezhelpers::get_moodle_url('/user/index.php', ['id' => $course->id], true),
             'summary' => self::get_course_formatted_summary($course),
             'format' => ['shortname' => $course->format, 'name' => get_string('pluginname', 'format_' . $course->format)],
             'sortorder' => $course->sortorder,

@@ -47,7 +47,7 @@ $string['plugininfo'] = 'Plugin Information';
 $string['plugininfo_desc'] = 'Plugin information and description.';
 $string['contentmanagement_desc'] = 'Create and manage pages, FAQs, testimonials, and other content.';
 $string['tip'] = 'Tip';
-$string['generate_secret_tip'] = 'Generate a secure key using:';
+$string['generate_secret_tip'] = 'Generate a secure key using';
 
 // =============================================================================
 // SSO INTEGRATION TAB
@@ -179,14 +179,14 @@ $string['errordeletecontent'] = 'Error deleting content';
 $string['deletecontentconfirm'] = 'Are you sure you want to delete "{$a->title}"? This action cannot be undone.';
 $string['invalidactionparam'] = 'Invalid action param. Check action param';
 $string['failtoconfirmsesskey'] = 'Fail to confirm sesskey.';
+$string['contentnotpublished'] = 'Content is not published.';
 
 // =============================================================================
 // CAPABILITIES
 // =============================================================================
-
-$string['local/stablezhelpers:managecontent'] = 'Manage content';
-$string['local/stablezhelpers:viewcontent'] = 'View content';
-$string['local/stablezhelpers:viewdraft'] = 'View draft content';
+$string['stablezhelpers:managecontent'] = 'Manage stablez content';
+$string['stablezhelpers:viewcontent'] = 'View stablezcontent';
+$string['stablezhelpers:viewdraft'] = 'View stablez draft content';
 
 // =============================================================================
 // SETTINGS STRINGS

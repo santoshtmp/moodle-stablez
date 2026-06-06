@@ -108,7 +108,9 @@ function theme_stablez_get_pre_scss($theme) {
         // Config key => [variableName, ...].
         'brandcolor' => ['primary'],
         'primarybuttoncolor' => ['primary-btn'],
-        'primarybuttonhovercolor' => ['primary-btn-hover']
+        'primarybuttonhovercolor' => ['primary-btn-hover'],
+        'secondarybuttoncolor' => ['secondary-btn'],
+        'secondarybuttonhovercolor' => ['secondary-btn-hover']
     ];
 
     // Prepend variables first.
