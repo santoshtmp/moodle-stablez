@@ -63,6 +63,12 @@ $block_regions = [
     'admin-content'
 ];
 $THEME->layouts = [
+    // Standard layout with blocks.
+    'standard' => array(
+        'file' => 'drawers.php',
+        'regions' => $block_regions,
+        'defaultregion' => 'side-pre',
+    ),
     // The site home page.
     'frontpage' => array(
         'file' => 'drawers.php',

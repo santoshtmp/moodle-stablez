@@ -30,8 +30,6 @@ use theme_stablez\local\service\theme_settings_service;
 
 defined('MOODLE_INTERNAL') || die();
 
-global $CFG, $SITE, $PAGE, $OUTPUT;
-
 /**
  * ==========================================================
  * BLOCKS: Render block regions and add-block buttons
@@ -205,7 +203,8 @@ $stablez_block_region = false;
 if (
     $PAGE->pagelayout == 'frontpage' ||
     ($PAGE->pagelayout == 'course' &&  ($PAGE->url->get_path(false) != '/course/section.php')) ||
-    $PAGE->pagelayout == 'custompages'
+    $PAGE->pagelayout == 'standard' ||
+    $PAGE->pagelayout == 'custompages' 
 ) {
     $stablez_block_region = true;
 }
