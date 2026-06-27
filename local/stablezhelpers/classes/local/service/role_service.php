@@ -422,4 +422,74 @@ class role_service {
 
         return $result;
     }
+
+    /**
+     * Get user role count per course for multiple courses in a single optimized query.
+     *
+     * This method returns a mapped structure of course IDs with role-wise user statistics.
+     * It also includes role metadata such as role name and shortname using JOIN with the
+     * role table. The query is optimized to avoid N+1 performance issues.
+     *
+     * Output format:
+     * [
+     *     courseid => [
+     *         [
+     *             'roleid' => int,
+     *             'rolename' => string,
+     *             'shortname' => string,
+     *             'usercount' => int
+     *         ],
+     *         ...
+     *     ],
+     *     ...
+     * ]
+     *
+     * @param array $courseids List of course IDs to fetch role statistics for.
+     *                          Must be an array of integers. If empty, returns empty array.
+     *
+     * @return array Associative array keyed by course ID containing role-wise user counts
+     *               along with role metadata (name, shortname).
+     *
+     * @throws dml_exception If database query fails.
+     */
+    public static function get_course_role_user_counts(array $courseids) {
+        global $DB;
+
+        if (empty($courseids)) {
+            return [];
+        }
+
+        list($insql, $params) = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'cid');
+
+        $sql = "SELECT 
+                ra.id,
+                ctx.instanceid AS courseid,
+                ra.roleid,
+                r.name AS rolename,
+                r.shortname AS shortname,
+                COUNT(DISTINCT ra.userid) AS usercount
+            FROM {role_assignments} ra
+            JOIN {context} ctx ON ctx.id = ra.contextid
+            JOIN {role} r ON r.id = ra.roleid
+            WHERE ctx.contextlevel = :contextlevel
+            AND ctx.instanceid $insql
+            GROUP BY ctx.instanceid, ra.roleid, r.shortname
+        ";
+
+        $params['contextlevel'] = CONTEXT_COURSE;
+
+        $results = $DB->get_records_sql($sql, $params);
+
+        $map = [];
+
+        foreach ($results as $r) {
+            $map[$r->courseid][] = [
+                'roleid'    => (int)$r->roleid,
+                'shortname' => (string)$r->shortname,
+                'usercount' => (int)$r->usercount
+            ];
+        }
+
+        return $map;
+    }
 }

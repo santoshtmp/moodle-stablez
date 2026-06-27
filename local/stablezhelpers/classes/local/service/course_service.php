@@ -715,6 +715,10 @@ class course_service {
             $orderby;
         $records = $DB->get_records_sql($sqlquery, $sqlparams, $limitfrom, $limitnum);
 
+        // 
+        $courseids = array_column($records, 'id');
+        $rolemap = role_service::get_course_role_user_counts($courseids);
+
         // Create return value.
         $allcoursesinfo = [];
         foreach ($records as $record) {
@@ -730,7 +734,7 @@ class course_service {
                     'addcoursegroups' => $addcoursegroups,
                     'addcustomnamevalueformat' => $addcustomnamevalueformat,
                 ]
-            );
+            ) + ['rolecounts' => $rolemap[$record->id] ?? []];
         }
 
         // Meta information.
@@ -738,7 +742,7 @@ class course_service {
         $allcoursesinfo['meta'] = [
             'totalrecords' => $totalrecords,
             'totalpage' => ($limitnum > 0) ? ceil($totalrecords / $limitnum) : 1,
-            'pagenumber' => $pagenumber,
+            'page' => $pagenumber,
             'perpage' => $limitnum,
             'datadisplaycount' => $recordcount,
             'datafrom' => ($recordcount > 0) ? $limitfrom + 1 : 0,
@@ -749,6 +753,33 @@ class course_service {
     }
 
 
+    /**
+     * Builds a structured course information object based on provided filters.
+     *
+     * This method prepares and enriches a course object with optional metadata
+     * such as participant counts, activity counts, enrolment details, group data,
+     * timestamps, and custom formatting options depending on the filter parameters.
+     *
+     * It is typically used as a helper for web service responses or course API layers.
+     *
+     * Available filter options:
+     * - timestamp: Include time-related metadata (created/modified dates).
+     * - defaultvalues: Use default fallback values when data is missing.
+     * - addparticipantcount: Include total enrolled participant count.
+     * - addactivitiescount: Include number of activities in the course.
+     * - addcourseaccessusercount: Include count of users who accessed the course.
+     * - addenrolinstances: Include enrolment method details.
+     * - addcoursegroups: Include course group information.
+     * - addcustomnamevalueformat: Include formatted custom field values.
+     *
+     * @param stdClass $course Course object containing at least an `id` property.
+     * @param array $filterparam Optional configuration flags to control returned data.
+     *
+     * @return array Returns a structured course object enriched with additional metadata.
+     *
+     * @throws moodle_exception If the course context is invalid or data retrieval fails.
+     * @throws dml_exception If database queries inside helper methods fail.
+     */
     public static function build_course_info($course, $filterparam = []) {
         global $CFG;
 
@@ -838,6 +869,7 @@ class course_service {
         // Add participant count.
         if ($addparticipantcount) {
             $courseInfo['participantcount'] = $course->participants ?? count_enrolled_users($context);
+            $courseInfo['studentcount'] = count_enrolled_users($context, 'moodle/course:isincompletionreports');
         }
 
         // Add course access user count.

@@ -88,9 +88,9 @@ $functions = [
     ],
 
     // Course APIs.
-    'local_stablezhelpers_course_get_info' => [
-        'classname' => 'local_stablezhelpers\external\course\get_info',
-        'methodname' => 'get_info',
+    'local_stablezhelpers_course_info' => [
+        'classname' => 'local_stablezhelpers\external\course\info',
+        'methodname' => 'info',
         'description' => 'Get course information with pagination',
         'type' => 'read',
         'ajax' => false,
@@ -123,6 +123,17 @@ $functions = [
         'ajax' => false,
         'loginrequired' => true,
         'capabilities' => 'mod/customcert:view',
+    ],
+
+    // User Course Enroll Student 
+    'local_stablezhelpers_enrol_user_course_list' => [
+        'classname' => 'local_stablezhelpers\external\enrol\user_course_list',
+        'methodname' => 'user_course_list',
+        'description' => 'Get list of enrolled user course list',
+        'type' => 'read',
+        'ajax' => false,
+        'loginrequired' => false,
+        'capabilities' => 'moodle/course:viewparticipants',
     ],
 
     // Role APIs.
@@ -173,6 +184,44 @@ $functions = [
         'loginrequired' => true,
         'capabilities' => 'local/stablezhelpers:managecontent',
     ],
+
+    // Custom unepal 
+    'unepal_get_enrol_user_course_list' => [
+        'classname' => 'local_stablezhelpers\external\unepal\enrol_user_course_list',
+        'methodname' => 'enrol_user_course_list',
+        'description' => 'Get list of enrolled user course list',
+        'type' => 'read',
+        'ajax' => false,
+        'loginrequired' => false,
+        'capabilities' => 'moodle/course:viewparticipants',
+    ],
+    'unepal_get_course_info' => [
+        'classname' => 'local_stablezhelpers\external\unepal\course_info',
+        'methodname' => 'course_info',
+        'description' => 'Get course information with pagination',
+        'type' => 'read',
+        'ajax' => false,
+        'loginrequired' => false,
+        'capabilities' => 'moodle/course:view,moodle/course:viewparticipants',
+    ],
+    'unepal_get_course_user_list' => [
+        'classname' => 'local_stablezhelpers\external\course\user_list',
+        'methodname' => 'user_list',
+        'description' => 'Get list of users enrolled in a course',
+        'type' => 'read',
+        'ajax' => false,
+        'loginrequired' => false,
+        'capabilities' => 'moodle/course:viewparticipants',
+    ],
+    'unepal_get_user_course_list' => [
+        'classname' => 'local_stablezhelpers\external\user\course_list',
+        'methodname' => 'course_list',
+        'description' => 'Get list of courses where user is enrolled',
+        'type' => 'read',
+        'ajax' => false,
+        'loginrequired' => false,
+        'capabilities' => 'moodle/course:viewparticipants',
+    ],
 ];
 
 $services = [
@@ -206,4 +255,17 @@ $services = [
         'downloadfiles' => 0, // Whether to allow file downloads.
         'uploadfiles' => 0, // Whether to allow file uploads.
     ],
+    'UNepal Web Services' => [
+        'functions' => [
+            'unepal_get_enrol_user_course_list',
+            'unepal_get_course_info',
+            'unepal_get_course_user_list',
+            'unepal_get_user_course_list'
+        ],
+        'shortname' => 'unepal_web_services',
+        'restrictedusers' => 0,
+        'enabled' => 0,
+        'downloadfiles' => 0,
+        'uploadfiles' => 0,
+    ]
 ];

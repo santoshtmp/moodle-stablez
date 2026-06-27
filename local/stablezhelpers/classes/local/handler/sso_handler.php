@@ -106,7 +106,7 @@ class sso_handler {
     public static function get_external_site_url(string $referer = '') {
         $url = optional_param('redirect_to', '', PARAM_URL);
         if (!$url) {
-            return "http://nfa-seap.test";
+            return "http://external-site.test";
 
             global $CFG;
 

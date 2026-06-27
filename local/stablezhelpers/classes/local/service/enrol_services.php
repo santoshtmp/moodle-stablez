@@ -719,6 +719,201 @@ class enrol_services {
         ];
     }
 
+
+    public static function get_enrol_user_course($filterparam = []) {
+        global $CFG, $DB;
+
+        // Get parameters.
+        $userid             = (int) ($filterparam['userid'] ?? 0);
+        $courseid           = (int) ($filterparam['courseid'] ?? 0);
+        $courseids          = $filterparam['courseids'] ?? ($courseid ? [$courseid] : []);
+        $pagenumber         = (int) ($filterparam['spage'] ?? 0);
+        $perpage            = (int) ($filterparam['perpage'] ?? 0);
+        $searchuser         = $filterparam['searchuser'] ?? '';
+        $sortby             = $filterparam['sortby'] ?? 'timemodified';
+        $sortdir            = $filterparam['sortdir'] ?? SORT_DESC;
+        $download           = $filterparam['download'] ?? 0;
+        $suspended          = 'no'; //$filterparam['suspended'] ?? '';
+        $confirmed          = 'yes'; //$filterparam['confirmed'] ?? '';
+        $roleids            = [5]; //$filterparam['roleids'] ?? [];
+
+        // Pagination.
+        $limitnum = 0;
+        $limitfrom = 0;
+        if ($perpage > 0) {
+            $limitnum = $perpage;
+            $limitfrom = $pagenumber * $perpage;
+        }
+
+        // ... SQL fragments
+        $jointable = [];
+        $jointable['role_assignments'] = "JOIN {role_assignments} ra ON u.id = ra.userid";
+        $jointable['context'] = "JOIN {context} ctx ON ra.contextid = ctx.id";
+        $jointable['user_enrolments'] = "JOIN {user_enrolments} ue ON ue.userid = u.id";
+        $jointable['enrol'] = "JOIN {enrol} e ON ue.enrolid = e.id";
+        $jointable['course'] = "JOIN {course} c ON c.id = ctx.instanceid AND c.id = e.courseid";
+
+        $sqlparams = [
+            'guest_user_id' => 1,
+            'user_deleted' => 0,
+            'contextlevel' => CONTEXT_COURSE
+        ];
+
+        $wherecondition = [
+            "u.id <> :guest_user_id",
+            "u.deleted = :user_deleted",
+            "ctx.contextlevel = :contextlevel"
+        ];
+
+        // ... search by text
+        if ($searchuser) {
+            $sqlparams['search_username'] = "%" . $DB->sql_like_escape($searchuser) . "%";
+            $sqlparams['search_firstname'] = "%" . $DB->sql_like_escape($searchuser) . "%";
+            $sqlparams['search_lastname'] = "%" . $DB->sql_like_escape($searchuser) . "%";
+            $sqlparams['search_email'] = "%" . $DB->sql_like_escape($searchuser) . "%";
+            $wherecondition[] = '( ' . $DB->sql_like('u.username', ':search_username') . ' OR ' .
+                $DB->sql_like('u.firstname', ':search_firstname') . ' OR ' .
+                $DB->sql_like('u.lastname', ':search_lastname') . ' OR ' .
+                $DB->sql_like('u.email', ':search_email') . ' )';
+        }
+
+        // ... suspended
+        if ($suspended && $suspended != 'all') {
+            $sqlparams['user_suspended'] = ($suspended == 'yes') ? 1 : 0;
+            $wherecondition[] = "u.suspended = :user_suspended";
+        }
+
+        // ... confirmed
+        if ($confirmed && $confirmed != 'all') {
+            $sqlparams['user_confirmed'] = ($confirmed == 'yes') ? 1 : 0;
+            $wherecondition[] = "u.confirmed = :user_confirmed";
+        }
+
+        // ... search by id
+        if ($userid) {
+            $sqlparams['user_id'] = $userid;
+            $wherecondition[] = 'u.id = :user_id';
+        }
+
+        // ... search by role ids
+        if (is_array($roleids) && count($roleids) > 0) {
+            [$insql, $inparams] = $DB->get_in_or_equal($roleids, SQL_PARAMS_NAMED, 'roleids');
+            $sqlparams = array_merge($sqlparams, $inparams);
+            $wherecondition[] = "ra.roleid $insql";
+        }
+
+        // ... search by course ids
+        if (is_array($courseids) && count($courseids) > 0) {
+            [$insql, $inparams] = $DB->get_in_or_equal($courseids, SQL_PARAMS_NAMED, 'courseids');
+            $sqlparams = array_merge($sqlparams, $inparams);
+            $wherecondition[] = "c.id $insql";
+        }
+
+        // ... apply table join
+        $joinapply = '';
+        if (count($jointable) > 0) {
+            $joinapply = implode(" ", $jointable);
+        }
+
+        // ... apply where conditions with AND
+        $whereapply = '';
+        if (count($wherecondition) > 0) {
+            $whereapply = "WHERE " . implode(" AND ", $wherecondition);
+        }
+
+        // ... order by sorting
+        $usersortfields = ['firstname', 'lastname', 'email', 'city', 'lastaccess'];
+        if (in_array($sortby, $usersortfields)) {
+            $sortby = 'u.' . $sortby;
+        } else {
+            $sortby = 'u.timemodified';
+        }
+        $sortdir = ($sortdir == SORT_ASC) ? 'ASC' : 'DESC';
+        $orderby = "ORDER BY " . $sortby . " " . $sortdir;
+
+        // ... query select fields if required.
+        $selectfields = implode(
+            ", ",
+            [
+                "DISTINCT CONCAT(u.id, '_', c.id) AS user_course_id",
+                'u.id AS userid',
+                'u.username AS username',
+                'u.email AS email',
+                'u.firstname AS user_firstname',
+                'u.lastname AS user_lastname',
+                'c.id AS courseid',
+                'c.fullname AS course_fullname',
+                'c.shortname AS course_shortname',
+                'c.category AS course_category'
+            ]
+        );
+        $groupby = ''; //'u.id, u.username, u.email, c.id';
+
+        // ... final sql query and execute
+        $sqlquery = "SELECT " . $selectfields . " FROM {user} u ";
+        $sqlquery .= $joinapply ? $joinapply . " " : '';
+        $sqlquery .= $whereapply ? $whereapply . " " : '';
+        $sqlquery .= $groupby ? " GROUP BY " . $groupby . " " : '';
+        $sqlquery .= $orderby ? $orderby . " " : '';
+
+        $records = $DB->get_records_sql($sqlquery, $sqlparams, $limitfrom, $limitnum);
+
+        // ... count total records
+        $sqlquerytotal = "SELECT COUNT(DISTINCT CONCAT(u.id, '_', c.id) ) AS id FROM {user} u " .
+            $joinapply . " " .
+            $whereapply;
+        $totalrecords = $DB->count_records_sql($sqlquerytotal, $sqlparams);
+
+        // Create return value.
+        $return_data = [
+            'data' => [],
+            'meta' => [],
+        ];
+
+        $coursecategoriescollection = [];
+        foreach ($records as $record) {
+            $course = get_course($record->courseid);
+            $gradeResult = grade_service::get_user_course_grade($record->userid, $record->courseid);
+            if (!isset($coursecategoriescollection[$record->course_category])) {
+                $coursecategoriescollection[$record->course_category] = $DB->get_record('course_categories', ['id' => $record->course_category]);
+            }
+            $coursecategories = $coursecategoriescollection[$record->course_category];
+
+            $recordarray = [
+                'userid' => $record->userid,
+                'username' => $record->username,
+                'email' => $record->email,
+                'user_fullname' => $record->user_firstname . " " . $record->user_lastname,
+                'courseid' => $record->courseid,
+                'course_fullname' => $record->course_fullname,
+                'course_shortname' => $record->course_shortname,
+                'completion_progress_percentage' => course_service::get_course_completion_progress($course, $record->userid),
+                'final_grade' => $gradeResult->finalgrade ?? 0,
+                'max_grade' => $gradeResult->grademax ?? 0,
+                'grade_percentage' => $gradeResult->gradepercentage ?? 0,
+                'course_categoryid' => $coursecategories->id,
+                'course_categoryname' => format_string($coursecategories->name)
+            ];
+
+            // Format user data to return.
+            $return_data['data'][] = $recordarray;
+        }
+
+        // Meta information.
+        $recordcount = $records ? count($records) : 0;
+        $return_data['meta'] = [
+            'totalrecords' => $totalrecords,
+            'page' => $pagenumber,
+            'perpage' => $limitnum,
+            'totalpage' => ($limitnum > 0) ? ceil($totalrecords / $limitnum) : 1,
+            'datadisplaycount' => $recordcount,
+            'datafrom' => ($recordcount > 0) ? $limitfrom + 1 : 0,
+            'datato' => ($recordcount > 0) ? $limitfrom + $recordcount : 0,
+        ];
+
+        return $return_data;
+    }
+
     /**
      * Unenrolls all users from all courses (except front page course).
      *
@@ -775,10 +970,13 @@ class enrol_services {
 
         foreach ($enrolinstances as $key => &$courseenrolinstance) {
             $courseenrolinstance->method_name = enrol_get_plugin($courseenrolinstance->enrol)->get_instance_name($courseenrolinstance);
-            $courseenrolinstance->role = role_service::get_role($courseenrolinstance->roleid);
             $courseenrolinstance->status = \core_course\reportbuilder\local\formatters\enrolment::enrolment_status(
                 $courseenrolinstance->status ?? 1
             );
+            $get_role = role_service::get_role($courseenrolinstance->roleid);
+            if ($get_role) {
+                $courseenrolinstance->role = $get_role;
+            }
         }
 
         return $enrolinstances;

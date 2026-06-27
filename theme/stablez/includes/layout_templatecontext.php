@@ -204,7 +204,7 @@ if (
     $PAGE->pagelayout == 'frontpage' ||
     ($PAGE->pagelayout == 'course' &&  ($PAGE->url->get_path(false) != '/course/section.php')) ||
     $PAGE->pagelayout == 'standard' ||
-    $PAGE->pagelayout == 'custompages' 
+    $PAGE->pagelayout == 'custompages'
 ) {
     $stablez_block_region = true;
 }
