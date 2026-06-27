@@ -25,9 +25,9 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$string['pluginname'] = 'University of Nepal (UNepal)';
-$string['configtitle'] = 'UNepal Theme Settings';
-$string['choosereadme'] = "UNepal Theme developed is a clean and modern theme.";
+$string['pluginname'] = 'StableZ Theme';
+$string['configtitle'] = 'StableZ Theme Settings';
+$string['choosereadme'] = "StableZ Theme developed is a clean and modern theme.";
 $string['custom_pages'] = "Custom Pages";
 
 $string['write_down'] = '';

@@ -29,6 +29,9 @@
 namespace local_stablezhelpers\local\service;
 
 use stdClass;
+use grade_plugin_return;
+use graded_users_iterator;
+use gradereport_user\report\user as user_report;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -60,7 +63,6 @@ class grade_service {
         if (!$gradeitem) {
             return null;
         }
-
         // Get user grade
         $grade = \grade_grade::fetch([
             'itemid' => $gradeitem->id,
@@ -72,9 +74,9 @@ class grade_service {
         }
 
         $result = new stdClass();
-        $result->grade      = $grade->finalgrade;
-        $result->grademax   = $gradeitem->grademax;
-        $result->percentage = $gradeitem->grademax > 0
+        $result->finalgrade = round($grade->finalgrade, 2);
+        $result->grademax   = round($gradeitem->grademax, 2);
+        $result->gradepercentage = $gradeitem->grademax > 0
             ? round(($grade->finalgrade / $gradeitem->grademax) * 100, 2)
             : null;
         $result->formatted  = \grade_format_gradevalue($grade->finalgrade, $gradeitem);
@@ -84,123 +86,133 @@ class grade_service {
     }
 
     /**
+     * @param int $userid user ID.
+     * @param int $courseid Course ID.
+     * @param string $itemtype item type.
+     * 
+     * @return array 
+     */
+    public static function get_user_course_grades($userid, $courseid,  $itemtype = 'course') {
+        global $DB;
+
+        $grade_sql = "SELECT gg.finalgrade, gi.grademax
+                FROM {grade_grades} gg
+                JOIN {grade_items} gi ON gi.id = gg.itemid
+                WHERE gi.itemtype = :itemtype
+                AND gi.courseid = :courseid
+                AND gg.userid = :userid";
+        $param = [
+            'itemtype' => $itemtype,
+            'courseid' => $courseid,
+            'userid' => $userid
+        ];
+        $gradeResult = $DB->get_records_sql($grade_sql, $param);
+        return $gradeResult;
+    }
+
+    /**
      * Returns all grades for a course.
      *
      * @param int $courseid Course ID.
      * @return array Array of grade objects keyed by user ID.
      */
     public static function get_course_grades($courseid) {
+        return 'not developed';
+    }
+
+    /**
+     * Get the report data
+     * @param  stdClass $course  course object
+     * @param  stdClass $context context object
+     * @param  null|stdClass $user    user object (it can be null for all the users)
+     * @param  int $userid       the user to retrieve data from, 0 for all
+     * @param  int $groupid      the group id to filter
+     * @param  bool $tabledata   whether to get the table data (true) or the gradeitemdata
+     * 
+     * From public/grade/report/user/classes/external/user.php
+     * 
+     */
+    public static function get_report_data(
+        stdClass $course,
+        stdClass $context,
+        ?stdClass $user,
+        int $userid,
+        int $groupid,
+        bool $tabledata = true
+    ) {
         global $CFG;
 
-        require_once("$CFG->libdir/gradelib.php");
+        // Require files here to save some memory in case validation fails.
+        require_once($CFG->dirroot . '/group/lib.php');
+        require_once($CFG->libdir  . '/gradelib.php');
+        require_once($CFG->dirroot . '/grade/lib.php');
+        require_once($CFG->dirroot . '/grade/report/user/lib.php');
 
-        $grades = [];
-        $gradeinfo = \grade_get_course_grades($courseid);
+        // Force regrade to update items marked as 'needupdate'.
+        grade_regrade_final_grades($course->id);
 
-        if (!$gradeinfo || empty($gradeinfo->items)) {
-            return $grades;
-        }
+        $gpr = new grade_plugin_return(
+            [
+                'type'           => 'report',
+                'plugin'         => 'user',
+                'courseid'       => $course->id,
+                'courseidnumber' => $course->idnumber,
+                'userid'         => $userid
+            ]
+        );
 
-        foreach ($gradeinfo->items as $itemid => $item) {
-            if (!empty($item->grades)) {
-                foreach ($item->grades as $userid => $usergrade) {
-                    if (!isset($grades[$userid])) {
-                        $grades[$userid] = new stdClass();
-                        $grades[$userid]->userid = $userid;
-                        $grades[$userid]->grade = 0;
-                        $grades[$userid]->percentage = 0;
-                        $grades[$userid]->formatted = '';
-                        $grades[$userid]->feedback = '';
-                    }
+        $reportdata = [];
 
-                    if (isset($usergrade->grade)) {
-                        $grades[$userid]->grade = $usergrade->grade;
-                        $grades[$userid]->formatted = \grade_format_gradevalue(
-                            $usergrade->grade,
-                            $usergrade,
-                            true
-                        );
+        // Just one user.
+        if ($user) {
+            $report = new user_report($course->id, $gpr, $context, $userid);
+            $report->fill_table();
 
-                        if (isset($usergrade->grademax) && $usergrade->grademax > 0) {
-                            $grades[$userid]->percentage = round(
-                                ($usergrade->grade / $usergrade->grademax) * 100
-                            );
-                        }
-
-                        if (isset($usergrade->feedback)) {
-                            $grades[$userid]->feedback = $usergrade->feedback;
-                        }
-                    }
-                }
+            $gradeuserdata = [
+                'courseid'       => $course->id,
+                'courseidnumber' => $course->idnumber,
+                'userid'         => $user->id,
+                'userfullname'   => fullname($user),
+                'useridnumber'   => $user->idnumber,
+                'maxdepth'       => $report->maxdepth,
+            ];
+            if ($tabledata) {
+                $gradeuserdata['tabledata'] = $report->tabledata;
+            } else {
+                $gradeuserdata['gradeitems'] = $report->gradeitemsdata;
             }
+            $reportdata[] = $gradeuserdata;
+        } else {
+            $defaultgradeshowactiveenrol = !empty($CFG->grade_report_showonlyactiveenrol);
+            $showonlyactiveenrol = get_user_preferences('grade_report_showonlyactiveenrol', $defaultgradeshowactiveenrol);
+            $showonlyactiveenrol = $showonlyactiveenrol || !has_capability('moodle/course:viewsuspendedusers', $context);
+
+            $gui = new graded_users_iterator($course, null, $groupid);
+            $gui->require_active_enrolment($showonlyactiveenrol);
+            $gui->init();
+
+            while ($userdata = $gui->next_user()) {
+                $currentuser = $userdata->user;
+                $report = new user_report($course->id, $gpr, $context, $currentuser->id);
+                $report->fill_table();
+
+                $gradeuserdata = [
+                    'courseid'       => $course->id,
+                    'courseidnumber' => $course->idnumber,
+                    'userid'         => $currentuser->id,
+                    'userfullname'   => fullname($currentuser),
+                    'useridnumber'   => $currentuser->idnumber,
+                    'maxdepth'       => $report->maxdepth,
+                ];
+                if ($tabledata) {
+                    $gradeuserdata['tabledata'] = $report->tabledata;
+                } else {
+                    $gradeuserdata['gradeitems'] = $report->gradeitemsdata;
+                }
+                $reportdata[] = $gradeuserdata;
+            }
+            $gui->close();
         }
-
-        return $grades;
-    }
-
-    /**
-     * Returns grade items for a course.
-     *
-     * @param int $courseid Course ID.
-     * @return array Array of grade item objects.
-     */
-    public static function get_course_grade_items($courseid) {
-        global $CFG;
-
-        require_once("$CFG->libdir/gradelib.php");
-
-        $gradeinfo = \grade_get_course_grades($courseid);
-
-        if (!$gradeinfo || empty($gradeinfo->items)) {
-            return [];
-        }
-
-        $items = [];
-        foreach ($gradeinfo->items as $itemid => $item) {
-            $gradeitem = new stdClass();
-            $gradeitem->id = $itemid;
-            $gradeitem->itemname = $item->itemname ?? '';
-            $gradeitem->grademin = $item->grademin ?? 0;
-            $gradeitem->grademax = $item->grademax ?? 0;
-            $items[] = $gradeitem;
-        }
-
-        return $items;
-    }
-
-    /**
-     * Returns the user's grade for a specific grade item.
-     *
-     * @param int $userid User ID.
-     * @param int $gradeitemid Grade item ID.
-     * @return stdClass|null Grade object with grade, percentage, and formatted properties.
-     */
-    public static function get_user_grade_item($userid, $gradeitemid) {
-        global $CFG;
-
-        require_once("$CFG->libdir/gradelib.php");
-
-        $gradeitem = new \grade_item(['id' => $gradeitemid]);
-
-        if (!$gradeitem->id) {
-            return null;
-        }
-
-        $grade = new \grade_grade(['userid' => $userid, 'itemid' => $gradeitemid]);
-
-        if (!$grade->id || !isset($grade->finalgrade)) {
-            return null;
-        }
-
-        $result = new stdClass();
-        $result->grade = $grade->finalgrade;
-        $result->formatted = \grade_format_gradevalue($grade->finalgrade, $gradeitem, true);
-        $result->percentage = 0;
-
-        if ($gradeitem->grademax > 0) {
-            $result->percentage = round(($grade->finalgrade / $gradeitem->grademax) * 100);
-        }
-
-        return $result;
+        return $reportdata;
     }
 }

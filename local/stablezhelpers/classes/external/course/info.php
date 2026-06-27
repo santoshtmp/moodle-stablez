@@ -29,15 +29,12 @@
 
 namespace local_stablezhelpers\external\course;
 
-use core\exception\moodle_exception;
-use core_analytics\course;
 use core_external\external_api;
 use core_external\external_function_parameters;
 use core_external\external_multiple_structure;
 use core_external\external_single_structure;
 use core_external\external_value;
 use local_stablezhelpers\local\service\course_service;
-use stdClass;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -46,14 +43,14 @@ defined('MOODLE_INTERNAL') || die();
  *
  * Provides web service endpoint to get course information.
  */
-class get_info extends external_api {
+class info extends external_api {
 
     /**
      * Returns description of method parameters.
      *
      * @return external_function_parameters
      */
-    public static function get_info_parameters() {
+    public static function info_parameters() {
         return new external_function_parameters([
             'courseids' => new external_multiple_structure(
                 new external_value(PARAM_INT, 'Course ID'),
@@ -61,7 +58,7 @@ class get_info extends external_api {
                 VALUE_DEFAULT,
                 []
             ),
-            'page' => new external_value(PARAM_INT, 'Page number', VALUE_DEFAULT, 1),
+            'page' => new external_value(PARAM_INT, 'Page number', VALUE_DEFAULT, 0),
             'perpage' => new external_value(PARAM_INT, 'Page size', VALUE_DEFAULT, 10),
         ]);
     }
@@ -75,7 +72,7 @@ class get_info extends external_api {
      * @return array Course information with pagination
      * 
      */
-    public static function get_info($courseids = [], $page = 1, $perpage = 10) {
+    public static function info($courseids = [], $page = 0, $perpage = 10) {
         global $CFG, $DB;
         require_once($CFG->dirroot . '/course/lib.php');
 
@@ -83,7 +80,7 @@ class get_info extends external_api {
         $return_course_datas['status'] = true;
         $return_course_datas['message'] = 'message';
 
-        $params = self::validate_parameters(self::get_info_parameters(), [
+        $params = self::validate_parameters(self::info_parameters(), [
             'courseids' => $courseids,
             'page' => $page,
             'perpage' => $perpage,
@@ -92,7 +89,7 @@ class get_info extends external_api {
         // Retrieve courses.
         $filterparam = [
             'courseids' => $params['courseids'],
-            'page' => $params['page'],
+            'spage' => $params['page'],
             'perpage' => $params['perpage'],
             'timestamp' => true,
             'defaultvalues' => false,
@@ -106,85 +103,10 @@ class get_info extends external_api {
         ];
         $allcourseinfo = course_service::get_all_course_info($filterparam);
 
-        // var_dump($allcourseinfo); // Debugging line, can be removed later.
-        // die;
-
         $return_course_datas['data'] = $allcourseinfo['data'];
         $return_course_datas['meta'] = $allcourseinfo['meta'];
         $return_course_datas['meta']['courseids'] = $params['courseids'];
         $return_course_datas['status'] = true;
-
-        return $return_course_datas;
-
-
-        // Retrieve courses.
-        if (empty($params['courseids'])) {
-            $query = 'SELECT * FROM {course} course WHERE course.id <> :frontpage_course_id';
-            $total_count_sql = 'SELECT COUNT(course.id) AS total_count FROM {course} course WHERE course.id <> :frontpage_course_id';
-            $sql_params = [
-                'frontpage_course_id' => 1,
-            ];
-            $page_number = $params['page'];
-
-            $limit_from = 0;
-            $limit_num = $params['perpage'];
-            if ($page_number > 1) {
-                $limit_from = $limit_num * ($page_number - 1);
-            }
-            $courses = $DB->get_records_sql($query, $sql_params, $limit_from, $limit_num);
-            $total_count = $DB->get_record_sql($total_count_sql, $sql_params);
-
-            $meta_info = [
-                'total_page' => ceil($total_count->total_count / $params['perpage']),
-                'current_page' => $page_number,
-                'perpage' => $params['perpage'],
-            ];
-        } else {
-            $courses = $DB->get_records_list('course', 'id', $params['courseids']);
-            if (!$courses) {
-                $return_course_datas['message'] = get_string('invalidcourseids', 'local_stablezhelpers');
-            }
-            $meta_info = [
-                'total_page' => 1,
-                'current_page' => 1,
-                'perpage' => count($courses),
-            ];
-        }
-
-        // Create return value.
-        $courses_info = [];
-        $page_data_count = 0;
-
-        foreach ($courses as $course) {
-            // Security checks.
-            /** @var \context System context instance */
-            $context = \context_course::instance($course->id, IGNORE_MISSING);
-
-            try {
-                self::validate_context($context);
-            } catch (\Exception $e) {
-                $exception_param = new stdClass();
-                $exception_param->message = $e->getMessage();
-                $exception_param->courseid = $course->id;
-                throw new moodle_exception('errorcoursecontextnotvalid', 'webservice', '', $exception_param);
-            }
-
-            if ($course->id != SITEID) {
-                require_capability('moodle/course:view', $context);
-            }
-
-            $filterparam = [
-                'timestamp' => true,
-                'defaultvalues' => false,
-            ];
-            $course_info = course_service::get_course_info($course->id, $filterparam);
-            $courses_info[] = $course_info;
-            $page_data_count++;
-        }
-
-        $meta_info['page_data_count'] = $page_data_count;
-        $return_course_datas['data'] = $courses_info;
-        $return_course_datas['meta'] = $meta_info;
 
         return $return_course_datas;
     }
@@ -194,7 +116,7 @@ class get_info extends external_api {
      *
      * @return external_single_structure
      */
-    public static function get_info_returns() {
+    public static function info_returns() {
         return new external_single_structure([
             'status' => new external_value(PARAM_BOOL, 'Status', VALUE_OPTIONAL),
             'data' => new external_multiple_structure(
@@ -216,7 +138,7 @@ class get_info extends external_api {
                                 'shortname' => new external_value(PARAM_PLUGIN, 'course format: weeks, topics, social, site,..'),
                                 'name' => new external_value(PARAM_RAW, 'Course format plugin name',  VALUE_OPTIONAL),
                             ],
-                            "course ormat detail",
+                            "course format detail",
                             VALUE_OPTIONAL
                         ),
                         'visible' => new external_value(PARAM_INT, '1: available to students, 0: not available', VALUE_OPTIONAL),
@@ -267,6 +189,21 @@ class get_info extends external_api {
                         'groups' => new external_value(PARAM_RAW, 'Comma separated group names', VALUE_OPTIONAL),
                         'groupmode' => new external_value(PARAM_RAW, 'Group mode: no groups, separate groups, visible groups', VALUE_OPTIONAL),
                         'participantcount' => new external_value(PARAM_INT, 'Count enrolled users', VALUE_OPTIONAL),
+                        'studentcount' => new external_value(PARAM_INT, 'Count Student users', VALUE_OPTIONAL),
+                        'roleusercounts' => new external_multiple_structure(
+                            new external_single_structure(
+                                [
+                                    'roleid' => new external_value(PARAM_INT, 'Role ID'),
+                                    'usercount' => new external_value(PARAM_INT, 'User count by Role'),
+                                    'name' => new external_value(PARAM_RAW, 'Role name', VALUE_OPTIONAL),
+                                    'shortname' => new external_value(PARAM_ALPHANUMEXT, 'Role short name', VALUE_OPTIONAL),
+                                ],
+                                'role count details',
+                                VALUE_OPTIONAL
+                            ),
+                            'Course user count by roles',
+                            VALUE_OPTIONAL
+                        ),
                         'courseaccessusercount' => new external_value(PARAM_INT, 'Count of users who have accessed the course', VALUE_OPTIONAL),
                         'activitiescount' => new external_value(PARAM_INT, 'Count of activities in the course', VALUE_OPTIONAL),
                         'sortorder' => new external_value(PARAM_INT, 'Sort order into the category', VALUE_OPTIONAL),
