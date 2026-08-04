@@ -30,13 +30,13 @@
             <div class="last-access-courses">
                 {{#lastaccess_courses}}
                 <div id="course-{{id}}" class="course-card">
-                    <div class="row">
+                    <div class="d-flex flex-wrap">
                         <div class="course-image">
                             <img src="{{course_image_url}}"/>
                         </div>
                         <div class="course-info">
                             <div class="course-category" id="course-category-id-{{category}}">{{categoryname}}</div>
-                            <div class="media-body col-md-9 col-sm-6">
+                            <div class="course-title">
                                 <a href="{{course_url}}">
                                     <h5 class="mt-0">{{fullname}}</h5>
                                 </a>
