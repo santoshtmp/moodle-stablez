@@ -12,3 +12,19 @@
 #block-region-below-content {
     margin-bottom: 42px;
 }
+
+#block-region-at_fullheader{
+    .card{
+        color: unset;
+        background-color: unset;
+    }
+}
+
+.stablez-block-title-only{
+    .block-header{
+        margin-bottom: 0;
+    }
+    .card-body{
+        padding: 0 !important;
+    }
+}

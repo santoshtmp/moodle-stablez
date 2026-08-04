@@ -91,14 +91,77 @@ class core_renderer extends \theme_boost\output\core_renderer {
 	// public function user_menu($user = null, $withlinks = null){}
 
 
-	// /**
-	//  * Wrapper for header elements.
-	//  *
-	//  * @return string HTML to display the main header.
-	//  * 
-	//  */
-	// public function full_header() {
-	// }
+	/**
+	 * Wrapper for header elements.
+	 *
+	 * @return string HTML to display the main header.
+	 */
+	public function full_header() {
+		global $USER, $COURSE;
+		// parent::full_header();
+		$pagetype = $this->page->pagetype;
+		$pagelayout = $this->page->pagelayout;
+		$homepage = get_home_page();
+		$homepagetype = null;
+		// Add a special case since /my/courses is a part of the /my subsystem.
+		if ($homepage == HOMEPAGE_MY || $homepage == HOMEPAGE_MYCOURSES) {
+			$homepagetype = 'my-index';
+		} else if ($homepage == HOMEPAGE_SITE) {
+			$homepagetype = 'site-index';
+		}
+		if (
+			$this->page->include_region_main_settings_in_header_actions() &&
+			!$this->page->blocks->is_block_present('settings')
+		) {
+			// Only include the region main settings if the page has requested it and it doesn't already have
+			// the settings block on it. The region main settings are included in the settings block and
+			// duplicating the content causes behat failures.
+			$this->page->add_header_action(html_writer::div(
+				$this->region_main_settings_menu(),
+				'd-print-none',
+				['id' => 'region-main-settings-menu']
+			));
+		}
+
+		$header = new stdClass();
+		$header->settingsmenu = $this->context_header_settings_menu();
+		$header->contextheader = $this->context_header();
+		$header->hasnavbar = empty($this->page->layout_options['nonavbar']);
+		$header->navbar = $this->navbar();
+		$header->pageheadingbutton = $this->page_heading_button();
+		$header->courseheader = $this->course_header();
+		$header->headeractions = $this->page->get_header_actions();
+		if (!empty($pagetype) && !empty($homepagetype) && $pagetype == $homepagetype) {
+			$header->welcomemessage = \core_user::welcome_message();
+		}
+		// return $this->render_from_template('core/full_header', $header);
+
+		// Add the blocks in the at_fullheader region to the header context.	
+		$header->hasat_fullheaderblocks = $this->page->blocks->region_has_content('at_fullheader', $this);
+		$header->addblockbutton_at_fullheader = $this->addblockbutton('at_fullheader');
+		$header->at_fullheaderblockHTML = $this->blocks('at_fullheader');
+
+		if ($pagelayout == 'course') {
+			// Course enrollment and progress.
+			// $header->is_enrolled = false;
+			// $header->course_percentage = 0;
+			// if (!empty($COURSE->id) && $COURSE->id != SITEID) {
+			// 	/** @var \context $coursecontext Course context instance. */
+			// 	$coursecontext = \context_course::instance($COURSE->id);
+			// 	$header->is_enrolled = is_enrolled($coursecontext, $USER->id);
+			// 	if ($header->is_enrolled) {
+			// 		$header->course_percentage = course_service::get_course_completion_progress(
+			// 			$COURSE,
+			// 			$USER->id
+			// 		);
+			// 	}
+			// }
+
+			// // Get course custom fields metadata for the current course and add it to the header context.
+			// $header->course_customfields = course_service::get_course_customfields($COURSE->id, "key_array");
+		}
+		return $this->render_from_template('core/full_header', $header);
+	}
 
 
 	/**

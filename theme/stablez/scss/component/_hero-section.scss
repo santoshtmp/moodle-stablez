@@ -257,8 +257,8 @@ $smallBanner-height: 480px;
     color: $white;
 
     button,
-    a,
-    .icon {
+    a:not(.block-add, .action-menu-trigger .menu-action),
+    .icon:not(.action-menu-trigger i) {
       color: $white !important;
     }
   }
