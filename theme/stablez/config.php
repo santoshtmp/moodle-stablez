@@ -58,6 +58,7 @@ $THEME->activityheaderconfig = [
 
 $block_regions = [
     'side-pre',
+    'at_fullheader',
     'above-content',
     'below-content',
     'admin-content'

@@ -107,6 +107,8 @@ function theme_stablez_get_pre_scss($theme) {
     $configurable = [
         // Config key => [variableName, ...].
         'brandcolor' => ['primary'],
+        'backgroundcolor' => ['background'],
+        'headerbgcolor' => ['headerbgcolor'],
         'primarybuttoncolor' => ['primary-btn'],
         'primarybuttonhovercolor' => ['primary-btn-hover'],
         'secondarybuttoncolor' => ['secondary-btn'],
@@ -117,7 +119,7 @@ function theme_stablez_get_pre_scss($theme) {
     foreach ($configurable as $configkey => $targets) {
         $value = isset($theme->settings->{$configkey}) ? $theme->settings->{$configkey} : null;
         if (empty($value)) {
-            continue;
+            $value = '#012757';
         }
         array_map(function ($target) use (&$scss, $value) {
             $scss .= '$' . $target . ': ' . $value . ";\n";
@@ -188,6 +190,13 @@ function theme_stablez_get_extra_scss($theme) {
         $content .= ' }';
     }
 
+    // Add a background color
+    $backgroundcolor = $theme->settings->backgroundcolor ?? '';
+    if ($backgroundcolor) {
+        $content .= 'body { ';
+        $content .= "background-color: $backgroundcolor;";
+        $content .= ' }';
+    }
     $extra_scss = $theme->settings->scss ?? '';
     return $content . " \n " . $extra_scss;
 }

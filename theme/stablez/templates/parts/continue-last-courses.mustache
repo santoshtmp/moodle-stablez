@@ -1,0 +1,65 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template theme_stablez/parts/continue-last-courses
+}}
+
+<div class="continue-card" id="boxContinue">
+    <div class="continue-last-course">
+        <div class="welcome-user continue-head">
+            <p> Welcome back, <span> {{user.firstname}}</span> </p>
+        </div>
+        <div class="welcome-body">
+            <div id="tab-body" class="nav nav-progress-completed">
+                <p class="enrolled-courses">Recently accessed courses</p>
+            </div>
+            <div class="last-access-courses">
+                {{#lastaccess_courses}}
+                <div id="course-{{id}}" class="course-card">
+                    <div class="row">
+                        <div class="course-image">
+                            <img src="{{course_image_url}}"/>
+                        </div>
+                        <div class="course-info">
+                            <div class="course-category" id="course-category-id-{{category}}">{{categoryname}}</div>
+                            <div class="media-body col-md-9 col-sm-6">
+                                <a href="{{course_url}}">
+                                    <h5 class="mt-0">{{fullname}}</h5>
+                                </a>
+                            </div>
+                            {{#is_enrolled}}
+                            <div class="course-progress last-access-progress">
+                                <div class=" progress">
+                                    <div class="progress-bar" data-progress="{{progress}}" aria-valuemin="0"
+                                        aria-valuemax="100" style="width: {{progress}}%;">
+                                    </div>
+                                </div>
+                                <span> {{progress}}% </span>
+                                <p>Overall Progress</p>
+                            </div>
+                            {{/is_enrolled}}
+                        </div>
+                    </div>
+                </div>
+                {{/lastaccess_courses}}
+            </div>
+        </div>
+        <div class="continue-footer">
+            <a class="btn btn-primary to-profile-btn" href="/user/profile.php?id={{user.id}}"> Go to your profile </a>
+        </div>
+    </div>
+</div>

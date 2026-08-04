@@ -39,18 +39,21 @@ defined('MOODLE_INTERNAL') || die();
 // Add "Add block" buttons for different regions (editing mode).
 $addblockbutton = $OUTPUT->addblockbutton();
 $addblockbutton_abovecontent = $OUTPUT->addblockbutton('above-content');
+$addblockbutton_at_fullheader = $OUTPUT->addblockbutton('at_fullheader');
 $addblockbutton_belowcontent = $OUTPUT->addblockbutton('below-content');
 $addblockbutton_admincontent = $OUTPUT->addblockbutton('admin-content');
 
 // Render block HTML for each region.
 $blockshtml = $OUTPUT->blocks('side-pre');
 $abovecontentblockHTML = $OUTPUT->blocks('above-content');
+$at_fullheaderblockHTML = $OUTPUT->blocks('at_fullheader');
 $belowcontentblockHTML = $OUTPUT->blocks('below-content');
 $admincontentblockHTML = $OUTPUT->blocks('admin-content');
 
 // Detect whether blocks exist in each region.
 $hasblocks = (strpos($blockshtml, 'data-block=') !== false || !empty($addblockbutton));
 $hasabovecontentblock = (strpos($abovecontentblockHTML, 'data-block=') !== false || !empty($addblockbutton_abovecontent));
+$hasat_fullheaderblock = (strpos($at_fullheaderblockHTML, 'data-block=') !== false || !empty($addblockbutton_at_fullheader));
 $hasbelowcontentblock = (strpos($belowcontentblockHTML, 'data-block=') !== false || !empty($addblockbutton_belowcontent));
 $hasadmincontentblock = (strpos($admincontentblockHTML, 'data-block=') !== false || !empty($addblockbutton_admincontent));
 
@@ -242,11 +245,13 @@ $templatecontext = [
 
     'sidepreblocks' => $blockshtml,
     'abovecontentblockHTML' => $abovecontentblockHTML,
+    'at_fullheaderblockHTML' => $at_fullheaderblockHTML,
     'belowcontentblockHTML' => $belowcontentblockHTML,
     'admincontentblockHTML' => $admincontentblockHTML,
 
     'hasblocks' => $hasblocks,
     'hasabovecontentblock' => $hasabovecontentblock,
+    'hasat_fullheaderblock' => $hasat_fullheaderblock,
     'hasbelowcontentblock' => $hasbelowcontentblock,
     'hasadmincontentblock' => $hasadmincontentblock,
 
@@ -364,7 +369,8 @@ switch ($pagelayout) {
     case 'frontpage':
         $templatecontext = array_merge(
             $templatecontext,
-            theme_settings_service::get_instance()->front_page_settings()
+            theme_settings_service::get_instance()->front_page_settings(),
+            ['continue_last_courses' => theme_stablez\local\util::get_continue_last_courses()]
         );
 
         $templatename = 'theme_stablez/layout/frontpage';

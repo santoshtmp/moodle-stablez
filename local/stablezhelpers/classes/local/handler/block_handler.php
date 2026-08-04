@@ -81,6 +81,7 @@ class block_handler {
             'course_list' => "Courses List Block",
             'contact_us' => "Contact Us",
             'start_guideline' => "Start Guideline",
+            'title_only' => "Title Only",
         ];
         // array_multisort(array_column($block_types, 'name'), SORT_ASC, $block_types);;
         ksort($block_types);
@@ -122,6 +123,13 @@ class block_handler {
             return "Stablez Block Type (" . $this->block_type . ") is in development. Contact developer or site admin. ";
         }
         return "Stablez Block Type is not defined. Edit the block and set stablez Block Type";
+    }
+
+    /**
+     * title_only
+     */
+    protected function title_only_block_content() {
+        return ' ';
     }
 
     /**
