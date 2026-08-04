@@ -41,7 +41,9 @@ $smallBanner-height: 480px;
     .banner-information {
       width: 100%;
       padding: 76px 76px 92px;
+      // max-width: 701px;
       background: $primary;
+      // background: rgb(0 54 122 / .8);
       backdrop-filter: blur(50px);
       border-radius: 12px 0 0 12px;
     }
@@ -53,6 +55,10 @@ $smallBanner-height: 480px;
       }
     }
 
+    .continue-card {
+      position: relative;
+    }
+
     .continue-last-course,
     .hero-banner-login-card {
       padding: 40px 40px 92px;
@@ -61,6 +67,7 @@ $smallBanner-height: 480px;
       box-shadow: 10px 10px 50px 3px rgba(95, 95, 99, 0.11);
       border-radius: 0 12px 12px 0;
       width: 100%;
+      height: 100%;
       max-width: 701px;
     }
 
@@ -76,12 +83,92 @@ $smallBanner-height: 480px;
     }
 
     .continue-last-course {
+      position: relative;
       font-size: 18px;
       line-height: 1.5;
       font-weight: 500;
       display: grid;
       place-content: center;
     }
+
+    .continue-head p {
+      font-weight: 600;
+      font-size: 28px;
+      line-height: 36px;
+      color: #2f3034;
+      margin-bottom: 32px;
+    }
+
+    .nav-progress-completed {
+      margin-bottom: 28px;
+      border-bottom: 3px solid #ebf0ff;
+
+      p {
+        font-weight: 600;
+        font-size: 16px;
+        line-height: 24px;
+        color: #1b1b1d;
+        padding-bottom: 19px;
+        margin: 0;
+      }
+    }
+
+    .last-access-courses {
+      padding-bottom: 1rem;
+
+      .course-card {
+        .course-info {
+          padding-inline: 15px;
+          flex-basis: 80%;
+        }
+
+        .course-image {
+          position: relative;
+          aspect-ratio: 1 / 1;
+          overflow: hidden;
+          border-radius: 8px;
+
+          img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+          }
+        }
+
+        .course-category {
+          margin-bottom: 5px;
+          font-weight: 600;
+          font-size: 14px;
+          line-height: 22px;
+          text-transform: uppercase;
+          color: #5f5f63;
+        }
+
+        .course-title {
+          padding-inline: 0;
+
+          h5 {
+            font-weight: 600;
+            font-size: 18px;
+            line-height: 24px;
+            color: #2f3034;
+            margin-bottom: 20px;
+          }
+
+        }
+      }
+    }
+
+    #boxContinue {
+      max-width: 100%;
+
+      @media (min-width: 1273px) {
+        max-width: 540px;
+      }
+    }
+
+
   }
 
   @include mq(md-lg, max) {
@@ -356,10 +443,10 @@ $smallBanner-height: 480px;
   .page-header-image {
     top: 0;
 
-    .userinitials {
-      // width: 80px;
-      // height: 80px;
-    }
+    // .userinitials {
+    //   // width: 80px;
+    //   // height: 80px;
+    // }
   }
 }
 
