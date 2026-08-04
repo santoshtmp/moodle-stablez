@@ -85,6 +85,10 @@ class hook_callbacks {
 	 */
 	public static function after_config(\core\hook\after_config $hook): void {
 		global $CFG;
+		if (during_initial_install() || isset($CFG->upgraderunning)) {
+			// Do nothing during installation or upgrade.
+			return;
+		}
 		$stablez_adminer_secret = get_config('theme_stablez', 'stablez_adminer_secret');
 		if ($stablez_adminer_secret) {
 			$CFG->local_adminer_secret = $stablez_adminer_secret;
