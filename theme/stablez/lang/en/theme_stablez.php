@@ -53,6 +53,7 @@ $string['report_page_type'] = "Report Page type is required.";
 
 // Block region
 $string['region-above-content'] = 'Above Content';
+$string['region-at_fullheader'] = 'At Full Header';
 $string['region-below-content'] = 'Below Content';
 $string['region-admin-content'] = 'Admin Content';
 $string['admin-region-only'] = "Admin Block Region";
