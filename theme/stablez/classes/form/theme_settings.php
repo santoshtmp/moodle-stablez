@@ -742,6 +742,20 @@ class theme_settings {
         $setting = new admin_setting_configcolourpicker($name, $title, $description, '#2f5d88'); // 
         $setting->set_updatedcallback('theme_reset_all_caches');
         $style_script_tab->add($setting);
+      
+        $name = 'theme_stablez/backgroundcolor';
+        $title = "Primary background Color";
+        $description = "The value is present as '\$background' variable. This will change the background color of the site. If you want to change the color of specific element, you can use the custom CSS code section below.";
+        $setting = new admin_setting_configcolourpicker($name, $title, $description, '#eef5f9'); // 
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $style_script_tab->add($setting);
+      
+        $name = 'theme_stablez/headerbgcolor';
+        $title = "Header background Color";
+        $description = "The value is present as '\$headerbgcolor' variable. This will change the header bg color color of the site. If you want to change the color of specific element, you can use the custom CSS code section below.";
+        $setting = new admin_setting_configcolourpicker($name, $title, $description, '#2f5d88'); // 
+        $setting->set_updatedcallback('theme_reset_all_caches');
+        $style_script_tab->add($setting);
 
         // ==========================================================================================
 
