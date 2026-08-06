@@ -91,7 +91,7 @@ if (isloggedin()) {
 
 // Theme setting override: force close course index.
 $close_course_index = get_config('theme_stablez', 'close_course_index') ?? '0';
-if ($close_course_index) {
+if ($close_course_index == '1') {
     $courseindexopen = false;
     $blockdraweropen = false;
 }
@@ -347,6 +347,15 @@ switch ($pagelayout) {
                 'coursecollapsetopic'
             );
         }
+        $PAGE->requires->js_call_amd(
+            'theme_stablez/course/course',
+            'sectiontitleclick'
+        );
+        $PAGE->requires->js_call_amd(
+            'theme_stablez/course/course',
+            'coursefield_remotevideo'
+        );
+
         $templatename = 'theme_stablez/layout/course';
         break;
 
