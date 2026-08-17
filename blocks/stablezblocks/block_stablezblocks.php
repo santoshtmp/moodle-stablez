@@ -88,8 +88,10 @@ class block_stablezblocks extends block_base {
         $this->config->block_stablez_id = $block_id;
         $PAGE->requires->js_call_amd('block_stablezblocks/block-stablez', 'init', [$block_id]);
 
-        // $this->content->add_class();
         $block_type = $this->config->stablez_block_type ?? '';
+        $this->config->context = $this->context;
+        $this->config->instance = $this->instance;
+        
         $block_handler = new block_handler($block_type, $this->config);
         $this->content->text = $block_handler->get_block_stablez_content();
         return $this->content;
@@ -115,10 +117,36 @@ class block_stablezblocks extends block_base {
         $block_type = $this->config->stablez_block_type ?? '';
         $block_background = $this->config->block_background ?? 'default';
         $block_class = $block_type ? str_replace([' ', '_'], '-', strtolower($block_type)) : '';
-        $block_class .= ' stablez-block-bg-'.$block_background;
+        $block_class .= ' stablez-block-bg-' . $block_background;
         $attributes = parent::html_attributes();
         $attributes['class'] .= ' stablez-block stablez-block-' . $block_class;
         $attributes['full_width_section'] = isset($this->config->full_width_section) ? $this->config->full_width_section : false;
         return $attributes;
+    }
+
+    /**
+     * Save the uploaded images from the draft area into the permanent file area.
+     * @param object $data
+     * @param bool $nolongerused
+     */
+    public function instance_config_save($data, $nolongerused = false) {
+        return parent::instance_config_save($data, $nolongerused);
+    }
+
+    /**
+     * Delete gallery files when the block instance is deleted.
+     *
+     * @return bool
+     */
+    public function instance_delete() {
+        $fs = get_file_storage();
+        $fs->delete_area_files(
+            $this->context->id,
+            block_handler::COMPONENT,
+            block_handler::FILEAREA_FIELD_GALLERY,
+            $this->instance->id
+        );
+
+        return true;
     }
 }
