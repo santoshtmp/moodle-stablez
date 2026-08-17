@@ -372,7 +372,7 @@ switch ($pagelayout) {
         //     redirect($loginurl);
         // }
 
-        $$templatename = 'theme_stablez/layout/incourse';
+        $templatename = 'theme_stablez/layout/incourse';
         break;
 
     case 'frontpage':

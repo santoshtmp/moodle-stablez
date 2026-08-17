@@ -89,12 +89,22 @@ class block_stablezblocks_edit_form extends block_edit_form {
         $mform->addElement('hidden', 'config_course_fields_order', '');
         $mform->setType('config_course_fields_order', PARAM_TEXT);
 
+        // Gallery.
+        $mform->addElement(
+            'filemanager',
+            'config_galleryimages',
+            get_string('images', 'local_stablezhelpers'),
+            null,
+            block_handler::get_filemanager_options($this->block->context, 9, '3MB')
+        );
+        $mform->hideIf('config_galleryimages', 'config_stablez_block_type', 'neq', 'gallery');
+
+
         // ── Informational notices for special block types ─────────────────────
         // These static elements are shown/hidden based on the selected block type.
 
         $mform->addElement('static', "contact_us_description", "", "Contact Us data is managed through <a href='/admin/settings.php?section=themesettingstablez&tabtitle=theme-stablez-contact-detail#general_setting_tab'> Theme stablez settings - Contact Detail</a>");
         $mform->hideIf('contact_us_description', 'config_stablez_block_type', 'neq', 'contact_us');
-
 
         // Notice: FAQs block requires the theme FAQs feature to be enabled.
         $mform->addElement('static', 'faqs_description', '', "FAQs must be enabled in Theme stablezblocks settings. FAQs data is managed through <a href='/theme/stablezblocks/pages/faqs/admin.php'>FAQs Settings</a>.");
@@ -192,17 +202,6 @@ class block_stablezblocks_edit_form extends block_edit_form {
      */
     public function validation($data, $files) {
         $errors = parent::validation($data, $files);
-
-        // Add field validation check for duplicate title.
-        // if ($data['title']) {
-        //     $data_title = trim($data['title']);
-        //     if ($existing = $DB->get_record("", array('title' => $data_title))) {
-        //         if (!$data['id'] || $existing->id != $data['id']) {
-        //             $errors['title'] = 'Title "' . trim($data['title']) . '" alrady exist.';
-        //         }
-        //     }
-        // }
-
         return $errors;
     }
 
@@ -217,17 +216,39 @@ class block_stablezblocks_edit_form extends block_edit_form {
      */
     public function get_data() {
         $data = parent::get_data();
-        // if ($data) {
-        //     if ($data->config_stablez_block_type == 'course_list') {
-        //         course_link_handler::save_data($data);
-        //         $config_course_list_order = isset($data->config_course_list_order) ? explode(',', $data->config_course_list_order) : [];
-        //         $data->config_course_list = $config_course_list_order;
-        //     }
-        //     if ($data->config_stablez_block_type == 'course_info') {
-        //         $config_course_fields_order = isset($data->config_course_fields_order) ? explode(',', $data->config_course_fields_order) : [];
-        //         $data->config_course_fields = $config_course_fields_order;
-        //     }
-        // }
         return $data;
+    }
+
+    /**
+     * Prepare existing files when editing the block.
+     */
+    public function set_data($defaults) {
+        if ($this->block->instance->id) {
+            $field = 'galleryimages';
+            $config_field = 'config_galleryimages';
+            $draftitemid = file_get_submitted_draft_itemid($config_field);
+            file_prepare_draft_area(
+                $draftitemid,
+                $this->block->context->id,
+                block_handler::COMPONENT,
+                block_handler::FILEAREA_FIELD_GALLERY,
+                $this->block->instance->id,
+                block_handler::get_filemanager_options($this->block->context, 9, '3MB')
+            );
+            $defaults->$config_field = $draftitemid;
+            $this->block->config->$field = $draftitemid;
+
+            if ($data = parent::get_data()) {
+                file_save_draft_area_files(
+                    $data->$config_field,
+                    $this->block->context->id,
+                    block_handler::COMPONENT,
+                    block_handler::FILEAREA_FIELD_GALLERY,
+                    $this->block->instance->id,
+                    block_handler::get_filemanager_options($this->block->context, 9, '3MB')
+                );
+            }
+        }
+        parent::set_data($defaults);
     }
 }
