@@ -23,6 +23,8 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+use local_stablezhelpers\local\handler\block_handler;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -39,4 +41,68 @@ function local_stablezhelpers_after_install() {
 function local_stablezhelpers_after_uninstall() {
     // Add any post-uninstallation logic here.
     return true;
+}
+
+/**
+ * Serves any files associated with the theme settings.
+ *
+ * @param stdClass $course
+ * @param stdClass $cm
+ * @param context $context
+ * @param string $filearea
+ * @param array $args
+ * @param bool $forcedownload
+ * @param array $options
+ * @return bool
+ */
+function local_stablezhelpers_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+    if ($context->contextlevel == CONTEXT_BLOCK) {
+        send_file_not_found();
+    }
+    
+    $stablez_filearea = [block_handler::FILEAREA_FIELD_GALLERY];
+    if (
+        !in_array($filearea, $stablez_filearea)
+        //    || !(preg_match("/^block_start_guideline_img_[1-9][0-9]?$/", $filearea))
+    ) {
+        send_file_not_found();
+    }
+
+    // By default, theme files must be cache-able by both browsers and proxies.
+    if (!array_key_exists('cacheability', $options)) {
+        $options['cacheability'] = 'public';
+    }
+    //
+    $fs = get_file_storage();
+    $filename = array_pop($args);
+    $filepath = '/'; // $args ? '/' . implode('/', $args) . '/' : '/';
+    $files = $fs->get_area_files(
+        $context->id,
+        block_handler::COMPONENT,
+        block_handler::FILEAREA_FIELD_GALLERY,
+        $args[0],
+        'timemodified',
+        false
+    );
+    if ($files) {
+        $file = reset($files); // Get the first file
+    } else {
+        $file = $fs->get_file(
+            $context->id,
+            block_handler::COMPONENT,
+            block_handler::FILEAREA_FIELD_GALLERY,
+            $args[0],
+            $filepath,
+            $filename
+        );
+    }
+    if ($file && !$file->is_directory()) {
+        // NOTE: it woudl be nice to have file revisions here, for now rely on standard file lifetime,
+        // do not lower it because the files are dispalyed very often.
+        \core\session\manager::write_close();
+        return send_stored_file($file, null, 0, $forcedownload, $options);
+    }
+
+    // 
+    send_file_not_found();
 }

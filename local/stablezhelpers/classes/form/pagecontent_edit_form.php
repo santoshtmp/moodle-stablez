@@ -25,6 +25,7 @@
 
 namespace local_stablezhelpers\form;
 
+use local_stablezhelpers\content\page_manager;
 use local_stablezhelpers\datarepository\content_datarepository;
 
 defined('MOODLE_INTERNAL') || die();
@@ -50,6 +51,7 @@ class pagecontent_edit_form extends \moodleform {
         $mform = $this->_form;
         $contentdata = $this->_customdata['content'] ?? null;
         $foemHeader = ($contentdata) ? 'editcontent' : 'addcontent';
+        $context =  \context_system::instance();
 
         // ----------------------------------------------------------------------------
         // General section.
@@ -91,19 +93,11 @@ class pagecontent_edit_form extends \moodleform {
         $mform->addHelpButton('content', 'content', 'local_stablezhelpers');
 
         // Feature image.
-        $mform->addElement('filemanager', 'image_filemanager', get_string('image', 'local_stablezhelpers'), null, [
-            'maxfiles' => 1,
-            'maxbytes' => $CFG->maxbytes,
-            'accepted_types' => ['image'],
-        ]);
+        $image_options = page_manager::get_image_filemanager_options();
+        $mform->addElement('filemanager', 'image_filemanager', get_string('image', 'local_stablezhelpers'), null, $image_options);
         $mform->addHelpButton('image_filemanager', 'image_filemanager', 'local_stablezhelpers');
 
-
-        // Status.
-        // $mform->addElement('select', 'status', get_string('status', 'local_stablezhelpers'), [
-        //     0 => get_string('draft', 'local_stablezhelpers'),
-        //     1 => get_string('publish', 'local_stablezhelpers'),
-        // ]);
+        // Content publish status
         $mform->addElement('checkbox', 'status', get_string('status', 'local_stablezhelpers'), get_string('publish', 'local_stablezhelpers'));
         $mform->setDefault('status', 1);
         $mform->setType('status', PARAM_INT);
@@ -150,6 +144,7 @@ class pagecontent_edit_form extends \moodleform {
      * @return array Form data
      */
     private function prepare_data_for_form($contentdata) {
+        global $DB, $CFG;
         $data = (array) $contentdata;
 
         // Prepare content editor.
@@ -159,6 +154,24 @@ class pagecontent_edit_form extends \moodleform {
                 'format' => $contentdata->contentformat ?? FORMAT_HTML,
                 'itemid' => $contentdata->contentitemid ?? 0,
             ];
+        }
+
+        // image
+        if (isset($contentdata->image) && $contentdata->image) {
+            $image_file = $DB->get_record('files', ['id' => $contentdata->image]);
+            if ($image_file) {
+                $draftitemid = $image_file->itemid;
+                $image_options = page_manager::get_image_filemanager_options();
+                file_prepare_draft_area(
+                    $draftitemid,
+                    $image_file->contextid,
+                    $image_file->component,
+                    $image_file->filearea,
+                    $image_file->itemid,
+                    $image_options
+                );
+                $data['image_filemanager'] =  $draftitemid;
+            }
         }
 
         return $data;

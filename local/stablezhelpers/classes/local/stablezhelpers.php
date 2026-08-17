@@ -215,51 +215,51 @@ class stablezhelpers {
         return $status === 1 ? 'text-success' : 'text-muted';
     }
 
-    /**
-     * Logs exceptions with backtrace to a secure file.
-     *
-     * @param \Throwable $throwable
-     *   The exception or error to log.
-     * $type can be 'error', 'message', 'log' or any other string to categorize the log entry.
-     *
-     * @return void
-     */
-    public static function set_log_message($th, $type = ''): void {
-        global $CFG;
+    // /**
+    //  * Logs exceptions with backtrace to a secure file.
+    //  *
+    //  * @param \Throwable $throwable
+    //  *   The exception or error to log.
+    //  * $type can be 'error', 'message', 'log' or any other string to categorize the log entry.
+    //  *
+    //  * @return void
+    //  */
+    // public static function set_log_message($th, $type = ''): void {
+    //     global $CFG;
 
-        $log_dir = $CFG->dataroot . '/helperbox_log';
-        $log_file = $log_dir . '/' . date("Y-m") . '-log.txt';
+    //     $log_dir = $CFG->dataroot . '/helperbox_log';
+    //     $log_file = $log_dir . '/' . date("Y-m") . '-log.txt';
 
-        // Create directory if it does not exist
-        if (!is_dir($log_dir)) {
-            mkdir($log_dir, 0775, true);
-        }
+    //     // Create directory if it does not exist
+    //     if (!is_dir($log_dir)) {
+    //         mkdir($log_dir, 0775, true);
+    //     }
 
-        $log_message = "[" . date("Y-m-d H:i:s") . "] ";
+    //     $log_message = "[" . date("Y-m-d H:i:s") . "] ";
 
-        if (strtolower($type) === 'error') {
-            $backtrace = debug_backtrace();
-            $initial_error_file = $backtrace[1]['file'] ?? '';
-            $initial_error_line = $backtrace[1]['line'] ?? '';
+    //     if (strtolower($type) === 'error') {
+    //         $backtrace = debug_backtrace();
+    //         $initial_error_file = $backtrace[1]['file'] ?? '';
+    //         $initial_error_line = $backtrace[1]['line'] ?? '';
 
-            $log_message .= "ERROR: " . $th->getMessage() . " in " . $th->getFile() . " on line " . $th->getLine();
+    //         $log_message .= "ERROR: " . $th->getMessage() . " in " . $th->getFile() . " on line " . $th->getLine();
 
-            if ($initial_error_file && $initial_error_line) {
-                $log_message .= " | Initial Error File: {$initial_error_file} on line {$initial_error_line}";
-            }
+    //         if ($initial_error_file && $initial_error_line) {
+    //             $log_message .= " | Initial Error File: {$initial_error_file} on line {$initial_error_line}";
+    //         }
 
-            $log_message .= PHP_EOL;
-        } elseif (strtolower($type) === 'message') {
-            $log_message .= "MESSAGE: " . $th . PHP_EOL;
-        } else {
-            $log_message .= $th . PHP_EOL;
-        }
+    //         $log_message .= PHP_EOL;
+    //     } elseif (strtolower($type) === 'message') {
+    //         $log_message .= "MESSAGE: " . $th . PHP_EOL;
+    //     } else {
+    //         $log_message .= $th . PHP_EOL;
+    //     }
 
-        // Write log safely
-        if (is_writable($log_dir)) {
-            file_put_contents($log_file, $log_message, FILE_APPEND | LOCK_EX);
-        }
-    }
+    //     // Write log safely
+    //     if (is_writable($log_dir)) {
+    //         file_put_contents($log_file, $log_message, FILE_APPEND | LOCK_EX);
+    //     }
+    // }
 
 
     /**
@@ -348,5 +348,62 @@ class stablezhelpers {
             return $moodle_url;
         }
         return false;
+    }
+
+    /**
+     * Check if a Mustache template exists.
+     *
+     * @param string $templatename Format: component/path/to/template
+     * @return bool
+     */
+    public static function template_exists(string $templatename): bool {
+        try {
+            $finder = new \core\output\mustache_template_finder();
+            $finder->get_template_filepath($templatename);
+            return true;
+        } catch (\moodle_exception $e) {
+            return false;
+        }
+    }
+
+    /**
+     * Register the webp mimetype only if it isn't already registered.
+     * Never throws, regardless of Moodle version behaviour.
+     */
+    public static function ensure_webp_registered(): void {
+        static $checked = false;
+        if ($checked) {
+            return; // Only need to check once per request.
+        }
+        $checked = true;
+
+        if (mimeinfo('type', 'test.webp') === 'image/webp') {
+            return; // Already registered, nothing to do.
+        }
+
+        try {
+            \core_filetypes::add_type(
+                'webp',
+                'image/webp',
+                'image',
+                ['image'],
+                '',
+                'WEBP image'
+            );
+            // \core_filetypes::update_type(
+            //     'webp',
+            //     'webp',
+            //     'image/webp',
+            //     'image',
+            //     ['image'],
+            //     '',
+            //     'WEBP image'
+            // );
+
+        } catch (\Throwable $e) {
+            // Already exists or add failed for another reason — safe to ignore,
+            // upload will just fall back to whatever the site already supports.
+            debugging('webp mimetype registration skipped: ' . $e->getMessage(), DEBUG_DEVELOPER);
+        }
     }
 }

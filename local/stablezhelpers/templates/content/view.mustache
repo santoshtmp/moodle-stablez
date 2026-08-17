@@ -36,51 +36,16 @@
 
 <div class="content-view-page">
 
-    {{#managecontent}}
-    {{! Content header }}
-    <div class="content-header mb-4 visually-hidden-focusable">
-        <h2 class="content-title m-3">{{content.title}}</h2>
+    {{! Content image }}
+    {{#content.image_url}}
+    <div class="content-image">
+       <img src="{{content.image_url}}">
     </div>
-
-    {{! Content meta information }}
-    <div class="content-meta text-muted mb-3">
-        <span class="content-type m-3">
-            {{#str}}contenttype, local_stablezhelpers{{/str}}: {{contenttypelabel}}
-        </span>
-        <span class="content-status m-3">
-            {{#str}}status{{/str}}: 
-            {{#content.status}}
-                <span class="badge bg-success">{{#str}}published, local_stablezhelpers{{/str}}</span>
-            {{/content.status}}
-            {{^content.status}}
-                <span class="badge bg-secondary">{{#str}}draft, local_stablezhelpers{{/str}}</span>
-            {{/content.status}}
-        </span>
-        <span class="content-author m-3">
-            {{#str}}author, local_stablezhelpers{{/str}}: {{authorname}}
-        </span>
-    </div>
-    {{/managecontent}}
-
+    {{/content.image_url}}
+   
     {{! Content body }}
     <div class="content-body m-3">
-
-        {{#managecontent}}
-            {{{content.content}}}
-        {{/managecontent}}
-
-        {{^managecontent}}
-            {{#content.status}}
-                {{{content.content}}}
-            {{/content.status}}
-            {{^content.status}}
-                <div class="alert alert-warning" role="alert">
-                    {{#str}}contentnotpublished, local_stablezhelpers{{/str}}
-                </div>
-            {{/content.status}}
-        {{/managecontent}}
-
-
+        {{{content.content}}}
     </div>
 
 </div>

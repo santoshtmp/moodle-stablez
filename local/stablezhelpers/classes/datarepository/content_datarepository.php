@@ -25,6 +25,7 @@
 
 namespace local_stablezhelpers\datarepository;
 
+use local_stablezhelpers\content\page_manager;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -128,7 +129,11 @@ class content_datarepository {
     public static function get_by_id($id, $fields = '*', $strictness = IGNORE_MISSING): object|false {
         global $DB;
 
-        return $DB->get_record(self::$tablename, ['id' => $id], $fields, $strictness);
+        $data = $DB->get_record(self::$tablename, ['id' => $id], $fields, $strictness);
+        if ($data->image) {
+            $data->image_url = page_manager::get_image_file_url($data->image);
+        }
+        return $data;
     }
 
     /**

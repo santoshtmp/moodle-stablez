@@ -27,6 +27,7 @@ use core\exception\moodle_exception;
 use local_stablezhelpers\datarepository\content_datarepository;
 use local_stablezhelpers\datarepository\usermeta_datarepository;
 use local_stablezhelpers\content\page_manager;
+use local_stablezhelpers\local\stablezhelpers;
 
 /**
  * ========================================================
@@ -63,7 +64,8 @@ $context = \context_system::instance();
 $classes = [
     'stablezhelpers-content-view',
     'content-type-' . strtolower($content->contenttype),
-    'content-id-' . $id
+    'content-id-' . $id,
+    'content-' . str_replace([' ', '_'], '-', strtolower($content->shortname))
 ];
 $strcapability = 'moodle/site:manageblocks';
 
@@ -91,13 +93,28 @@ if (is_siteadmin()) {
 // Add page secondary navigation.
 if (is_siteadmin()) {
     $PAGE->secondarynav->add(
-        get_string('back'),
+        get_string('viewallcontent', 'local_stablezhelpers'),
         page_manager::get_listing_page_url()
     );
     $PAGE->secondarynav->add(
         get_string('editcontent', 'local_stablezhelpers'),
         page_manager::get_action_page_url($id)
     );
+
+    // check if this file class exist
+    if (class_exists('\local_customcleanurl\local\helper')) {
+        $enabled_customcleanurl = \local_customcleanurl\local\helper::is_enable_customcleanurl();
+        if ($enabled_customcleanurl) {
+            $cleanurltype = get_config('local_customcleanurl', 'cleanurl_type');
+            $cleanurltype = explode(",", $cleanurltype);
+            if (in_array('defineurl', $cleanurltype)) {
+                $PAGE->secondarynav->add(
+                    get_string('editcustomcleanurl', 'local_stablezhelpers'),
+                    '/local/customcleanurl/define_custom_url.php'
+                );
+            }
+        }
+    }
 }
 /**
  * ========================================================
@@ -125,14 +142,28 @@ $contenttypelabel = get_string('contenttype_' . $content->contenttype, 'local_st
 
 // Prepare content data.
 $template_content = [
-    'content' => $content,
     'authorname' => $authorname,
     'contenttypelabel' => $contenttypelabel,
     'managecontent' => ($content->userid == $USER->id || $managecontent || is_siteadmin()) ? true : false,
+    'is_edit_mode' => $PAGE->user_is_editing(),
 ];
+if ($content->status) {
+    $template_content['content'] = $content;
+}
+
+// Decide the template name
+$templatename = 'local_stablezhelpers/content/view_id_' . $id;
+
+// Check if the template really exists
+if (!stablezhelpers::template_exists($templatename)) {
+    $templatename = 'local_stablezhelpers/content/view'; // fallback default
+}
+
+// === Allow other plugins/themes to modify the template data ===
+\local_stablezhelpers\hooks\hook_callbacks::modify_content_view_template($template_content, $content, $id);
 
 // Render content using template.
-$contents = $OUTPUT->render_from_template('local_stablezhelpers/content/view', $template_content);
+$contents = $OUTPUT->render_from_template($templatename, $template_content);
 
 /**
  * ========================================================

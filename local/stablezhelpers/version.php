@@ -34,7 +34,7 @@ $plugin->component = 'local_stablezhelpers';
 $plugin->release = '1.0.0';
 
 // This is the version of the plugin.
-$plugin->version = 2026060605;
+$plugin->version = 2026091600;
 
 // This is a stable release.
 $plugin->maturity = MATURITY_STABLE;

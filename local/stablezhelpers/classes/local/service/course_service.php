@@ -439,6 +439,7 @@ class course_service {
             $courseinfo['short_summary'] = $summary;
             $courseinfo['arrow-right'] = $OUTPUT->image_url('icons/arrow-right', 'theme_stablez');
             $courseinfo['enrollment_methods'] = $enrollmentmethods;
+            $courseinfo['visible'] = (int)$course->visible;
 
             return $courseinfo;
         }
@@ -668,13 +669,12 @@ class course_service {
 
         // Build SELECT fields clause
         if ($selectall) {
-            $selectfields = 'c.*';
+            $selectfields = 'c.*, cc.name AS categoryname';
         } else {
             // Ensure essential fields are included
             $fields = array_unique(array_merge($essentialfields, $fields));
-            $selectfields = 'c.' . implode(', c.', $fields);
+            $selectfields = 'c.' . implode(', c.', $fields) . ' cc.name AS categoryname';
         }
-
 
         // Add enrolledcourses count if requested.
         if ($addparticipantcount) {

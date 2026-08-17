@@ -1060,4 +1060,27 @@ class enrol_services {
 
         return (int) $DB->count_records_sql($sql, $params);
     }
+
+    /**
+     * Get enrolment URL for a course.
+     *
+     * @param object $COURSE Course object.
+     * @param object|null $USER User object (optional).
+     * @return string Enrolment URL.
+     */
+    public static function get_enrol_url($COURSE, $USER = null) {
+        $enrol_url = false;
+        $coursecontext = context_course::instance($COURSE->id, IGNORE_MISSING);
+        $is_enrolled = is_enrolled($coursecontext, $USER);
+        if (!$is_enrolled) {
+            $enrolinstances = enrol_get_instances((int)$COURSE->id, true);
+            foreach ($enrolinstances as $key => $courseenrolinstance) {
+                if (!in_array($courseenrolinstance->enrol, ['manual', 'guest'])) {
+                    $enrol_url =  stablezhelpers::get_moodle_url('/enrol/index.php', ['id' => $COURSE->id], true);
+                    break;
+                }
+            }
+        }
+        return $enrol_url;
+    }
 }

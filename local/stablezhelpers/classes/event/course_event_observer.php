@@ -56,10 +56,6 @@ class course_event_observer {
         // course created by meta data.
         $metakey_course_created_by = 'course_created_by';
         coursemeta_datarepository::set($courseid, $metakey_course_created_by, $userid);
-
-        // Log the event with details.
-        $log_message = "event={$eventname}, target={$target}, CourseID={$courseid}, UserID={$userid}";
-        stablezhelpers::set_log_message($log_message, 'log');
     }
 
 
@@ -79,10 +75,6 @@ class course_event_observer {
         // course updated by meta data.
         $metakey_course_updated_by = 'course_updated_by';
         coursemeta_datarepository::set($courseid, $metakey_course_updated_by, $userid);
-
-        // Log the event with details.
-        $log_message = "event={$eventname}, target={$target}, CourseID={$courseid}, UserID={$userid}";
-        stablezhelpers::set_log_message($log_message, 'log');
     }
 
     /**
@@ -102,9 +94,9 @@ class course_event_observer {
         // Clean up course metadata.
         coursemeta_datarepository::cleanup_course($courseid);
 
-        // Log the event with details.
-        $log_message = "event={$eventname}, target={$target}, CourseID={$courseid}, UserID={$userid}";
-        stablezhelpers::set_log_message($log_message, 'log');
+        // // Log the event with details.
+        // $log_message = "event={$eventname}, target={$target}, CourseID={$courseid}, UserID={$userid}";
+        // stablezhelpers::set_log_message($log_message, 'log');
     }
 
 
