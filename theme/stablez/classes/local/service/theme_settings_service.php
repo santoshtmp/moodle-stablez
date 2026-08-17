@@ -113,8 +113,6 @@ class theme_settings_service {
      */
     public function footer_settings(): array {
         $copyright          = $this->theme->settings->copyright ?? '';
-        $footer_menu_number = (int)($this->theme->settings->footer_menu_number ?? 0);
-
         $templatecontext = [
             'copyright'                  => $copyright
                 ? str_replace('{year}', date('Y'), format_string($copyright))
@@ -125,34 +123,39 @@ class theme_settings_service {
             'footer_menu'                => [],
         ];
 
-        for ($i = 0, $j = 1; $i < $footer_menu_number; $i++, $j++) {
-            $label_key = 'footer_menu_label_' . $j;
-            $items_key = 'footer_menu_items_' . $j;
-            $raw_items = $this->theme->settings->$items_key ?? '';
-            $menu_items = [];
+        $theme_stablez_footer_menus = ['footer_menu', 'footer_menu_second'];
+        foreach ($theme_stablez_footer_menus as $key => $menu_placeholder) {
+            $menu_num_key = $menu_placeholder . '_number';
+            $menu_number = (int)($this->theme->settings->$menu_num_key ?? 0);
+            for ($i = 0, $j = 1; $i < $menu_number; $i++, $j++) {
+                $label_key = $menu_placeholder . '_label_' . $j;
+                $items_key = $menu_placeholder . '_items_' . $j;
+                $raw_items = $this->theme->settings->$items_key ?? '';
+                $menu_items = [];
 
-            if ($raw_items) {
-                $index = 0;
-                foreach (explode("\n", $raw_items) as $line) {
-                    $line = trim($line);
-                    if ($line === '') {
-                        continue;
+                if ($raw_items) {
+                    $index = 0;
+                    foreach (explode("\n", $raw_items) as $line) {
+                        $line = trim($line);
+                        if ($line === '') {
+                            continue;
+                        }
+
+                        [$title, $link] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
+                        $menu_items[$index]['title'] = $title ? html_entity_decode(format_string($title)) : '';
+                        $menu_items[$index]['link']  = ($link !== '') ? $link : '#';
+                        $index++;
                     }
-
-                    [$title, $link] = array_pad(array_map('trim', explode('|', $line, 2)), 2, '');
-                    $menu_items[$index]['title'] = html_entity_decode(format_string($title));
-                    $menu_items[$index]['link']  = ($link !== '') ? $link : '#';
-                    $index++;
                 }
-            }
 
-            $label = $this->theme->settings->$label_key ?? '';
-            $templatecontext['footer_menu'][$i] = [
-                'label'         => html_entity_decode(format_string($label)),
-                'label_class'   => str_replace([' ', '_'], '-', strtolower($label)),
-                'items'         => $menu_items,
-                'items_present' => !empty($menu_items),
-            ];
+                $label = $this->theme->settings->$label_key ?? '';
+                $templatecontext[$menu_placeholder][$i] = [
+                    'label'         => $label ? html_entity_decode(format_string($label)) : '',
+                    'label_class'   => $label ? str_replace([' ', '_'], '-', strtolower($label)) : '',
+                    'items'         => $menu_items,
+                    'items_present' => !empty($menu_items),
+                ];
+            }
         }
 
         return $templatecontext;
@@ -183,6 +186,7 @@ class theme_settings_service {
      */
     public function contact_details_settings(): array {
         $phone_number = $this->theme->settings->phone_number ?? '';
+        $phone_number = $phone_number ? array_map('trim', explode(',', $phone_number)) : false;
         $map_location = $this->theme->settings->map_location ?? '';
 
         // Extract the src attribute from an iframe embed snippet, falling
@@ -198,7 +202,7 @@ class theme_settings_service {
             'other_contact_info'           => format_text($this->theme->settings->other_contact_info ?? ''),
             'map_location_src'             => $map_src,
             'phone_number_exist'           => !empty($phone_number),
-            'phone_number'                 => $phone_number ? array_map('trim', explode(',', $phone_number)) : false,
+            'phone_number'                 => $phone_number,
             'mail'                         => $this->theme->settings->mail ?? '',
             'website'                      => $this->theme->settings->website ?? '',
             'social_link'                  => [
@@ -314,31 +318,21 @@ class theme_settings_service {
      */
     public function start_guideline_settings(): array {
         $templatecontext = [];
+        $templatecontext['start_guideline_heading'] = format_string($this->theme->settings->start_guideline_heading ?? '');
+        $templatecontext['start_guideline_desc'] = format_string($this->theme->settings->start_guideline_desc ?? '');
         $item_count = (int)($this->theme->settings->start_guideline_item_count ?? 0);
-
         if ($item_count <= 0) {
             return $templatecontext;
         }
-
-        /** Default icon paths indexed by item position (1-based). */
-        $default_icons = [
-            1 => '/theme/stablez/pix/icons/start-guideline-user.svg',
-            2 => '/theme/stablez/pix/icons/start-guideline-circle-check.svg',
-        ];
-        $fallback_icon = '/theme/stablez/pix/icons/start-guideline-web.svg';
 
         for ($i = 1; $i <= $item_count; $i++) {
             $image_key = "start_guideline_image_{$i}";
             $image     = $this->theme->setting_file_url($image_key, $image_key);
 
-            if (empty($image)) {
-                $image = $default_icons[$i] ?? $fallback_icon;
-            }
-
             $templatecontext['start_guideline'][$i - 1] = [
                 'image' => $image,
                 'title' => format_string($this->theme->settings->{"start_guideline_title_{$i}"} ?? ''),
-                'desc'  => format_string($this->theme->settings->{"start_guideline_desc_{$i}"} ?? ''),
+                'desc'  => format_text($this->theme->settings->{"start_guideline_desc_{$i}"} ?? ''),
             ];
         }
 

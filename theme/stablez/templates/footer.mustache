@@ -21,9 +21,10 @@
 }}
 
 <footer id="page-footer" class="stablez-footer bg-white">
-    <div class="px-3">
+    <div class="footer-main-wrapper px-3">
         <div class="footer-wrapper container">
             <div class="footer-items">
+
                 <div class="site-name footer-desc">
                     <div class="logo-wrapper">
                         {{# output.get_logo_url_out }}
@@ -42,11 +43,14 @@
                     <div class="footer_description">{{footersettings.footer_description}}</div>
                     {{/footersettings.footer_description}}
                 </div>
+
                 {{#footersettings.footer_menu}}
-                <div class="footer-menu {{label_class}} ">
+                <div class="footer-menu footer-menu-primary {{label_class}} ">
+                    {{#label}}
                     <div class="label">
                         {{label}}
                     </div>
+                    {{/label}}
                     {{#items_present}}
                     <ul class="items">
                     {{#items}}
@@ -58,6 +62,7 @@
                     {{/items_present}}
                 </div>
                 {{/footersettings.footer_menu}}
+
                 {{#footersettings.footer_contact_section}}
                 {{^contacstettings.isEmpty}}
                 <div class="footer-menu contact-detail">
@@ -77,7 +82,7 @@
                         {{/contacstettings.location_address}}
                         {{#contacstettings.mail}}
                         <li class="mail">
-                           Email: <a href="mailto:{{mail}}">{{contacstettings.mail}}</a>
+                           Email: <a href="mailto:{{contacstettings.mail}}">{{contacstettings.mail}}</a>
                         </li>
                         {{/contacstettings.mail}}
                         {{#contacstettings.website}}
@@ -134,11 +139,31 @@
                 </div>
                 {{/contacstettings.isEmpty}}
                 {{/footersettings.footer_contact_section}}
+
+                 {{#footersettings.footer_menu_second}}
+                <div class="footer-menu footer-menu-secondary {{label_class}} ">
+                    {{#label}}
+                    <div class="label">
+                        {{label}}
+                    </div>
+                    {{/label}}
+
+                    {{#items_present}}
+                    <ul class="items">
+                    {{#items}}
+                        <li>
+                            <a href="{{link}}">{{title}}</a>
+                        </li>
+                    {{/items}}
+                    </ul>
+                    {{/items_present}}
                 </div>
+                {{/footersettings.footer_menu_second}}
+
             </div>
         </div>
     </div>
-    <div class="copyright px-3">
+    <div class="copyright px-3 footer-copyright-wrapper">
         <div class="container footer-copyright">
         {{footersettings.copyright}}
         </div>    

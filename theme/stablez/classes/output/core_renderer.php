@@ -303,6 +303,7 @@ class core_renderer extends \theme_boost\output\core_renderer {
 	 * 
 	 */
 	public function get_logo_url($maxwidth = null, $maxheight = 200) {
+		// $theme_logo = theme_settings_service::get_instance()->setting('logo', 'logo');
 		$theme_logo = get_config('theme_stablez', 'logo');
 		if ($theme_logo) {
 			// Use $CFG->themerev to prevent browser caching when the file changes.
@@ -366,10 +367,10 @@ class core_renderer extends \theme_boost\output\core_renderer {
 		$context->skiptitle = strip_tags($bc->title);
 		$context->showskiplink = !empty($context->skiptitle);
 		$context->arialabel = $bc->arialabel;
-		$context->ariarole = !empty($bc->attributes['role']) ? $bc->attributes['role'] : '';
+		$context->ariarole = !empty($bc->attributes['role']) ? $bc->attributes['role'] : 'complementary';
 		$context->class = $bc->attributes['class'];
 		$context->type = $bc->attributes['data-block'];
-		$context->title = (string) $bc->title;
+		$context->title = format_string((string)$bc->title);
 		$context->showtitle = $context->title !== '';
 		$context->content = $bc->content;
 		$context->annotation = $bc->annotation;

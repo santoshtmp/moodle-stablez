@@ -35,20 +35,6 @@ defined('MOODLE_INTERNAL') || die;
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 class stablezhelpers {
-
-    /**
-     * security_header
-     */
-    public static function security_header() {
-        // security header
-        @header('X-Frame-Options: SAMEORIGIN');
-        @header('Referrer-Policy: strict-origin-when-cross-origin');
-        @header('X-Content-Type-Options: nosniff');
-        @header('X-XSS-Protection: 1; mode=block');
-        @header("Content-Security-Policy: frame-ancestors 'self';");
-        @header('Strict-Transport-Security: max-age=31536000; includeSubDomains');
-    }
-
     /**
      * set_extra_css_js
      * @param string $path path to your theme example '/theme/yourtheme'

@@ -405,13 +405,26 @@ class theme_settings {
         }
 
         /**
-         * 
-         * 
+         * -------------------- Setting heading :: Start Guideline --------------------
          */
         $name = 'theme_stablez/start_guideline';
         $heading = 'Start Guideline';
         $information = '';
         $setting = new admin_setting_heading($name, $heading, $information);
+        $frontpage_tab->add($setting);
+
+        $name = 'theme_stablez/start_guideline_heading';
+        $title = 'Enter start guideline heading';
+        $description = '';
+        $default = '';
+        $setting = new admin_setting_configtext($name, $title, $description, $default);
+        $frontpage_tab->add($setting);
+
+        $name = 'theme_stablez/start_guideline_desc';
+        $title = 'Enter start guideline description';
+        $description = '';
+        $default = "";
+        $setting = new admin_setting_configtextarea($name, $title, $description, $default, $paramtype = PARAM_RAW, $cols = '60', $rows = '4');
         $frontpage_tab->add($setting);
 
         $name = 'theme_stablez/start_guideline_item_count';
@@ -435,7 +448,7 @@ class theme_settings {
             $fileid = 'start_guideline_image_' . $i;
             $name = 'theme_stablez/' . $fileid;
             $title = 'Enter Image Icon ' . $i;
-            $description = '';
+            $description = 'Example icon: /theme/stablez/pix/icons/start-guideline-user.svg /theme/stablez/pix/icons/start-guideline-circle-check.svg /theme/stablez/pix/icons/start-guideline-web.svg';
             $opts = array('accepted_types' => ['image'], 'maxfiles' => 1);
             $setting = new admin_setting_configstoredfile($name, $title, $description, $fileid, 0, $opts);
             $frontpage_tab->add($setting);
@@ -451,7 +464,7 @@ class theme_settings {
             $title = 'Enter start guideline description ' . $i;
             $description = 'start guideline description';
             $default = "";
-            $setting = new admin_setting_configtextarea($name, $title, $description, $default, $paramtype = PARAM_RAW, $cols = '60', $rows = '4');
+            $setting = new admin_setting_confightmleditor($name, $title, $description, $default, $paramtype = PARAM_RAW);
             $frontpage_tab->add($setting);
         }
 
@@ -482,6 +495,17 @@ class theme_settings {
         $choices = [
             'default' => 'Default Layout',
             'card' => 'Card Layout', // add stablez-course-card css class
+        ];
+        $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
+        $courses_tab->add($setting);
+
+        $name = 'theme_stablez/view_all_courses_ono_category';
+        $title = 'Initial category course view';
+        $description = 'When there is no category selected, display ALL courses from all categories in one list.';
+        $default = '0';
+        $choices = [
+            '0' => 'No',
+            '1' => 'Yes',
         ];
         $setting = new admin_setting_configselect($name, $title, $description, $default, $choices);
         $courses_tab->add($setting);
@@ -626,6 +650,45 @@ class theme_settings {
             }
         }
 
+        // ------------------------------------------------------------------------------------------
+
+        $name = 'theme_stablez/footer_menu_second';
+        $heading = 'Secondary Footer Menu';
+        $information = '';
+        $setting = new admin_setting_heading($name, $heading, $information);
+        $footer_tab->add($setting);
+
+        $name = 'theme_stablez/footer_menu_second_number';
+        $title = "Secondary footer Menu Number ";
+        $description = "This define the number of footer menu.";
+        $default = 1;
+        $setting = new admin_setting_configtext($name, $title, $description, $default);
+        $footer_tab->add($setting);
+        // 
+        $footer_menu_number = (int)get_config('theme_stablez', 'footer_menu_second_number');
+        if ($footer_menu_number > 0) {
+            for ($i = 1; $i <= $footer_menu_number; $i++) {
+
+                $setting = new admin_setting_heading('footer_menu_second_separator' . $i, '', '<hr>');
+                $footer_tab->add($setting);
+
+                $name = 'theme_stablez/footer_menu_second_label_' . $i;
+                $title = "Footer Menu Label " . $i;
+                $description = "";
+                $default = 'Quick Link';
+                $setting = new admin_setting_configtext($name, $title, $description, $default);
+                $footer_tab->add($setting);
+
+                $name = 'theme_stablez/footer_menu_second_items_' . $i;
+                $title = 'Footer Menu Items';
+                $description = 'Each menu item should be defined on a new line. Additionally, the item title and link must be separated by "|". For Example: <br>Course|/course/index.php<br>FAQs|https://moodle-site.com/faq<br>';
+                $default = "Course|/course/index.php\nFAQs|https://moodle-site.com/faq";
+                $setting = new admin_setting_configtextarea($name, $title, $description, $default);
+                $setting->set_updatedcallback('theme_reset_all_caches');
+                $footer_tab->add($setting);
+            }
+        }
+
 
         // ------------------------------------------------------------------------------------------
 
@@ -742,14 +805,14 @@ class theme_settings {
         $setting = new admin_setting_configcolourpicker($name, $title, $description, '#2f5d88'); // 
         $setting->set_updatedcallback('theme_reset_all_caches');
         $style_script_tab->add($setting);
-      
+
         $name = 'theme_stablez/backgroundcolor';
         $title = "Primary background Color";
         $description = "The value is present as '\$background' variable. This will change the background color of the site. If you want to change the color of specific element, you can use the custom CSS code section below.";
         $setting = new admin_setting_configcolourpicker($name, $title, $description, '#eef5f9'); // 
         $setting->set_updatedcallback('theme_reset_all_caches');
         $style_script_tab->add($setting);
-      
+
         $name = 'theme_stablez/headerbgcolor';
         $title = "Header background Color";
         $description = "The value is present as '\$headerbgcolor' variable. This will change the header bg color color of the site. If you want to change the color of specific element, you can use the custom CSS code section below.";
