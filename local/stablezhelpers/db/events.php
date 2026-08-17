@@ -157,10 +157,10 @@ $observers = [
     ],
 
     // Course module viewed.
-    // [
-    //     'eventname' => '\core\event\course_module_viewed',
-    //     'callback'  => '\local_stablezhelpers\event\module_event_observer::course_module_viewed',
-    // ],
+    [
+        'eventname' => '\core\event\course_module_viewed',
+        'callback'  => '\local_stablezhelpers\event\module_event_observer::course_module_viewed',
+    ],
 
     // Course module completion updated.
     // [

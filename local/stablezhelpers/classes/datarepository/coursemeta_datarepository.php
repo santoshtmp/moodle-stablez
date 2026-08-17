@@ -57,7 +57,7 @@ class coursemeta_datarepository {
             'meta_value'
         );
 
-        return $record ? $record->meta_value : false;
+        return $record ? $record->meta_value : null;
     }
 
     /**

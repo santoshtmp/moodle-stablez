@@ -30,6 +30,7 @@ namespace local_stablezhelpers\hooks;
 defined('MOODLE_INTERNAL') || die();
 
 use core\hook\output\before_http_headers;
+use local_stablezhelpers\external\course\general_section_setting;
 use local_stablezhelpers\local\handler\google_translate_handler;
 
 /**
@@ -101,7 +102,14 @@ class hook_callbacks {
 			// Do nothing during installation or upgrade.
 			return;
 		}
+
+		// course general_section settings
+		general_section_setting::setting_hideshow();
+		
+		// Apply google translate if enable
 		google_translate_handler::google_translate_lang();
+
+		// add to footer
 		$output = "";
 		$hook->add_html($output);
 	}
@@ -130,5 +138,23 @@ class hook_callbacks {
 	 * @param \core\hook\after_config $hook
 	 */
 	public static function after_config(\core\hook\after_config $hook): void {
+	}
+
+	/**
+	 * Allow other plugins/themes to modify content view template data.
+	 *
+	 * @param array $templatecontent Reference to the template data
+	 * @param \stdClass $content The content record
+	 * @param int $id Content ID
+	 */
+	public static function modify_content_view_template(array &$templatecontent, \stdClass $content, int $id): void {
+		// Call all plugins that implement the callback
+		$pluginsfunction = get_plugins_with_function('local_stablezhelpers_modify_content_view_template');
+
+		foreach ($pluginsfunction as $plugins) {
+			foreach ($plugins as $pluginfunction) {
+				$pluginfunction($templatecontent, $content, $id);
+			}
+		}
 	}
 }

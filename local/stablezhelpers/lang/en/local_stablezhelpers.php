@@ -84,11 +84,6 @@ $string['store_session'] = 'Store session data (mch_data parameter)';
 $string['login_user'] = 'Login user with verification hash';
 $string['logout_user'] = 'Logout user with verification hash';
 
-// Documentation.
-$string['documentation'] = 'Documentation';
-$string['view_full_guide'] = 'View Full Integration Guide';
-$string['docs_desc'] = 'Complete guide with PHP, Node.js, and Python examples.';
-
 // Supported systems.
 $string['supported_systems'] = 'Supported Systems';
 $string['supported_systems_desc'] = 'This plugin works with WordPress, Drupal, Joomla, custom PHP apps, Node.js, Python, and any system with OpenSSL support.';
@@ -112,12 +107,13 @@ $string['sso_shared_secret_desc'] = 'Encryption key for SSO communication. Must 
 // GENERAL STRINGS
 // =============================================================================
 
-// Common UI labels.
+// Common labels.
 $string['sn'] = 'S.N';
 $string['name'] = 'Name';
 $string['title'] = 'Title';
 $string['description'] = 'Description';
 $string['image'] = 'Image';
+$string['images'] = 'Images';
 $string['content'] = 'Content';
 $string['status'] = 'Status';
 $string['type'] = 'Type';
@@ -125,8 +121,10 @@ $string['author'] = 'Author';
 $string['modified'] = 'Modified';
 $string['actions'] = 'Actions';
 $string['back'] = 'Back';
+$string['viewallcontent'] = 'View all content';
 $string['none'] = 'None';
 $string['unknown'] = 'Unknown';
+$string['editcustomcleanurl'] = 'Edit Custom Clean URL';
 
 // Status values.
 $string['draft'] = 'Draft';

@@ -219,7 +219,6 @@ class get_info extends external_api {
             'firstaccess' => new external_value(core_user::get_property_type('firstaccess'), 'first access to the site (0 if never)', VALUE_OPTIONAL),
             'lastaccess'  => new external_value(core_user::get_property_type('lastaccess'), 'last access to the site (0 if never)', VALUE_OPTIONAL),
             'lastlogin' => new external_value(PARAM_INT, 'Last login', VALUE_OPTIONAL),
-            'interests' => new external_value(PARAM_RAW, 'Interests', VALUE_OPTIONAL),
             'roles' => new external_multiple_structure(
                 new external_single_structure(
                     [

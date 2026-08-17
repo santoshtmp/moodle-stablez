@@ -27,6 +27,7 @@
 
 namespace local_stablezhelpers\event;
 
+use local_stablezhelpers\datarepository\usermeta_datarepository;
 use local_stablezhelpers\local\stablezhelpers;
 
 defined('MOODLE_INTERNAL') || die();
@@ -48,15 +49,15 @@ class module_event_observer {
      */
     public static function course_module_created(\core\event\course_module_created $event): void {
         $courseid = $event->courseid;
-        $cmid = $event->objectid;
+        $cmid = $event->contextinstanceid;
         $modulename = $event->other['modulename'];
         $userid = $event->userid;
         $target = $event->target;
         $eventname = $event::class;
 
         // Log the module creation event with details.
-        $log_message = "event={$eventname}, target={$target}, CourseID={$courseid}, CMID={$cmid}, ModuleName={$modulename}, UserID={$userid}";
-        stablezhelpers::set_log_message($log_message, 'log');
+        // $log_message = "event={$eventname}, target={$target}, CourseID={$courseid}, CMID={$cmid}, ModuleName={$modulename}, UserID={$userid}";
+        // stablezhelpers::set_log_message($log_message, 'log');
     }
 
     /**
@@ -69,17 +70,14 @@ class module_event_observer {
      */
     public static function course_module_updated(\core\event\course_module_updated $event): void {
         $courseid = $event->courseid;
-        $cmid = $event->objectid;
+        $cmid = $event->contextinstanceid;
         $modulename = $event->other['modulename'];
         $userid = $event->userid;
         $target = $event->target;
         $eventname = $event::class;
+        // Log the event with details.
         // $event_data = $event->get_data();
         // $cm = get_coursemodule_from_id($modulename, $cmid, 0, false, MUST_EXIST);
-
-        // Log the event with details.
-        $log_message = "event={$eventname}, target={$target}, CourseID={$courseid}, CMID={$cmid}, ModuleName={$modulename}, UserID={$userid}";
-        stablezhelpers::set_log_message($log_message, 'log');
     }
 
     /**
@@ -92,15 +90,11 @@ class module_event_observer {
      */
     public static function course_module_deleted(\core\event\course_module_deleted $event): void {
         $courseid = $event->courseid;
-        $cmid = $event->objectid;
+        $cmid = $event->contextinstanceid;
         $modulename = $event->other['modulename'];
         $userid = $event->userid;
         $target = $event->target;
         $eventname = $event::class;
-
-        // Log the event with details.
-        $log_message = "event={$eventname}, target={$target}, CourseID={$courseid}, CMID={$cmid}, ModuleName={$modulename}, UserID={$userid}";
-        stablezhelpers::set_log_message($log_message, 'log');
     }
 
     /**
@@ -112,11 +106,39 @@ class module_event_observer {
      * @return void
      */
     public static function course_module_viewed(\core\event\course_module_viewed $event): void {
-        $cmid = $event->objectid;
-        $courseid = $event->courseid;
+        try {
+            global $USER;
+            $cmid = $event->contextinstanceid;
+            $courseid = $event->courseid;
 
-        // Track module view if needed.
-        // mtrace("  stablezhelpers: Course module {$cmid} viewed in course {$courseid}");
+            // Track module view if needed.
+            if ($courseid  && $cmid && $USER->id > 1) {
+                /** @var \context $coursecontext Course context instance. */
+                $coursecontext = \context_course::instance($courseid);
+                $is_enrolled = is_enrolled($coursecontext, $USER->id);
+                if ($is_enrolled) {
+                    $modinfo = get_fast_modinfo($courseid);
+                    $cm = $modinfo->get_cm($cmid);
+                    $dontallowedmodules = [
+                        'label',
+                        'url',
+                        'resource',
+                        'imscp',
+                    ];
+                    if ($cm->uservisible && !in_array($cm->modname, $dontallowedmodules, true)) {
+                        $key = 'stablez_resume_course';
+                        $data = json_decode(
+                            usermeta_datarepository::get($USER->id, $key),
+                            true
+                        );
+                        $data[$courseid] = $cmid;
+                        usermeta_datarepository::set($USER->id, $key, json_encode($data));
+                    }
+                }
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
+        }
     }
 
     /**
@@ -128,7 +150,7 @@ class module_event_observer {
      * @return void
      */
     public static function course_module_completion_updated(\core\event\course_module_completion_updated $event): void {
-        $cmid = $event->objectid;
+        $cmid = $event->contextinstanceid;
         $userid = $event->relateduserid;
 
         // Track completion if needed.

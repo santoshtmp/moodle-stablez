@@ -58,6 +58,16 @@ class block_handler {
      */
     protected $context;
 
+    /**
+     * block component block_stablezblocks.
+     */
+    public const COMPONENT = 'block_stablezblocks';
+
+    /**
+     * File area name.
+     */
+    public const FILEAREA_FIELD_GALLERY = 'field_gallery';
+
 
     /**
      * init
@@ -82,6 +92,7 @@ class block_handler {
             'contact_us' => "Contact Us",
             'start_guideline' => "Start Guideline",
             'title_only' => "Title Only",
+            'gallery' => 'Gallery',
         ];
         // array_multisort(array_column($block_types, 'name'), SORT_ASC, $block_types);;
         ksort($block_types);
@@ -102,6 +113,84 @@ class block_handler {
         ksort($course_meta_var);
 
         return $course_meta_var;
+    }
+
+    /**
+     * Get image options for file manager/editor.
+     *
+     * @param context $context      The context the filemanager applies to.
+     * @param int     $maxfiles     Max number of files allowed.
+     * @param int|string $maxsize   Max size per file. Either bytes (int) or
+     *                              a human string like '3MB', '512KB', '1GB'.
+     * @param array|null $accepted_types
+     * @return array
+     */
+    public static function get_filemanager_options(
+        $context = null,
+        $maxfiles = 1,
+        $maxsize = null,
+        $accepted_types = null
+    ): array {
+        global $CFG;
+
+        if ($context === null) {
+            $context = \context_system::instance();
+        }
+
+        if ($accepted_types === null) {
+            $accepted_types = ['image'];
+        }
+
+        // Resolve maxbytes: convert human-readable size string to bytes if needed.
+        if ($maxsize === null) {
+            $maxbytes = $CFG->maxbytes;
+        } else if (is_numeric($maxsize)) {
+            $maxbytes = (int) $maxsize;
+        } else {
+            $maxbytes = self::size_string_to_bytes($maxsize);
+        }
+
+        // Ensure webp is registered — safe no-op if it already exists.
+        stablezhelpers::ensure_webp_registered();
+
+        // Never allow more than the site-wide upload limit.
+        $maxbytes = get_max_upload_file_size($CFG->maxbytes, $maxbytes);
+
+        return [
+            'maxfiles'       => $maxfiles,
+            'maxbytes'       => $maxbytes,
+            'trusttext'      => true,
+            'noclean'        => true,
+            'context'        => $context,
+            'subdirs'        => false,
+            'accepted_types' => $accepted_types,
+        ];
+    }
+
+    /**
+     * Convert a human-readable size string ('3MB', '512KB', '1GB') to bytes.
+     *
+     * @param string $size
+     * @return int
+     */
+    protected static function size_string_to_bytes(string $size): int {
+        $size = trim($size);
+        if (!preg_match('/^([\d.]+)\s*(B|KB|MB|GB)?$/i', $size, $m)) {
+            // Fallback if the format is unrecognised.
+            return 0;
+        }
+
+        $value = (float) $m[1];
+        $unit  = strtoupper($m[2] ?? 'B');
+
+        $multipliers = [
+            'B'  => 1,
+            'KB' => 1024,
+            'MB' => 1024 * 1024,
+            'GB' => 1024 * 1024 * 1024,
+        ];
+
+        return (int) round($value * $multipliers[$unit]);
     }
 
     /**
@@ -130,6 +219,47 @@ class block_handler {
      */
     protected function title_only_block_content() {
         return ' ';
+    }
+
+    /**
+     * gallery block 
+     */
+    protected function gallery_block_content() {
+        global $OUTPUT;
+        $template_content = [];
+        $template_content['block_stablez_id'] = $this->block_settings->block_stablez_id;
+
+        $fs = get_file_storage();
+        $files = $fs->get_area_files(
+            $this->block_settings->context->id,
+            block_handler::COMPONENT,
+            block_handler::FILEAREA_FIELD_GALLERY,
+            $this->block_settings->instance->id,
+            'sortorder, filename',
+            false
+        );
+
+        if ($files) {
+            $template_content['is_field_gallery'] = true;
+            foreach ($files as $file) {
+                $url = \moodle_url::make_pluginfile_url(
+                    $file->get_contextid(),
+                    $file->get_component(),
+                    $file->get_filearea(),
+                    $file->get_itemid(),
+                    $file->get_filepath(),
+                    $file->get_filename(),
+                    false
+                );
+
+                $alt = pathinfo($file->get_filename(), PATHINFO_FILENAME);
+                $alt = format_string($alt ?: get_string('image'));
+                $template_content['field_gallery'][] = ['url' => $url, 'alt' => $alt];
+            }
+        }
+
+
+        return $OUTPUT->render_from_template("theme_stablez/blocks/gallery", $template_content);
     }
 
     /**
