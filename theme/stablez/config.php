@@ -84,6 +84,12 @@ $THEME->layouts = [
         'defaultregion' => 'side-pre',
         'options' => array('langmenu' => true),
     ),
+    'coursecategory' => array(
+        'file' => 'drawers.php',
+        'regions' => $block_regions,
+        'defaultregion' => 'side-pre',
+        'options' => array('langmenu' => true),
+    ),
     // Part of course, typical for modules - default page layout if $cm specified in require_login().
     'incourse' => array(
         'file' => 'drawers.php',

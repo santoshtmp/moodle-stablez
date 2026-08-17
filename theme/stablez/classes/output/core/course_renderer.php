@@ -90,6 +90,121 @@ class course_renderer extends \core_course_renderer {
             $output .= $this->box($description, array('class' => 'generalbox info'));
         }
 
+
+        /*
+        * ================================================================
+        * TOP LEVEL /course/index.php
+        * ================================================================
+        *
+        * When there is no category selected, display ALL courses from
+        * all categories in one list.
+        */
+        if (!$coursecat->id) {
+            $theme = theme_settings_service::get_instance()->theme;
+            $view_all_courses_ono_category = $theme->settings->view_all_courses_ono_category ?? '';
+            if ($view_all_courses_ono_category == '1') {
+                $this->page->set_heading(get_string('courses'));
+
+                // base url
+                $baseurl = new moodle_url('/course/index.php');
+                // Pagination.
+                $perpage = optional_param('perpage', $CFG->coursesperpage, PARAM_INT);
+                $page = optional_param('page', 0, PARAM_INT);
+                // Prevent invalid values.
+                if ($perpage <= 0) {
+                    $perpage = $CFG->coursesperpage;
+                }
+                if ($page < 0) {
+                    $page = 0;
+                }
+
+                /*
+            * Get all courses visible to the current user.
+            *
+            * recursive = true means courses from child categories
+            * are also included.
+            */
+                $courses = $coursecat->get_courses(
+                    [
+                        'recursive' => true,
+                        'idonly' => false,
+                    ]
+                );
+                // Remove the Moodle front page course.
+                if (isset($courses[SITEID])) {
+                    unset($courses[SITEID]);
+                }
+                // Total number of courses before pagination.
+                $totalcourses = count($courses);
+
+                // Apply Pagination.
+                $offset = $page * $perpage;
+                $courses = array_slice(
+                    $courses,
+                    $offset,
+                    $perpage,
+                    true
+                );
+
+                // Course display options.
+                $coursedisplayoptions = [
+                    'limit' => $perpage,
+                    'offset' => $offset,
+                    'paginationurl' => $baseurl,
+                ];
+
+                // Preserve perpage in pagination URL.
+                if ($perpage != $CFG->coursesperpage) {
+                    $coursedisplayoptions['paginationurl']->param(
+                        'perpage',
+                        $perpage
+                    );
+                }
+
+                /*
+            * Render ALL courses as one course list.
+            *
+            * The category tree is intentionally NOT rendered here.
+            */
+                if (!empty($courses)) {
+                    $output .= $this->courses_list(
+                        $courses,
+                        $coursedisplayoptions,
+                        'courses-list-wrapper',
+                    );
+                } else {
+                    $output .= $this->notification(
+                        get_string('nocourses'),
+                        \core\output\notification::NOTIFY_INFO
+                    );
+                }
+
+                // Render pagination if necessary.
+                if ($totalcourses > $perpage) {
+                    if ($perpage != $CFG->coursesperpage) {
+                        $baseurl->param('perpage', $perpage);
+                    }
+                    $output .= $this->paging_bar(
+                        $totalcourses,
+                        $page,
+                        $perpage,
+                        $baseurl
+                    );
+                }
+
+                return $output;
+            }
+        }
+
+        /*
+        * ================================================================
+        * CATEGORY PAGE
+        * ================================================================
+        *
+        * If a specific category was selected, keep Moodle's normal output.
+        * 
+        */
+
         // Prepare parameters for courses and categories lists in the tree
         $chelper->set_show_courses(self::COURSECAT_SHOW_COURSES_AUTO)
             ->set_attributes(array('class' => 'category-browse category-browse-' . $coursecat->id));

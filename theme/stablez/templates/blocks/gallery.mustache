@@ -15,41 +15,19 @@
     along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 }}
 {{!
-    @template theme_stablez/blocks/start-guideline
+    @template theme_stablez/blocks/gallery
 }}
 
 
-
 <div {{#block_stablez_id}}id="block-stablez-{{block_stablez_id}}" {{/block_stablez_id}}
- class="start-guideline">
-    {{#start_guideline_heading}}
-    <div class="start-guideline-heading">
-        <h2>{{start_guideline_heading}}</h2>
-    </div>
-    {{/start_guideline_heading}}
-
-    {{#start_guideline_desc}}
-    <div class="start-guideline-description">
-        <p>{{start_guideline_desc}}</p>
-    </div>
-    {{/start_guideline_desc}}
-
-    <div class="row">   
-        {{#start_guideline}}
-        <div class="start-guideline-item"> 
-            {{#image}}
-             <img src="{{image}}" alt="icon">
-            {{/image}}
-
-            {{#title}}
-            <p class="title"> {{title}} </p>
-            {{/title}}
-
-            {{#desc}}
-            <div class="description"> {{{desc}}} </div>
-            {{/desc}}
+    class="block-stablez-gallery">
+    {{#is_field_gallery}}
+    <div class="gallery-collection">
+        {{#field_gallery}}
+        <div class="gallery-image image-1">
+            <img src="{{url}}" alt="{{alt}}">
         </div>
-        {{/start_guideline}}
+        {{/field_gallery}}
     </div>
-    
+    {{/is_field_gallery}}
 </div>

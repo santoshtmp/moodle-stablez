@@ -22,6 +22,7 @@
  */
 
 use core\output\theme_config;
+use theme_stablez\local\service\theme_settings_service;
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -245,4 +246,36 @@ function theme_stablez_user_preferences(): array {
             'permissioncallback' => [core_user::class, 'is_current_user'],
         ],
     ];
+}
+
+/**
+ * Add custom body classes based on content view page.
+ *
+ * @param moodle_page $page
+ */
+function theme_stablez_page_init(moodle_page $page) {
+
+    // Only run on content view page
+    if ($page->pagetype === 'content-view') {
+
+        $id = $page->subpage; // You already set this: $PAGE->set_subpage((string)$id);
+
+        if ($id == '2' || $id == '1') {
+            // $page->add_body_class('hide-fullheader');
+        }
+    }
+}
+
+
+/**
+ * Modify content view template data.
+ *
+ * @param array $templatecontent
+ * @param \stdClass $content
+ * @param int $id
+ */
+function theme_stablez_local_stablezhelpers_modify_content_view_template(array &$templatecontent, \stdClass $content, int $id) {
+    if ($id == 2) {
+        $templatecontent = array_merge($templatecontent, theme_settings_service::get_instance()->contact_details_settings());
+    }
 }

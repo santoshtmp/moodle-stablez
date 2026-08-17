@@ -104,15 +104,16 @@ class breadcrumb_navbar extends \theme_boost\boostnavbar
                 // Remove if it is a course category breadcrumb node.
                 $this->remove($item->key, \breadcrumb_navigation_node::TYPE_CATEGORY);
             }
-            // $courseformat = course_get_format($this->page->course);
-            // $removesections = $courseformat->can_sections_be_removed_from_navigation();
-            // if ($removesections) {
-            //     // If the course sections are removed, we need to add the anchor of current section to the Course.
-            //     $coursenode = $this->get_item($this->page->course->id);
-            //     if (!is_null($coursenode) && $this->page->cm->sectionnum !== null) {
-            //         $coursenode->action = course_get_format($this->page->course)->get_view_url($this->page->cm->sectionnum);
-            //     }
-            // }
+            
+            $courseformat = course_get_format($this->page->course);
+            $removesections = $courseformat->can_sections_be_removed_from_navigation();
+            if ($removesections) {
+                // If the course sections are removed, we need to add the anchor of current section to the Course.
+                $coursenode = $this->get_item($this->page->course->id);
+                if (!is_null($coursenode) && $this->page->cm->sectionnum !== null) {
+                    $coursenode->action = course_get_format($this->page->course)->get_view_url($this->page->cm->sectionnum);
+                }
+            }
         }
 
         if ($this->page->context->contextlevel == CONTEXT_SYSTEM) {

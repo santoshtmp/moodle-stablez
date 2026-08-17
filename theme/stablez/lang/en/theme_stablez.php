@@ -40,7 +40,7 @@ $string['login_to_your_account'] = "Login to your account";
 $string['dont_have_an_account'] = "Don’t have an account?";
 
 $string['view_course'] = 'View Course';
-$string['view_all_course'] = 'View All Course';
+$string['view_all_course'] = 'View All Courses';
 
 
 $string['course_progress'] = "Course's progress";
