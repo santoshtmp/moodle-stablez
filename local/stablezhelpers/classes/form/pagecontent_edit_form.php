@@ -158,20 +158,19 @@ class pagecontent_edit_form extends \moodleform {
 
         // image
         if (isset($contentdata->image) && $contentdata->image) {
-            $image_file = $DB->get_record('files', ['id' => $contentdata->image]);
-            if ($image_file) {
-                $draftitemid = $image_file->itemid;
-                $image_options = page_manager::get_image_filemanager_options();
-                file_prepare_draft_area(
-                    $draftitemid,
-                    $image_file->contextid,
-                    $image_file->component,
-                    $image_file->filearea,
-                    $image_file->itemid,
-                    $image_options
-                );
-                $data['image_filemanager'] =  $draftitemid;
-            }
+            $draftitemid = file_get_submitted_draft_itemid('image_filemanager');
+            $image_options = page_manager::get_image_filemanager_options();
+            $component = 'local_stablezhelpers';
+            $filearea = 'content_page_image';
+            file_prepare_draft_area(
+                $draftitemid,
+                \context_system::instance()->id,
+                $component,
+                $filearea,
+                $contentdata->id,
+                $image_options
+            );
+            $data['image_filemanager'] =  $draftitemid;
         }
 
         return $data;

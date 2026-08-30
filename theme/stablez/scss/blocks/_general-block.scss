@@ -1,0 +1,63 @@
+.block-region section.block {
+    margin-bottom: 32px !important;
+    border: 1px solid #c8c6c9;
+    border-radius: 8px;
+    padding: 32px 40px !important;
+    background: $white;
+    color: #5f5f63;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.5;
+
+    &>.card-body {
+        padding: 0 !important;
+    }
+
+    .block-header .card-title {
+        font-weight: 600;
+        font-size: 22px;
+        line-height: 1.2;
+        color: $N-50;
+        margin-bottom: 16px;
+    }
+
+    .block-header {
+        margin-bottom: 0 !important;
+
+        h3.card-title {
+            margin-bottom: 32px;
+            display: inline-block !important;
+        }
+    }
+
+    .text-truncate {
+        white-space: unset;
+    }
+}
+
+.stablez-block-bg-transparent {
+    background-color: transparent;
+    border: 0;
+    border-radius: 0;
+}
+
+#block-region-below-content {
+    margin-bottom: 42px;
+}
+
+#block-region-at_fullheader {
+    .card {
+        color: unset;
+        background-color: unset;
+    }
+}
+
+.stablez-block-title-only {
+    .block-header {
+        margin-bottom: 0;
+    }
+
+    .card-body {
+        padding: 0 !important;
+    }
+}

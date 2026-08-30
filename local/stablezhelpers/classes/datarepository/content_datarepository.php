@@ -25,8 +25,6 @@
 
 namespace local_stablezhelpers\datarepository;
 
-use local_stablezhelpers\content\page_manager;
-
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -130,8 +128,8 @@ class content_datarepository {
         global $DB;
 
         $data = $DB->get_record(self::$tablename, ['id' => $id], $fields, $strictness);
-        if ($data->image) {
-            $data->image_url = page_manager::get_image_file_url($data->image);
+        if (!$data) {
+            return false;
         }
         return $data;
     }

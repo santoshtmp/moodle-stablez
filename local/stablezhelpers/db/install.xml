@@ -90,5 +90,30 @@
                 <INDEX NAME="metakey_ix" UNIQUE="false" FIELDS="meta_key"/>
             </INDEXES>
         </TABLE>
+
+        <TABLE NAME="local_stablezhelpers_contact" COMMENT="Stores contact form submissions">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Unique identifier for the contact form submission"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Moodle user ID of the submitter; zero for guest submissions"/>
+                <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Name provided by the person submitting the contact form"/>
+                <FIELD NAME="email" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Email address provided by the person submitting the contact form"/>
+                <FIELD NAME="subject" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Subject of the contact form submission"/>
+                <FIELD NAME="message" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Message content submitted through the contact form"/>
+                <FIELD NAME="status" TYPE="int" LENGTH="2" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Submission status: 0 for unread, 1 for read, and 2 for replied"/>
+                <FIELD NAME="other" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Other contact form information"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Unix timestamp when the submission was created"/>
+                <FIELD NAME="timemodified" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Unix timestamp when the submission was last modified"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id" COMMENT="Primary key for the contact form submission"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="email_idx" UNIQUE="false" FIELDS="email" COMMENT="Improves performance when searching submissions by email address"/>
+                <INDEX NAME="userid_idx" UNIQUE="false" FIELDS="userid" COMMENT="Improves performance when filtering submissions by Moodle user ID"/>
+                <INDEX NAME="status_idx" UNIQUE="false" FIELDS="status"/>
+                <INDEX NAME="timecreated_idx" UNIQUE="false" FIELDS="timecreated"/>
+            </INDEXES>
+        </TABLE>
+
     </TABLES>
 </XMLDB>

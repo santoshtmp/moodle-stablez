@@ -216,39 +216,42 @@ class block_stablezblocks_edit_form extends block_edit_form {
      */
     public function get_data() {
         $data = parent::get_data();
-        return $data;
-    }
-
-    /**
-     * Prepare existing files when editing the block.
-     */
-    public function set_data($defaults) {
         if ($this->block->instance->id) {
-            $field = 'galleryimages';
-            $config_field = 'config_galleryimages';
-            $draftitemid = file_get_submitted_draft_itemid($config_field);
-            file_prepare_draft_area(
-                $draftitemid,
-                $this->block->context->id,
-                block_handler::COMPONENT,
-                block_handler::FILEAREA_FIELD_GALLERY,
-                $this->block->instance->id,
-                block_handler::get_filemanager_options($this->block->context, 9, '3MB')
-            );
-            $defaults->$config_field = $draftitemid;
-            $this->block->config->$field = $draftitemid;
-
-            if ($data = parent::get_data()) {
-                file_save_draft_area_files(
-                    $data->$config_field,
+            if ('gallery' === $this->block->config->stablez_block_type) {
+                $field = 'galleryimages';
+                $config_field = 'config_galleryimages';
+                $draftitemid = file_get_submitted_draft_itemid($config_field);
+                $options = block_handler::get_filemanager_options($this->block->context, 9, '3MB');
+                
+                file_prepare_draft_area(
+                    $draftitemid,
                     $this->block->context->id,
                     block_handler::COMPONENT,
                     block_handler::FILEAREA_FIELD_GALLERY,
                     $this->block->instance->id,
-                    block_handler::get_filemanager_options($this->block->context, 9, '3MB')
+                    $options
                 );
+                $this->block->config->$field = $draftitemid;
+
+                if ($data) {
+                    file_save_draft_area_files(
+                        $data->$config_field,
+                        $this->block->context->id,
+                        block_handler::COMPONENT,
+                        block_handler::FILEAREA_FIELD_GALLERY,
+                        $this->block->instance->id,
+                        $options
+                    );
+                }
             }
         }
+        return $data;
+    }
+
+    /**
+     * set data.
+     */
+    public function set_data($defaults) {
         parent::set_data($defaults);
     }
 }

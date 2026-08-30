@@ -155,23 +155,51 @@ class page_manager {
     /**
      * Get image file URL from file ID.
      *
-     * @param int $imagefileid Image file ID.
+     * @param object $data.
      * @return \moodle_url|false
      */
-    public static function get_image_file_url($imagefileid) {
-        global $DB;
-        $image_file = $DB->get_record('files', ['id' => $imagefileid]);
-        if ($image_file) {
-            return \moodle_url::make_pluginfile_url(
-                $image_file->contextid,
-                $image_file->component,
-                $image_file->filearea,
-                $image_file->itemid,
-                $image_file->filepath,
-                $image_file->filename
+    public static function get_image_file_url($data) {
+        $output_files = [];
+        $component = 'local_stablezhelpers';
+        $filearea = 'content_page_image';
+        $context = \context_system::instance();
+        $fs = get_file_storage();
+
+        $files = $fs->get_area_files(
+            $context->id,
+            $component,
+            $filearea,
+            $data->id,
+            'sortorder, filename',
+            false
+        );
+
+        foreach ($files as $file) {
+            $url = \moodle_url::make_pluginfile_url(
+                $file->get_contextid(),
+                $file->get_component(),
+                $file->get_filearea(),
+                $file->get_itemid(),
+                $file->get_filepath(),
+                $file->get_filename(),
+                false
             );
+
+            $alt = pathinfo($file->get_filename(), PATHINFO_FILENAME);
+
+            $alt = format_string(
+                $alt ?: get_string('image'),
+                true,
+                ['context' => $context]
+            );
+
+            $output_files[] = [
+                'url' => $url,
+                'alt' => $alt,
+            ];
         }
-        return false;
+
+        return $output_files;
     }
 
     /**
@@ -187,29 +215,13 @@ class page_manager {
      * @throws moodle_exception On database errors
      */
     public static function process_form($formdata, $id = null) {
-        global $DB, $CFG;
+        global $DB, $CFG, $USER;
 
         $transaction = $DB->start_delegated_transaction();
         try {
             // Move embedded files into a proper filearea and adjust HTML links to match
             // file_prepare_standard_editor  file_postupdate_standard_editor
             $context =  \context_system::instance();
-            $fileid = 0;
-            if ($formdata->image_filemanager) {
-                $image_options = self::get_image_filemanager_options();
-                $component = 'local_stablezhelpers';
-                $filearea = 'content_page_image';
-                $draftitemid = $formdata->image_filemanager;
-                file_save_draft_area_files($draftitemid, $context->id, $component, $filearea, $draftitemid, $image_options);
-
-                $fs = get_file_storage();
-                $files = $fs->get_area_files($context->id, $component, $filearea, $draftitemid, 'timemodified', false);
-                if ($files) {
-                    $file = reset($files); // Get the first file
-                    $fileid = $file->get_id(); // File ID in mdl_files table
-                }
-            }
-
             // Prepare content data.
             $contentrecord = new \stdClass();
             $contentrecord->title = $formdata->title;
@@ -217,7 +229,7 @@ class page_manager {
             $contentrecord->contenttype = $formdata->type ?? content_datarepository::DEFAULT_CONTENT_TYPE;
             $contentrecord->status = $formdata->status ?? 0;
             $contentrecord->parentid = $formdata->parentid ?? 0;
-            $contentrecord->image = $fileid;
+            $contentrecord->image = ($formdata->image_filemanager) ? 1 : 0;
 
             // Handle content editor.
             if (isset($formdata->content)) {
@@ -237,7 +249,32 @@ class page_manager {
                 $result = content_datarepository::update($contentrecord);
             } else {
                 // Create new content.
-                $result = content_datarepository::create($contentrecord);
+                $newid = $result = content_datarepository::create($contentrecord);
+            }
+
+            if ($formdata->image_filemanager) {
+                $image_options = self::get_image_filemanager_options();
+                $component = 'local_stablezhelpers';
+                $filearea = 'content_page_image';
+                $itemid = $newid ?? $id;
+                $draftitemid = $formdata->image_filemanager;
+                if ($draftitemid) {
+                    file_save_draft_area_files(
+                        $draftitemid,
+                        $context->id,
+                        $component,
+                        $filearea,
+                        $itemid,
+                        $image_options
+                    );
+                    $fs = get_file_storage();
+                    $fs->delete_area_files(
+                        \context_user::instance($USER->id)->id,
+                        'user',
+                        'draft',
+                        $draftitemid
+                    );
+                }
             }
 
             if (!$result) {
@@ -260,46 +297,6 @@ class page_manager {
             return false;
         }
     }
-
-    // /**
-    //  * Handle view action (single content).
-    //  *
-    //  * @param int $id Content ID
-    //  * @return void
-    //  */
-    // public function view(int $id): void {
-    //     global $PAGE, $OUTPUT;
-
-    //     require_capability('local/stablezhelpers:viewcontent', $this->context);
-
-    //     // Fetch content.
-    //     $content = content_datarepository::get_by_id($id);
-
-    //     if (!$content) {
-    //         throw new \moodle_exception('contentnotfound', 'local_stablezhelpers');
-    //     }
-
-    //     // Check status permission.
-    //     if ($content->status == 0) {
-    //         require_capability('local/stablezhelpers:viewdraft', $this->context);
-    //     }
-
-    //     // Set up page.
-    //     $PAGE->set_context($this->context);
-    //     $PAGE->set_title(format_string($content->title));
-    //     $PAGE->set_heading(format_string($content->title));
-
-    //     // Render output.
-    //     echo $OUTPUT->header();
-    //     echo $OUTPUT->heading(format_string($content->title));
-
-    //     // Render content item.
-    //     $renderer = $PAGE->get_renderer('local_stablezhelpers');
-    //     $contentitem = new \local_stablezhelpers\output\content_item($content);
-    //     echo $renderer->render($contentitem);
-
-    //     echo $OUTPUT->footer();
-    // }
 
     /**
      * Handle delete action for content.
