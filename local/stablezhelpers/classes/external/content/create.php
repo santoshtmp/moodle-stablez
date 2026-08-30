@@ -51,7 +51,7 @@ class create extends external_api {
             'title' => new external_value(PARAM_TEXT, 'Content title', VALUE_REQUIRED),
             'shortname' => new external_value(PARAM_RAW, 'Content shortname', VALUE_OPTIONAL),
             'content' => new external_value(PARAM_RAW, 'Content body', VALUE_REQUIRED),
-            'contentformat' => new external_value(PARAM_INT, 'Content format (0=HTML, 1=MOODLE, 2=PLAIN)', VALUE_DEFAULT, 1),
+            'contentformat' => new external_value(PARAM_INT, 'Content format (0=MOODLE, 1=HTML, 2=PLAIN)', VALUE_DEFAULT, FORMAT_HTML),
             'contenttype' => new external_value(PARAM_ALPHANUM, 'Content type', VALUE_DEFAULT, 'page'),
             'status' => new external_value(PARAM_INT, 'Status (0=draft, 1=published)', VALUE_DEFAULT, 0),
             'parentid' => new external_value(PARAM_INT, 'Parent content ID', VALUE_DEFAULT, 0),
@@ -70,7 +70,15 @@ class create extends external_api {
      * @param int $parentid Parent content ID
      * @return array Created content info
      */
-    public static function create($title, $content, $shortname = '', $contentformat = 1, $contenttype = 'page', $status = 0, $parentid = 0) {
+    public static function create(
+        $title,
+        $content,
+        $shortname = '',
+        $contentformat = FORMAT_HTML,
+        $contenttype = 'page',
+        $status = 0,
+        $parentid = 0
+    ) {
         global $USER;
 
         $params = self::validate_parameters(self::create_parameters(), [

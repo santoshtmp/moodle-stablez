@@ -466,6 +466,10 @@ $smallBanner-height: 480px;
 }
 
 @include mq(md, max) {
+  #page.drawers {
+    padding-top: 43px;
+  }
+
   .stablez-header {
     padding-block: 72px !important;
   }

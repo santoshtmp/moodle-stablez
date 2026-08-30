@@ -37,11 +37,11 @@
 <div class="content-view-page">
 
     {{! Content image }}
-    {{#content.image_url}}
-    <div class="content-image">
-       <img src="{{content.image_url}}">
+    <div class="image-wrap">
+        {{#content.image_url}}
+            <img src="{{url}}" alt="{{alt}}">
+        {{/content.image_url}}
     </div>
-    {{/content.image_url}}
    
     {{! Content body }}
     <div class="content-body m-3">

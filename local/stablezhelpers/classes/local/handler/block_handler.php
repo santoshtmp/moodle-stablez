@@ -32,6 +32,7 @@ defined('MOODLE_INTERNAL') || die();
 
 use core\output\html_writer;
 use core\output\theme_config;
+use local_stablezhelpers\content\contactus_manager;
 use local_stablezhelpers\local\service\course_service;
 use local_stablezhelpers\local\stablezhelpers;
 use theme_stablez\local\service\theme_settings_service;
@@ -299,15 +300,36 @@ class block_handler {
      * contact_us
      */
     protected function contact_us_block_content() {
-        global $OUTPUT, $PAGE, $CFG, $SITE;
+        global $OUTPUT;
+
+        $manager = new \local_stablezhelpers\content\contactus_manager();
+        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+            $manager->process_contact_form();
+        }
+
+        $template_content = $manager->export_for_form_template();
+        $template_content['block_stablez_id'] = $this->block_settings->block_stablez_id;
+        $template_content['title'] = format_string($this->block_settings->title);
+
+        return $OUTPUT->render_from_template(
+            'theme_stablez/blocks/contact-us',
+            $template_content
+        );
+    }
+
+    /**
+     * 
+     */
+    public static function contact_us_form_to_be_deleted() {
+        global $PAGE, $CFG, $SITE;
+        $contactus_content = theme_settings_service::get_instance()->contact_details_settings();
+        // check if the message is send or not
         $send_email = optional_param('send_email', 0, PARAM_INT);
         $sesskey = optional_param('sesskey', '', PARAM_RAW);
-        $template_content = theme_settings_service::get_instance()->contact_details_settings();
-        // check if the message is send or not
         if ($_POST && $send_email && $sesskey) {
             if ($sesskey == sesskey()) {
-                $sendto_email = ($template_content['contact_form_recipient_email']) ?: $CFG->supportemail;
-                $sendto_name = ($template_content['contact_form_recipient_name']) ?: $CFG->supportname;
+                $sendto_email = ($contactus_content['contact_form_recipient_email']) ?: $CFG->supportemail;
+                $sendto_name = ($contactus_content['contact_form_recipient_name']) ?: $CFG->supportname;
                 $form_name = optional_param('name', '', PARAM_TEXT);
                 $form_email = optional_param('email', '', PARAM_TEXT);
                 $form_subject = optional_param('subject', '', PARAM_TEXT);
@@ -357,13 +379,11 @@ class block_handler {
                 $redirect_msg = "Session time out.";
             }
             redirect($PAGE->url->out(), $redirect_msg);
-        } else {
-            $template_content['block_stablez_id'] = $this->block_settings->block_stablez_id;
-            $template_content['form_action'] = $PAGE->url->out();
-            $template_content['title'] = format_string($this->block_settings->title);
-            return $OUTPUT->render_from_template("theme_stablez/blocks/contact-us", $template_content);
         }
+        $contactus_content['form_action'] = $PAGE->url->out();
+        return $contactus_content;
     }
+
     /**
      * course_list
      */

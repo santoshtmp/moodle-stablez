@@ -52,6 +52,10 @@ if (empty($id)) {
  *              Prepare the page information.
  * ========================================================
  */
+/** @var \context $context */
+$context = \context_system::instance();
+$PAGE->set_context($context);
+
 // Get content data.
 $content = content_datarepository::get_by_id($id);
 if (!$content) {
@@ -59,8 +63,6 @@ if (!$content) {
 }
 
 // Prepare the page information.
-/** @var \context $context */
-$context = \context_system::instance();
 $classes = [
     'stablezhelpers-content-view',
     'content-type-' . strtolower($content->contenttype),
@@ -70,7 +72,6 @@ $classes = [
 $strcapability = 'moodle/site:manageblocks';
 
 // Setup page information.
-$PAGE->set_context($context);
 $title = format_string($content->title);
 
 $PAGE->set_url(page_manager::get_view_page_url());
@@ -100,21 +101,6 @@ if (is_siteadmin()) {
         get_string('editcontent', 'local_stablezhelpers'),
         page_manager::get_action_page_url($id)
     );
-
-    // check if this file class exist
-    if (class_exists('\local_customcleanurl\local\helper')) {
-        $enabled_customcleanurl = \local_customcleanurl\local\helper::is_enable_customcleanurl();
-        if ($enabled_customcleanurl) {
-            $cleanurltype = get_config('local_customcleanurl', 'cleanurl_type');
-            $cleanurltype = explode(",", $cleanurltype);
-            if (in_array('defineurl', $cleanurltype)) {
-                $PAGE->secondarynav->add(
-                    get_string('editcustomcleanurl', 'local_stablezhelpers'),
-                    '/local/customcleanurl/define_custom_url.php'
-                );
-            }
-        }
-    }
 }
 /**
  * ========================================================
@@ -139,6 +125,21 @@ $managecontent = has_capability('local/stablezhelpers:managecontent', $context);
 
 // Get content type label.
 $contenttypelabel = get_string('contenttype_' . $content->contenttype, 'local_stablezhelpers', $content->contenttype);
+
+// Format rich text only for display. The repository must return raw content for editors and APIs.
+if (!empty($content->content)) {
+    $content->content = format_text(
+        $content->content,
+        $content->contentformat ?? FORMAT_HTML,
+        ['context' => $context]
+    );
+}
+if (!empty($content->title)) {
+    $content->title = format_string($content->title);
+}
+if ($content->image) {
+    $content->image_url = page_manager::get_image_file_url($content);
+}
 
 // Prepare content data.
 $template_content = [

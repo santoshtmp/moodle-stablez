@@ -16,6 +16,15 @@
   }
 
   .stablez-course-main-area {
+    flex-basis: 85%;
+    padding-left: 2rem;
+
+    @include mq(md, max) {
+      padding-left: 0;
+    }
+  }
+
+  .stablez-course-main-area:has(+ .stablez-course-right-side) {
     flex-basis: 54%;
   }
 
@@ -123,39 +132,6 @@
 
 .stablez-course-right-side {
   flex-basis: 30%;
-
-  .block-region .block_stablezblocks {
-    margin-bottom: 32px !important;
-    border: 1px solid #c8c6c9;
-    border-radius: 8px;
-    padding: 32px 40px !important;
-    background: $white;
-    color: #5f5f63;
-    font-size: 16px;
-    font-weight: 400;
-    line-height: 1.5;
-
-    &>.card-body {
-      padding: 0 !important;
-    }
-
-    .block-header .card-title {
-      font-weight: 600;
-      font-size: 22px;
-      line-height: 1.2;
-      color: $N-50;
-      margin-bottom: 16px;
-    }
-
-    .block-header {
-      margin-bottom: 0 !important;
-
-      h3.card-title {
-        margin-bottom: 32px;
-        display: inline-block !important;
-      }
-    }
-  }
 
   .course-fields-data-wrapper {
     &>div:not(:last-child) {

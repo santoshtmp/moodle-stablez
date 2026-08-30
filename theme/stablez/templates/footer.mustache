@@ -27,17 +27,17 @@
 
                 <div class="site-name footer-desc">
                     <div class="logo-wrapper">
-                        {{# output.get_logo_url_out }}
-                            <img src="{{output.get_logo_url_out}}" class="logo me-1" alt="{{sitename}}">
+                        {{# output.get_logo_url }}
+                            <img src="{{output.get_logo_url}}" class="logo me-1" alt="{{sitename}}">
                             {{# output.get_theme_stablez_logo_description }}
                             <div class="logo-description">  
                             {{{output.get_theme_stablez_logo_description}}}
                             </div>
                             {{/ output.get_theme_stablez_logo_description }}
-                        {{/ output.get_logo_url_out }}
-                        {{^ output.get_logo_url_out }}
+                        {{/ output.get_logo_url }}
+                        {{^ output.get_logo_url }}
                             {{{ sitename }}}
-                        {{/ output.get_logo_url_out }}
+                        {{/ output.get_logo_url }}
                     </div>
                     {{#footersettings.footer_description}}
                     <div class="footer_description">{{footersettings.footer_description}}</div>
@@ -76,13 +76,15 @@
                     </div>
                     <ul class="items">
                         {{#contacstettings.location_address}}
-                        <li class="location-address">
-                            {{contacstettings.location_address}}
+                        <li class="location-address d-flex gap-2">
+                            <img src="{{{config.wwwroot}}}/theme/stablez/pix/icons/map.svg" alt="map-icon">
+                            <span>{{contacstettings.location_address}}</span>
                         </li>
                         {{/contacstettings.location_address}}
                         {{#contacstettings.mail}}
-                        <li class="mail">
-                           Email: <a href="mailto:{{contacstettings.mail}}">{{contacstettings.mail}}</a>
+                        <li class="mail d-flex gap-2">
+                            <img src="{{{config.wwwroot}}}/theme/stablez/pix/icons/email.svg" alt="email-icon">
+                            <a href="mailto:{{contacstettings.mail}}">{{contacstettings.mail}}</a>
                         </li>
                         {{/contacstettings.mail}}
                         {{#contacstettings.website}}
@@ -91,11 +93,13 @@
                         </li>
                         {{/contacstettings.website}}
                         {{#contacstettings.phone_number_exist}}
-                        <li class="phone_number">
-                            Phone: 
+                        <li class="phone_number d-flex gap-2">
+                            <img src="{{{config.wwwroot}}}/theme/stablez/pix/icons/phone.svg" alt="phone-icon">
+                            <span>
                             {{#contacstettings.phone_number}}
                             <a href="tel:{{.}}">{{.}}</a>
                             {{/contacstettings.phone_number}}
+                            <span>
                         </li>
                         {{/contacstettings.phone_number_exist}}
                         {{#contacstettings.other_contact_info}}

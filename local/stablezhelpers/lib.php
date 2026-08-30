@@ -59,8 +59,11 @@ function local_stablezhelpers_pluginfile($course, $cm, $context, $filearea, $arg
     if ($context->contextlevel == CONTEXT_BLOCK) {
         send_file_not_found();
     }
-    
-    $stablez_filearea = [block_handler::FILEAREA_FIELD_GALLERY];
+
+    $stablez_filearea = [
+        block_handler::FILEAREA_FIELD_GALLERY,
+        'content_page_image',
+    ];
     if (
         !in_array($filearea, $stablez_filearea)
         //    || !(preg_match("/^block_start_guideline_img_[1-9][0-9]?$/", $filearea))
@@ -78,8 +81,8 @@ function local_stablezhelpers_pluginfile($course, $cm, $context, $filearea, $arg
     $filepath = '/'; // $args ? '/' . implode('/', $args) . '/' : '/';
     $files = $fs->get_area_files(
         $context->id,
-        block_handler::COMPONENT,
-        block_handler::FILEAREA_FIELD_GALLERY,
+        'local_stablezhelpers',
+        $filearea,
         $args[0],
         'timemodified',
         false
@@ -89,8 +92,8 @@ function local_stablezhelpers_pluginfile($course, $cm, $context, $filearea, $arg
     } else {
         $file = $fs->get_file(
             $context->id,
-            block_handler::COMPONENT,
-            block_handler::FILEAREA_FIELD_GALLERY,
+            'local_stablezhelpers',
+            $filearea,
             $args[0],
             $filepath,
             $filename

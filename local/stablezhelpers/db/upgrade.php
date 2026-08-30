@@ -29,27 +29,27 @@
 defined('MOODLE_INTERNAL') || die();
 
 /**
- * Upgrade code for local_stablezhelpers
+ * Upgrade code for local_stablezhelpers.
  *
- * @param int $oldversion the version we are upgrading from
- * @return bool result
+ * @param int $oldversion The version we are upgrading from.
+ * @return bool Result.
  */
 function xmldb_local_stablezhelpers_upgrade($oldversion) {
     global $DB;
 
     $dbman = $DB->get_manager();
 
-    // Version 2026021901: Create all tables with proper schema and indexes.
-    $newversion = 2026021901;
+    // Version 2026092000: Create all initial tables.
+    $newversion = 2026092000;
     if ($oldversion < $newversion) {
         // ==================== local_stablezhelpers_course_meta ====================.
         $table = new xmldb_table('local_stablezhelpers_course_meta');
 
         // Adding fields to table local_stablezhelpers_course_meta.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null, 'Foreign key to course table');
-        $table->add_field('meta_key', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, 'Metadata key name');
-        $table->add_field('meta_value', XMLDB_TYPE_TEXT, null, null, null, null, null, null, 'Metadata value (long text)');
+        $table->add_field('courseid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('meta_key', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('meta_value', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
@@ -80,9 +80,9 @@ function xmldb_local_stablezhelpers_upgrade($oldversion) {
 
         // Adding fields to table local_stablezhelpers_user_meta.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null, 'Foreign key to user table');
-        $table->add_field('meta_key', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, 'Metadata key name');
-        $table->add_field('meta_value', XMLDB_TYPE_TEXT, null, null, null, null, null, null, 'Metadata value (long text)');
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('meta_key', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('meta_value', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
@@ -113,17 +113,17 @@ function xmldb_local_stablezhelpers_upgrade($oldversion) {
 
         // Adding fields to table local_stablezhelpers_content.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null, 'Foreign key to user table (createdby)');
-        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null, 'Foreign key to user table (last modified by)');
-        $table->add_field('contenttype', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null, null, 'Type of content: page, faqs, faq_categories testimonials, and others');
-        $table->add_field('title', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, 'Content title/name');
-        $table->add_field('shortname', XMLDB_TYPE_CHAR, '255', null, null, null, null, null, null, 'Short name/slug for pages');
-        $table->add_field('content', XMLDB_TYPE_TEXT, null, null, null, null, null, null, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('usermodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('contenttype', XMLDB_TYPE_CHAR, '50', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('title', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('shortname', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('content', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('contentformat', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('contentitemid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
-        $table->add_field('image', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null, 'Feature image file id for content');
-        $table->add_field('status', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null, 'status 0=draft, 1=published');
-        $table->add_field('parentid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null, 'Parent content ID for hierarchy');
+        $table->add_field('image', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('parentid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
@@ -169,9 +169,9 @@ function xmldb_local_stablezhelpers_upgrade($oldversion) {
 
         // Adding fields to table local_stablezhelpers_content_meta.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
-        $table->add_field('contentid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0', null, 'Foreign key to local_stablezhelpers_content table');
-        $table->add_field('meta_key', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null, null, 'Metadata key name like: feature_image, designation, and others');
-        $table->add_field('meta_value', XMLDB_TYPE_TEXT, null, null, null, null, null, null, 'Metadata value');
+        $table->add_field('contentid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('meta_key', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('meta_value', XMLDB_TYPE_TEXT, null, null, null, null, null);
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
 
@@ -185,17 +185,67 @@ function xmldb_local_stablezhelpers_upgrade($oldversion) {
             $dbman->create_table($table);
         }
 
-        // Add indexes to local_stablezhelpers_content_meta.
+        // Add index for content ID.
         $index = new xmldb_index('contentid_ix', XMLDB_INDEX_NOTUNIQUE, ['contentid']);
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
+
+        // Add index for meta key.
         $index = new xmldb_index('metakey_ix', XMLDB_INDEX_NOTUNIQUE, ['meta_key']);
+
         if (!$dbman->index_exists($table, $index)) {
             $dbman->add_index($table, $index);
         }
 
-        // MHelpers savepoint reached.
+        // ==================== local_stablezhelpers_contact ====================.
+        $table = new xmldb_table('local_stablezhelpers_contact');
+
+        // Adding fields to table local_stablezhelpers_contact.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('email', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('subject', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('message', XMLDB_TYPE_TEXT, null, null, XMLDB_NOTNULL, null, null);
+        $table->add_field('other', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('status', XMLDB_TYPE_INTEGER, '2', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
+
+        // Adding keys to table local_stablezhelpers_contact.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+
+        // Conditionally launch create table for local_stablezhelpers_contact.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Add index for searching submissions by email address.
+        $index = new xmldb_index('email_idx', XMLDB_INDEX_NOTUNIQUE, ['email']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Add index for filtering submissions by Moodle user ID.
+        $index = new xmldb_index('userid_idx', XMLDB_INDEX_NOTUNIQUE, ['userid']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Add index for filtering submissions by status.
+        $index = new xmldb_index('status_idx', XMLDB_INDEX_NOTUNIQUE, ['status']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Add index for sorting submissions by creation time.
+        $index = new xmldb_index('timecreated_idx', XMLDB_INDEX_NOTUNIQUE, ['timecreated']);
+        if (!$dbman->index_exists($table, $index)) {
+            $dbman->add_index($table, $index);
+        }
+
+        // Stablezhelpers savepoint reached.
         upgrade_plugin_savepoint(true, $newversion, 'local', 'stablezhelpers');
     }
 

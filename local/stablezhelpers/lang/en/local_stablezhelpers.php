@@ -25,88 +25,17 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-// =============================================================================
-// PLUGIN STRINGS
-// =============================================================================
-
 // Plugin identification and configuration.
 $string['pluginname'] = 'StableZ Helpers';
 $string['pluginname_desc'] = 'Local plugin to manage course and user metadata';
 $string['enable'] = 'Enable stablez helper';
-$string['configenable'] = 'Enable the stablez helper plugin functionality';
 $string['manage'] = 'Manage StableZ Helpers';
 
-// =============================================================================
-// GENERAL SETTINGS
-// =============================================================================
-
+// General settings.
 $string['general'] = 'General';
 $string['generalsettings'] = 'General Settings';
-$string['enable_desc'] = 'Enable the stablez helper plugin functionality';
 $string['plugininfo'] = 'Plugin Information';
-$string['plugininfo_desc'] = 'Plugin information and description.';
-$string['contentmanagement_desc'] = 'Create and manage pages, FAQs, testimonials, and other content.';
 $string['tip'] = 'Tip';
-$string['generate_secret_tip'] = 'Generate a secure key using';
-
-// =============================================================================
-// SSO INTEGRATION TAB
-// =============================================================================
-
-$string['sso_integration'] = 'SSO Integration';
-$string['sso_integration_desc'] = 'Configure SSO integration with external systems (WordPress, Drupal, custom apps, etc.). Users from external systems can automatically log in to Moodle using encrypted data exchange.';
-$string['configure_sso'] = 'Configure Single Sign-On';
-$string['external_site_integration'] = 'External Site Integration';
-$string['external_site_url'] = 'External Site URL';
-$string['external_site_url_desc'] = 'The base URL of your external site (e.g., https://example.com). Used for error redirects.';
-$string['shared_secret'] = 'Shared Secret Key';
-$string['shared_secret_desc'] = 'A secret key shared between the external system and Moodle for encrypting SSO data. Use a strong, random string (at least 32 characters). This must match the value in your external system configuration.';
-$string['plugin_not_configured'] = 'SSO integration has not yet been configured. Please contact the Moodle administrator for details.';
-
-// SSO Flow steps.
-$string['how_it_works'] = 'How It Works';
-$string['sso_flow'] = 'SSO Flow';
-$string['step1'] = 'External Login';
-$string['step1_desc'] = 'User logs into external system (WordPress, Drupal, etc.)';
-$string['step2'] = 'Encrypt Data';
-$string['step2_desc'] = 'External system encrypts user data with shared secret';
-$string['step3'] = 'Send to Moodle';
-$string['step3_desc'] = 'POST encrypted data to Moodle SSO endpoint';
-$string['step4'] = 'Verify & Login';
-$string['step4_desc'] = 'Moodle decrypts, verifies hash, and logs in user';
-
-// API Endpoints.
-$string['api_endpoints'] = 'API Endpoints';
-$string['endpoint'] = 'Endpoint';
-$string['method'] = 'Method';
-$string['description'] = 'Description';
-$string['store_session'] = 'Store session data (mch_data parameter)';
-$string['login_user'] = 'Login user with verification hash';
-$string['logout_user'] = 'Logout user with verification hash';
-
-// Supported systems.
-$string['supported_systems'] = 'Supported Systems';
-$string['supported_systems_desc'] = 'This plugin works with WordPress, Drupal, Joomla, custom PHP apps, Node.js, Python, and any system with OpenSSL support.';
-$string['wordpress_desc'] = 'Full SSO support';
-$string['drupal_desc'] = 'Full SSO support';
-$string['php_desc'] = 'Full SSO support';
-$string['other_desc'] = 'Full SSO support';
-
-// Integration guide.
-$string['integration_guide'] = 'Integration Guide';
-$string['integration_guide_content'] = 'How to integrate external systems with Moodle SSO.';
-
-$string['sso_settings'] = 'SSO Settings';
-$string['sso_settings_desc'] = 'Configure Single Sign-On (SSO) for external systems (WordPress).';
-$string['sso_wordpress_url'] = 'WordPress URL';
-$string['sso_wordpress_url_desc'] = 'The WordPress site URL for SSO redirect (e.g., https://example.com).';
-$string['sso_shared_secret'] = 'Shared Secret';
-$string['sso_shared_secret_desc'] = 'Encryption key for SSO communication. Must match the WordPress side. Leave empty to auto-generate.';
-
-// =============================================================================
-// GENERAL STRINGS
-// =============================================================================
-
 // Common labels.
 $string['sn'] = 'S.N';
 $string['name'] = 'Name';
@@ -133,10 +62,6 @@ $string['published'] = 'Published';
 
 // Actions.
 $string['savechanges'] = 'Save changes';
-$string['addfaq'] = 'Add FAQ';
-$string['editfaq'] = 'Edit FAQ';
-$string['addtestimonial'] = 'Add Testimonial';
-$string['edittestimonial'] = 'Edit Testimonial';
 $string['filter'] = 'Filter';
 $string['search'] = 'Search';
 $string['all'] = 'All';
@@ -145,10 +70,6 @@ $string['readmore'] = 'Read More';
 // Content-related.
 $string['shortname'] = 'Short Name';
 $string['parent'] = 'Parent Content';
-
-// =============================================================================
-// CONTENT MANAGEMENT STRINGS
-// =============================================================================
 
 // Section titles.
 $string['contentmanagement'] = 'Content Management';
@@ -165,85 +86,46 @@ $string['contenttype'] = 'Content Type';
 $string['contenttype_page'] = 'Page';
 $string['contenttype_faq'] = 'FAQ';
 $string['contenttype_testimonial'] = 'Testimonial';
-$string['contenttype_all'] = 'All Types';
+$string['contenttype_article'] = 'Article';
+$string['contenttype_video'] = 'Video';
+$string['contenttype_announcement'] = 'Announcement';
 
 // Content messages.
-$string['nocontentfound'] = 'No content found';
 $string['contentnotfound'] = 'Content not found';
-$string['contentdeleted'] = 'Content deleted successfully';
 $string['contentcreated'] = 'Content created successfully';
+$string['contentdeleted'] = 'Content deleted successfully';
 $string['changessaved'] = 'Changes saved successfully';
 $string['errordeletecontent'] = 'Error deleting content';
 $string['deletecontentconfirm'] = 'Are you sure you want to delete "{$a->title}"? This action cannot be undone.';
 $string['invalidactionparam'] = 'Invalid action param. Check action param';
 $string['failtoconfirmsesskey'] = 'Fail to confirm sesskey.';
-$string['contentnotpublished'] = 'Content is not published.';
 
-// =============================================================================
-// CAPABILITIES
-// =============================================================================
+// Capabilities.
 $string['stablezhelpers:managecontent'] = 'Manage stablez content';
 $string['stablezhelpers:viewcontent'] = 'View stablezcontent';
 $string['stablezhelpers:viewdraft'] = 'View stablez draft content';
 
-// =============================================================================
-// SETTINGS STRINGS
-// =============================================================================
-
-$string['content_settings'] = 'Content Settings';
-$string['content_settings_desc'] = 'Configure content management settings.';
-$string['maxuploadsize'] = 'Maximum upload size';
-$string['maxuploadsize_help'] = 'Maximum file size for uploads in bytes.';
-$string['invalidmaxuploadsize'] = 'Invalid maximum upload size. Please enter a positive number.';
-
-// =============================================================================
-// FORM FIELD HELP STRINGS
-// =============================================================================
-
-$string['title_help'] = 'Enter a descriptive title for this content.';
-$string['shortname_help'] = 'A unique short name or identifier for this content (e.g., "about-us", "contact").';
-$string['content_help'] = 'The main content or body text. You can use the HTML editor to format your content.';
+// Form fields.
+$string['faq_category'] = 'FAQ category';
+$string['faq_content'] = 'FAQ content';
+$string['search_faq_category'] = 'Search FAQ categories';
 $string['image_filemanager'] = 'Image File Manager';
-$string['image_filemanager_help'] = 'Upload or select an image to associate with this content. Supported formats: JPG, PNG, GIF.';
-$string['status_help'] = 'Set the content status. Draft is visible only to administrators, Published is visible to all users.';
-
-// =============================================================================
-// TESTIMONIALS AND FAQ STRINGS
-// =============================================================================
-
 $string['designation'] = 'Designation';
+$string['backtosubmissions'] = 'Back to submissions';
+$string['cleanup_task'] = 'Clean up expired data';
 
-// =============================================================================
-// USER API STRINGS
-// =============================================================================
-
-// Login/Logout.
-$string['usernameisrequired'] = 'Username is required.';
-$string['passwordisrequired'] = 'Password is required.';
+// User API messages.
 $string['invalidlogin'] = 'Invalid login credentials.';
 $string['usernotconfirmed'] = 'User account has not been confirmed.';
-$string['loginsuccess'] = 'Login successful.';
-$string['webservicesnotenabled'] = 'Web services are not enabled. Please contact administrator.';
 $string['usernotfound'] = 'User not found.';
-$string['ssotokengenerated'] = 'SSO token generated successfully.';
 $string['useridisrequired'] = 'User ID is required.';
-$string['tokenisrequired'] = 'Session token is required.';
 $string['invalidtoken'] = 'Invalid session token.';
 $string['logoutsuccess'] = 'Logout successful.';
-$string['logoutfailed'] = 'Logout failed.';
-
-// User management.
-$string['invaliduserids'] = 'Invalid user IDs.';
 $string['invaliduserid'] = 'Invalid user ID.';
 $string['useralreadyenrolled'] = 'User is already enrolled.';
 $string['userenrolledsuccessfully'] = 'User enrolled successfully.';
 
-// =============================================================================
-// COURSE API STRINGS
-// =============================================================================
-
-// Course management.
-$string['invalidcourseids'] = 'Invalid course IDs.';
+// Course API messages.
 $string['invalidcourseid'] = 'Invalid course ID.';
 $string['invalidroleid'] = 'Invalid role ID.';
 $string['manualenrolmentnotfound'] = 'Manual enrolment method not found.';
@@ -254,17 +136,13 @@ $string['failtoissuecertificate'] = 'Failed to issue certificate.';
 $string['invalidcertificatedate'] = 'Invalid certificate date. Must be between 2001-01-01 and 2100-12-31.';
 $string['usernotstudent'] = 'User is not enrolled as a student in this course.';
 
-// =============================================================================
-// ROLE API STRINGS
-// =============================================================================
-
+// Role API messages.
 $string['invalidrole'] = 'Invalid role.';
 $string['rolenotassignable'] = 'Role is not assignable in this context.';
 $string['rolealreadyassigned'] = 'Role is already assigned to this user.';
 $string['roleassigned'] = 'Role assigned successfully.';
 $string['roleunassigned'] = 'Role unassigned successfully.';
 $string['roleisrequired'] = 'Role shortname is required.';
-$string['useridisrequired'] = 'User ID is required.';
 $string['onlysystemroleallowed'] = 'Only system-level role assignment is allowed.';
 $string['useralreadyadmin'] = 'User is already an administrator.';
 $string['usernotadmin'] = 'User is not an administrator.';
@@ -295,3 +173,41 @@ $string['errorcreatecontent'] = 'Error creating content.';
 
 $string['certificateissued'] = 'Certificate issued successfully.';
 $string['certificatealreadyissued'] = 'Certificate already issued.';
+
+
+// =============================================================================
+// Contact Us
+// =============================================================================
+
+$string['contactus'] = 'Contact Us';
+$string['contactus_submission'] = 'Contact Us submission';
+$string['contactus_submission_detail'] = 'Contact Us submission Detail';
+$string['contactus_submissioncount'] = '{$a} contact form submissions';
+$string['contactus_name'] = 'Name';
+$string['contactus_email'] = 'Email';
+$string['contactus_subject'] = 'Subject';
+$string['contactus_message'] = 'Message';
+$string['contactus_other'] = 'Other';
+$string['filter_name'] = 'Name';
+
+// Table.
+$string['submission_id'] = 'ID';
+$string['timecreated'] = 'Submitted';
+$string['timemodified'] = 'Last modified';
+$string['backtosubmissions'] = 'Back to submissions';
+
+// Capabilities.
+$string['stablezhelpers:managecontactus'] = 'Manage Contact Us submissions';
+$string['stablezhelpers:viewcontactus'] = 'View Contact Us submissions';
+$string['stablezhelpers:deletecontactus'] = 'Delete Contact Us submissions';
+
+// Privacy.
+$string['privacy:metadata:local_stablezhelpers_contact'] = 'Stores Contact Us form submissions.';
+$string['privacy:metadata:local_stablezhelpers_contact:userid'] = 'The Moodle user ID of the person who submitted the form.';
+$string['privacy:metadata:local_stablezhelpers_contact:name'] = 'The name provided in the Contact Us form.';
+$string['privacy:metadata:local_stablezhelpers_contact:email'] = 'The email address provided in the Contact Us form.';
+$string['privacy:metadata:local_stablezhelpers_contact:subject'] = 'The subject provided in the Contact Us form.';
+$string['privacy:metadata:local_stablezhelpers_contact:message'] = 'The message provided in the Contact Us form.';
+$string['privacy:metadata:local_stablezhelpers_contact:other'] = 'Other information provided in the Contact Us form.';
+$string['privacy:metadata:local_stablezhelpers_contact:timecreated'] = 'The time when the Contact Us submission was created.';
+$string['privacy:metadata:local_stablezhelpers_contact:timemodified'] = 'The time when the Contact Us submission was last modified.';
