@@ -35,32 +35,31 @@ require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Form class for editing content.
- *
- * Extends Moodle's moodleform for standardized form handling.
  */
 class pagecontent_edit_form extends \moodleform {
 
     /**
      * Form definition.
-     *
-     * Defines all form elements and their settings.
      */
     protected function definition() {
         global $CFG;
 
         $mform = $this->_form;
+
         $contentdata = $this->_customdata['content'] ?? null;
         $returnurl = $this->_customdata['returnurl'] ?? '';
-        $foemHeader = ($contentdata) ? 'editcontent' : 'addcontent';
-        $context =  \context_system::instance();
 
-        // ----------------------------------------------------------------------------
+        $formheader = $contentdata ? 'editcontent' : 'addcontent';
+
+        $context = \context_system::instance();
+
+        // -------------------------------------------------------------------------
         // General section.
-        // ----------------------------------------------------------------------------
-        // $mform->addElement('header', 'general', get_string('general', 'form'));
-        $mform->addElement('header', 'generalsettings', get_string($foemHeader, 'local_stablezhelpers'));
+        // -------------------------------------------------------------------------
 
-        // Title field.
+        $mform->addElement('header', 'generalsettings', get_string($formheader, 'local_stablezhelpers'));
+
+        // Title.
         $mform->addElement('text', 'title', get_string('title', 'local_stablezhelpers'), ['size' => '60']);
         $mform->setType('title', PARAM_TEXT);
         $mform->addRule('title', null, 'required', null, 'client');
@@ -83,101 +82,170 @@ class pagecontent_edit_form extends \moodleform {
             'maxfiles' => EDITOR_UNLIMITED_FILES,
             'maxbytes' => $CFG->maxbytes,
             'trusttext' => true,
-            'context' => \context_system::instance(),
-            'subdirs' => true,
+            'context' => $context,
+            'subdirs' => false,
         ];
-        $attr = ' placeholder=""  cols="20" class="custom-pages-textarea" rows="15" ';
+
+        $attr = 'cols="20" class="custom-pages-textarea" rows="15"';
 
         $mform->addElement('editor', 'content', get_string('content', 'local_stablezhelpers'), $attr, $editoroptions);
         $mform->setType('content', PARAM_RAW);
         $mform->addRule('content', null, 'required', null, 'client');
         $mform->addHelpButton('content', 'content', 'local_stablezhelpers');
 
+        // -------------------------------------------------------------------------
         // Feature image.
-        $image_options = page_manager::get_image_filemanager_options();
-        $mform->addElement('filemanager', 'image_filemanager', get_string('image', 'local_stablezhelpers'), null, $image_options);
-        $mform->addHelpButton('image_filemanager', 'image_filemanager', 'local_stablezhelpers');
+        // -------------------------------------------------------------------------
 
-        // Content publish status
-        $mform->addElement('checkbox', 'status', get_string('status', 'local_stablezhelpers'), get_string('publish', 'local_stablezhelpers'));
-        $mform->setDefault('status', 1);
+        $imageoptions = page_manager::get_image_filemanager_options();
+
+        $mform->addElement(
+            'filemanager',
+            'image_filemanager',
+            get_string('image', 'local_stablezhelpers'),
+            null,
+            $imageoptions
+        );
+
+        $mform->addHelpButton(
+            'image_filemanager',
+            'image_filemanager',
+            'local_stablezhelpers'
+        );
+
+        // -------------------------------------------------------------------------
+        // Status.
+        // -------------------------------------------------------------------------
+
+        $mform->addElement(
+            'checkbox',
+            'status',
+            get_string('status', 'local_stablezhelpers'),
+            get_string('publish', 'local_stablezhelpers')
+        );
+
         $mform->setType('status', PARAM_INT);
         $mform->setDefault('status', 0);
-        $mform->addHelpButton('status', 'status', 'local_stablezhelpers');
 
+        $mform->addHelpButton(
+            'status',
+            'status',
+            'local_stablezhelpers'
+        );
 
-        // ----------------------------------------------------------------------------
+        // -------------------------------------------------------------------------
         // Hidden fields.
-        // ----------------------------------------------------------------------------
+        // -------------------------------------------------------------------------
 
-        // Hidden fields id.
         $mform->addElement('hidden', 'id');
         $mform->setType('id', PARAM_INT);
         $mform->setDefault('id', 0);
 
-        // Hidden fields parentid.
         $mform->addElement('hidden', 'parentid');
         $mform->setType('parentid', PARAM_INT);
         $mform->setDefault('parentid', 0);
 
-        // Hidden fields type.
         $mform->addElement('hidden', 'type');
         $mform->setType('type', PARAM_TEXT);
-        $mform->setDefault('type', content_datarepository::DEFAULT_CONTENT_TYPE);
+        $mform->setDefault(
+            'type',
+            content_datarepository::DEFAULT_CONTENT_TYPE
+        );
 
         $mform->addElement('hidden', 'returnurl');
         $mform->setType('returnurl', PARAM_URL);
         $mform->setDefault('returnurl', $returnurl);
 
-        // ----------------------------------------------------------------------------
+        // -------------------------------------------------------------------------
         // Buttons.
-        // ----------------------------------------------------------------------------
+        // -------------------------------------------------------------------------
+
         $this->add_action_buttons();
 
+        // -------------------------------------------------------------------------
+        // Set defaults when editing.
+        // -------------------------------------------------------------------------
 
-        // Set defaults if editing.
         if ($contentdata) {
-            $this->set_data($this->prepare_data_for_form($contentdata));
+            $this->set_data(
+                $this->prepare_data_for_form($contentdata)
+            );
         }
     }
 
     /**
-     * Prepare content data for form
+     * Prepare content data for form.
      *
-     * @param object $contentdata Content record
-     * @return array Form data
+     * @param object $contentdata Content record.
+     * @return array
      */
     private function prepare_data_for_form($contentdata) {
-        global $DB, $CFG;
-        $data = (array) $contentdata;
+        global $CFG;
 
-        // Prepare content editor.
-        if (isset($contentdata->content)) {
-            $data['content'] = [
-                'text' => $contentdata->content,
-                'format' => $contentdata->contentformat ?? FORMAT_HTML,
-                'itemid' => $contentdata->contentitemid ?? 0,
-            ];
-        }
+        $context = \context_system::instance();
 
-        // image
-        if (isset($contentdata->image) && $contentdata->image) {
-            $draftitemid = file_get_submitted_draft_itemid('image_filemanager');
-            $image_options = page_manager::get_image_filemanager_options();
-            $component = 'local_stablezhelpers';
-            $filearea = 'content_page_image';
+        $data = clone $contentdata;
+
+        // ---------------------------------------------------------------------
+        // Content editor.
+        // ---------------------------------------------------------------------
+
+        $editoroptions = [
+            'maxfiles' => EDITOR_UNLIMITED_FILES,
+            'maxbytes' => $CFG->maxbytes,
+            'trusttext' => true,
+            'noclean' => true,
+            'context' => $context,
+            'subdirs' => true,
+        ];
+
+        /*
+         * IMPORTANT:
+         *
+         * This prepares the existing permanent files:
+         *
+         * local_stablezhelpers/content/<contentid>/
+         *
+         * into the user's draft area.
+         *
+         * It also prepares the editor data correctly.
+         */
+        $data = file_prepare_standard_editor(
+            $data,
+            'content',
+            $editoroptions,
+            $context,
+            'local_stablezhelpers',
+            'content',
+            $contentdata->id
+        );
+
+        $data->content = $data->content_editor;
+
+        // ---------------------------------------------------------------------
+        // Feature image.
+        // ---------------------------------------------------------------------
+
+        if (!empty($contentdata->image)) {
+            $draftitemid = file_get_submitted_draft_itemid(
+                'image_filemanager'
+            );
+
+            $imageoptions = page_manager::get_image_filemanager_options();
+
             file_prepare_draft_area(
                 $draftitemid,
-                \context_system::instance()->id,
-                $component,
-                $filearea,
+                $context->id,
+                'local_stablezhelpers',
+                'content_page_image',
                 $contentdata->id,
-                $image_options
+                $imageoptions
             );
-            $data['image_filemanager'] =  $draftitemid;
+
+            $data->image_filemanager = $draftitemid;
         }
 
-        return $data;
+        return (array)$data;
     }
 
     /**
@@ -187,20 +255,35 @@ class pagecontent_edit_form extends \moodleform {
      */
     private function get_content_types(): array {
         return [
-            'page' => get_string('contenttype_page', 'local_stablezhelpers'),
-            'faq' => get_string('contenttype_faq', 'local_stablezhelpers'),
-            'testimonial' => get_string('contenttype_testimonial', 'local_stablezhelpers'),
-            'article' => get_string('contenttype_article', 'local_stablezhelpers'),
-            'video' => get_string('contenttype_video', 'local_stablezhelpers'),
+            'page' => get_string(
+                'contenttype_page',
+                'local_stablezhelpers'
+            ),
+            'faq' => get_string(
+                'contenttype_faq',
+                'local_stablezhelpers'
+            ),
+            'testimonial' => get_string(
+                'contenttype_testimonial',
+                'local_stablezhelpers'
+            ),
+            'article' => get_string(
+                'contenttype_article',
+                'local_stablezhelpers'
+            ),
+            'video' => get_string(
+                'contenttype_video',
+                'local_stablezhelpers'
+            ),
         ];
     }
 
     /**
-     * Validation
+     * Validation.
      *
-     * @param array $data Submitted data
-     * @param array $files Submitted files
-     * @return array Validation errors
+     * @param array $data Submitted data.
+     * @param array $files Submitted files.
+     * @return array
      */
     public function validation($data, $files) {
         global $DB;
@@ -215,12 +298,19 @@ class pagecontent_edit_form extends \moodleform {
             $errors['content'] = get_string('required');
         }
 
-        if ($data['shortname']) {
+        if (!empty($data['shortname'])) {
             $datashortname = trim($data['shortname']);
-            if ($existing = $DB->get_record('local_stablezhelpers_content', array('shortname' => $datashortname))) {
-                if (!$data['id'] || $existing->id != $data['id']) {
-                    $errors['shortname'] = 'short name "' . trim($data['shortname']) . '" alrady exist.';
-                }
+
+            $existing = $DB->get_record(
+                'local_stablezhelpers_content',
+                ['shortname' => $datashortname]
+            );
+
+            if ($existing && (!$data['id'] || $existing->id != $data['id'])) {
+                $errors['shortname'] =
+                    'Short name "' .
+                    $datashortname .
+                    '" already exists.';
             }
         }
 

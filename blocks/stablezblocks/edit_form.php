@@ -208,50 +208,71 @@ class block_stablezblocks_edit_form extends block_edit_form {
     /**
      * Return the submitted form data after validation.
      *
-     * Wraps parent::get_data(). Post-processing of course list ordering or
-     * course field ordering can be applied here before data is saved to the
-     * block config.
+     * Wraps parent::get_data(). Saves any files uploaded through the gallery
+     * filemanager field to permanent storage once the form has been
+     * submitted. Uses the *submitted* block type (not the previously stored
+     * one) so switching a block to 'gallery' and uploading images in the
+     * same save works correctly.
      *
      * @return stdClass|null Submitted and validated data, or null if invalid/not submitted.
      */
     public function get_data() {
         $data = parent::get_data();
-        if ($this->block->instance->id) {
-            if ('gallery' === $this->block->config->stablez_block_type) {
-                $field = 'galleryimages';
-                $config_field = 'config_galleryimages';
-                $draftitemid = file_get_submitted_draft_itemid($config_field);
-                $options = block_handler::get_filemanager_options($this->block->context, 9, '3MB');
-                
-                file_prepare_draft_area(
-                    $draftitemid,
-                    $this->block->context->id,
-                    block_handler::COMPONENT,
-                    block_handler::FILEAREA_FIELD_GALLERY,
-                    $this->block->instance->id,
-                    $options
-                );
-                $this->block->config->$field = $draftitemid;
 
-                if ($data) {
-                    file_save_draft_area_files(
-                        $data->$config_field,
-                        $this->block->context->id,
-                        block_handler::COMPONENT,
-                        block_handler::FILEAREA_FIELD_GALLERY,
-                        $this->block->instance->id,
-                        $options
-                    );
-                }
-            }
+        if (
+            $data !== null
+            && !empty($this->block->instance->id)
+            && isset($data->config_stablez_block_type)
+            && $data->config_stablez_block_type === 'gallery'
+        ) {
+
+            $options = block_handler::get_filemanager_options($this->block->context, 9, '3MB');
+
+            file_save_draft_area_files(
+                $data->config_galleryimages,
+                $this->block->context->id,
+                block_handler::COMPONENT,
+                block_handler::FILEAREA_FIELD_GALLERY,
+                $this->block->instance->id,
+                $options
+            );
         }
+
         return $data;
     }
 
     /**
-     * set data.
+     * Set the form's default values.
+     *
+     * Prepares the gallery filemanager draft area so previously uploaded
+     * images appear in the field when editing an existing gallery block.
+     * This must happen here (before display), not in get_data(), or the
+     * filemanager will show empty when reopening an existing gallery block.
+     *
+     * @param stdClass $defaults Default values for the form.
      */
     public function set_data($defaults) {
-        parent::set_data($defaults);
+        if (!empty($this->block->instance->id) && !empty($this->block->config->galleryimages)) {
+            $draftitemid = file_get_submitted_draft_itemid('config_galleryimages');
+            $options = block_handler::get_filemanager_options($this->block->context, 9, '3MB');
+
+            file_prepare_draft_area(
+                $draftitemid,
+                $this->block->context->id,
+                block_handler::COMPONENT,
+                block_handler::FILEAREA_FIELD_GALLERY,
+                $this->block->instance->id,
+                $options
+            );
+
+            $data = $this->prepare_defaults($defaults);
+            $data->config_galleryimages = $draftitemid;
+            if (is_object($data)) {
+                $data = (array)$data;
+            }
+            $this->_form->setDefaults($data);
+        } else {
+            parent::set_data($defaults);
+        }
     }
 }

@@ -218,10 +218,9 @@ class page_manager {
         global $DB, $CFG, $USER;
 
         $transaction = $DB->start_delegated_transaction();
+
         try {
-            // Move embedded files into a proper filearea and adjust HTML links to match
-            // file_prepare_standard_editor  file_postupdate_standard_editor
-            $context =  \context_system::instance();
+            $context = \context_system::instance();
             $component = 'local_stablezhelpers';
 
             // Prepare content data.
@@ -231,82 +230,146 @@ class page_manager {
             $contentrecord->contenttype = $formdata->type ?? content_datarepository::DEFAULT_CONTENT_TYPE;
             $contentrecord->status = $formdata->status ?? 0;
             $contentrecord->parentid = $formdata->parentid ?? 0;
-            $contentrecord->image = ($formdata->image_filemanager) ? 1 : 0;
+            $contentrecord->image = !empty($formdata->image_filemanager) ? 1 : 0;
 
-            // Handle content editor.
+            /*
+            * ---------------------------------------------------------
+            * Handle content editor.
+            * ---------------------------------------------------------
+            *
+            * For existing content, use the content ID as itemid.
+            * For new content, we need the new database ID first.
+            */
+            if ($id) {
+                // Validate content ID.
+                if ((int)$formdata->id !== (int)$id) {
+                    \core\notification::error(get_string('contentnotfound', 'local_stablezhelpers'));
+                    return false;
+                }
+
+                $contentrecord->id = $id;
+
+                /*
+                * Save the record first so we have a stable content ID
+                * for the editor filearea.
+                */
+                $result = content_datarepository::update($contentrecord);
+
+                if (!$result) {
+                    throw new moodle_exception('dberror', 'error');
+                }
+
+                $itemid = $id;
+            } else {
+                /*
+                * Create the content record first.
+                */
+                $newid = content_datarepository::create($contentrecord);
+
+                if (!$newid) {
+                    throw new moodle_exception('dberror', 'error');
+                }
+
+                $itemid = $newid;
+                $result = $newid;
+            }
+
+            /*
+            * ---------------------------------------------------------
+            * Save embedded editor files.
+            * ---------------------------------------------------------
+            */
             if (isset($formdata->content)) {
-                $editor_options = array(
+                $editor_options = [
                     'maxfiles' => EDITOR_UNLIMITED_FILES,
                     'maxbytes' => $CFG->maxbytes,
                     'trusttext' => true,
                     'noclean' => true,
                     'context' => $context,
-                    'subdirs' => false
-                );
+                    'subdirs' => false,
+                ];
 
-                // Move embedded files into a proper filearea and adjust HTML links to match
+                /*
+                * The draft itemid comes from the editor.
+                */
+                $draftitemid = $formdata->content['itemid'];
+
+                /*
+                * Move draft files into:
+                *
+                * local_stablezhelpers/content/<contentid>/
+                */
                 $contentrecord->content = file_save_draft_area_files(
-                    $formdata->content['itemid'],
+                    $draftitemid,
                     $context->id,
                     $component,
                     'content',
-                    $formdata->content['itemid'],
+                    $itemid,
                     $editor_options,
                     $formdata->content['text']
                 );
+
                 $contentrecord->contentformat = $formdata->content['format'];
-                $contentrecord->contentitemid = $formdata->content['itemid'];
-            }
+                $contentrecord->id = $itemid;
 
-            if ($id) {
-                // Validate content ID.
-                if ($formdata->id != $id) {
-                    \core\notification::error(get_string('contentnotfound', 'local_stablezhelpers'));
-                    return false;
+                /*
+                * Update content with the processed HTML.
+                */
+                $updated = content_datarepository::update($contentrecord);
+
+                if (!$updated) {
+                    throw new moodle_exception('dberror', 'error');
                 }
-                // Update existing content.
-                $contentrecord->id = $id;
-                $result = content_datarepository::update($contentrecord);
-            } else {
-                // Create new content.
-                $newid = $result = content_datarepository::create($contentrecord);
             }
 
-            if ($formdata->image_filemanager) {
+            /*
+            * ---------------------------------------------------------
+            * Handle page image.
+            * ---------------------------------------------------------
+            */
+            if (!empty($formdata->image_filemanager)) {
                 $image_options = self::get_image_filemanager_options();
-                $filearea = 'content_page_image';
-                $itemid = $newid ?? $id;
-                $draftitemid = $formdata->image_filemanager;
-                if ($draftitemid) {
-                    file_save_draft_area_files(
-                        $draftitemid,
-                        $context->id,
-                        $component,
-                        $filearea,
-                        $itemid,
-                        $image_options
-                    );
-                    $fs = get_file_storage();
-                    $fs->delete_area_files(
-                        \context_user::instance($USER->id)->id,
-                        'user',
-                        'draft',
-                        $draftitemid
-                    );
-                }
-            }
 
-            if (!$result) {
-                throw new moodle_exception('dberror', 'error');
+                $filearea = 'content_page_image';
+                $draftitemid = $formdata->image_filemanager;
+
+                file_save_draft_area_files(
+                    $draftitemid,
+                    $context->id,
+                    $component,
+                    $filearea,
+                    $itemid,
+                    $image_options
+                );
+
+                /*
+                * Delete the draft files after saving them.
+                */
+                $fs = get_file_storage();
+
+                $fs->delete_area_files(
+                    \context_user::instance($USER->id)->id,
+                    'user',
+                    'draft',
+                    $draftitemid
+                );
             }
 
             $transaction->allow_commit();
 
-            // Display success notification.
+            /*
+            * ---------------------------------------------------------
+            * Success notification.
+            * ---------------------------------------------------------
+            */
             if ($id) {
-                \core\notification::success(get_string('changessaved', 'local_stablezhelpers'));
+                \core\notification::success(
+                    get_string('changessaved', 'local_stablezhelpers')
+                );
             } else {
-                \core\notification::success(get_string('contentcreated', 'local_stablezhelpers'));
+                \core\notification::success(
+                    get_string('contentcreated', 'local_stablezhelpers')
+                );
             }
 
             return $result;
@@ -320,31 +383,36 @@ class page_manager {
     /**
      * Handle delete action for content.
      *
-     * Validates sesskey and deletes content along with its metadata.
-     * Redirects to the content listing page after successful deletion.
+     * Validates sesskey and capability, then deletes the content,
+     * associated files, and metadata.
      *
-     * @param int $id Content ID to delete
+     * @param int $id Content ID to delete.
      * @return void
      *
-     * @throws moodle_exception If content not found or sesskey validation fails
+     * @throws \moodle_exception If content is not found or access is denied.
      */
     public static function delete(int $id): void {
-        // require_capability('local/stablezhelpers:managecontent', $context);
+        // Security checks.
+        require_sesskey();
+        $context = \context_system::instance();
+        require_capability('local/stablezhelpers:managecontent', $context);
 
-        // Validate content exists.
+        //   Validate content exists.
         $content = content_datarepository::get_by_id($id);
         if (!$content) {
             throw new moodle_exception('contentnotfound', 'local_stablezhelpers');
         }
 
-        // Validate sesskey and delete content.
-        if (confirm_sesskey()) {
-            content_datarepository::delete_with_meta($id);
-            \core\notification::success(get_string('contentdeleted', 'local_stablezhelpers'));
-            redirect(new \moodle_url('/local/stablezhelpers/content/index.php'));
-        }
+        //    Delete content, files, and metadata.
+        content_datarepository::delete_with_meta($id);
 
-        throw new moodle_exception('failtoconfirmsesskey', 'local_stablezhelpers');
+        // -------------------------------------------------------------------------
+        // Success notification.
+        // -------------------------------------------------------------------------
+
+        \core\notification::success(get_string('contentdeleted', 'local_stablezhelpers'));
+        redirect(new \moodle_url('/local/stablezhelpers/content/index.php'));
+
     }
 
     /**

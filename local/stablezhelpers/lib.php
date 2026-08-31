@@ -56,57 +56,140 @@ function local_stablezhelpers_after_uninstall() {
  * @return bool
  */
 function local_stablezhelpers_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = array()) {
+    /*
+     * ---------------------------------------------------------
+     * Validate context.
+     * ---------------------------------------------------------
+     */
     if ($context->contextlevel == CONTEXT_BLOCK) {
         send_file_not_found();
     }
 
+    /*
+     * ---------------------------------------------------------
+     * Validate filearea.
+     * ---------------------------------------------------------
+     */
     $stablez_filearea = [
         block_handler::FILEAREA_FIELD_GALLERY,
         'content_page_image',
-        'content'
+        'content',
     ];
-    if (
-        !in_array($filearea, $stablez_filearea)
-        //    || !(preg_match("/^block_start_guideline_img_[1-9][0-9]?$/", $filearea))
-    ) {
+
+    if (!in_array($filearea, $stablez_filearea, true)) {
         send_file_not_found();
     }
 
-    // By default, theme files must be cache-able by both browsers and proxies.
+    /*
+     * ---------------------------------------------------------
+     * Cacheability.
+     * ---------------------------------------------------------
+     */
     if (!array_key_exists('cacheability', $options)) {
         $options['cacheability'] = 'public';
     }
-    //
-    $fs = get_file_storage();
+
+    /*
+     * ---------------------------------------------------------
+     * Extract itemid and filename.
+     *
+     * URL:
+     *
+     * pluginfile.php/
+     *     <contextid>/
+     *     <component>/
+     *     <filearea>/
+     *     <itemid>/
+     *     <filename>
+     *
+     * Example:
+     *
+     * pluginfile.php/1/local_stablezhelpers/content/69074995/bg.png
+     * ---------------------------------------------------------
+     */
+    if (empty($args)) {
+        send_file_not_found();
+    }
+
     $filename = array_pop($args);
-    $filepath = '/'; // $args ? '/' . implode('/', $args) . '/' : '/';
-    $files = $fs->get_area_files(
+    $itemid = array_shift($args);
+
+    if (empty($itemid) || empty($filename)) {
+        send_file_not_found();
+    }
+
+    /*
+     * ---------------------------------------------------------
+     * Build filepath.
+     *
+     * Currently your editor uses:
+     *
+     * 'subdirs' => false
+     *
+     * so normally this will simply be '/'.
+     *
+     * The code also supports subdirectories.
+     * ---------------------------------------------------------
+     */
+    $filepath = '/';
+
+    if (!empty($args)) {
+        $filepath = '/' . implode('/', $args) . '/';
+    }
+
+    /*
+     * ---------------------------------------------------------
+     * Get the exact requested file.
+     *
+     * IMPORTANT:
+     *
+     * Do NOT use get_area_files() + reset().
+     *
+     * reset() returns the first file and can cause:
+     *
+     * bg.png
+     * Frame 359.png
+     *
+     * to both return the same physical file.
+     * ---------------------------------------------------------
+     */
+    $fs = get_file_storage();
+
+    $file = $fs->get_file(
         $context->id,
         'local_stablezhelpers',
         $filearea,
-        $args[0],
-        'timemodified',
-        false
+        $itemid,
+        $filepath,
+        $filename
     );
-    if ($files) {
-        $file = reset($files); // Get the first file
-    } else {
-        $file = $fs->get_file(
-            $context->id,
-            'local_stablezhelpers',
-            $filearea,
-            $args[0],
-            $filepath,
-            $filename
-        );
-    }
-    if ($file && !$file->is_directory()) {
-        // NOTE: it woudl be nice to have file revisions here, for now rely on standard file lifetime,
-        // do not lower it because the files are dispalyed very often.
-        \core\session\manager::write_close();
-        return send_stored_file($file, null, 0, $forcedownload, $options);
+
+    /*
+     * ---------------------------------------------------------
+     * File not found.
+     * ---------------------------------------------------------
+     */
+    if (!$file || $file->is_directory()) {
+        send_file_not_found();
     }
 
-    // 
-    send_file_not_found();
+    /*
+     * ---------------------------------------------------------
+     * Close session before sending file.
+     * ---------------------------------------------------------
+     */
+    \core\session\manager::write_close();
+
+    /*
+     * ---------------------------------------------------------
+     * Send exact requested file.
+     * ---------------------------------------------------------
+     */
+    return send_stored_file(
+        $file,
+        null,
+        0,
+        $forcedownload,
+        $options
+    );
 }
