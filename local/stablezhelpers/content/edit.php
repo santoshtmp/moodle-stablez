@@ -44,8 +44,12 @@ defined('MOODLE_INTERNAL') || die();
 // Get URL parameters.
 $type = required_param('type', PARAM_ALPHANUMEXT); // Content type: page, faq, testimonial, etc.
 $id = optional_param('id', 0, PARAM_INT);
+$returnurl = optional_param('returnurl', '', PARAM_URL);
 $action = optional_param('action', '', PARAM_ALPHA);
 $action = $action ? $action : ($id ? 'edit' : 'add');
+if (empty($returnurl)) {
+    $returnurl = page_manager::get_listing_page_url();
+}
 
 // Validate action parameter.
 if ($action && !in_array($action, ['add', 'edit', 'delete'])) {
@@ -65,6 +69,14 @@ $currentPageURL = page_manager::get_action_page_url($id);
 // Set page title.
 $pagetitle = get_string('pluginname', 'local_stablezhelpers');
 
+/**
+ * ========================================================
+ *     Access checks.
+ * ========================================================
+ */
+require_login();
+require_capability('local/stablezhelpers:managecontent', $context);
+
 // Setup page information.
 $PAGE->set_context($context);
 $PAGE->set_url($currentPageURL);
@@ -83,13 +95,6 @@ $PAGE->navbar->add($action === 'edit' ? get_string('edit') : get_string('add'));
 
 /**
  * ========================================================
- *     Access checks.
- * ========================================================
- */
-// require_capability('local/stablezhelpers:managecontent', $context);
-
-/**
- * ========================================================
  *     Get the data and display
  * ========================================================
  */
@@ -103,17 +108,23 @@ if ($id) {
 }
 
 // Create form instance.
-$content_form = new pagecontent_edit_form(null, ['content' => $contentdata]);
+$content_form = new pagecontent_edit_form(
+    null,
+    [
+        'content' => $contentdata,
+        'returnurl' => $returnurl,
+    ]
+);
 
 // Process form submission.
 if ($content_form->is_cancelled()) {
     // Form cancelled - redirect to listing.
-    redirect(page_manager::get_listing_page_url());
+    redirect($returnurl);
 } else if ($formdata = $content_form->get_data()) {
     // Form submitted - process data.
     $result = page_manager::process_form($formdata, $id);
     if ($result) {
-        redirect(page_manager::get_listing_page_url());
+        redirect($returnurl);
     }
 } else {
     // Form displayed for first time.

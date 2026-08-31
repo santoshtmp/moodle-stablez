@@ -38,14 +38,14 @@ require_capability('moodle/site:config', $context);
 
 $PAGE->set_context($context);
 
-$page_path = '/local/stablezhelpers/content/contact/submissions.php';
+$page_path = '/local/stablezhelpers/content/contact-form/submissions.php';
 $PAGE->set_url(
     new moodle_url($page_path)
 );
 
 $PAGE->set_pagelayout('admin');
-$PAGE->set_title('Contact Us Submissions');
-$PAGE->set_heading('Contact Us Submissions');
+$PAGE->set_title(get_string('contactus_submissions', 'local_stablezhelpers'));
+$PAGE->set_heading(get_string('contactus_submissions', 'local_stablezhelpers'));
 
 $manager = new contactus_manager();
 
@@ -78,15 +78,12 @@ $perpage = 20;
 
 /*
  * -------------------------------------------------------------------------
- * Process POST actions.
+ * Process actions (GET or POST).
  * -------------------------------------------------------------------------
  */
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($action !== '') {
     require_sesskey();
-
-    $action = required_param('action', PARAM_ALPHA);
-    $id = required_param('id', PARAM_INT);
 
     $submission = $manager->get_submission($id);
 
@@ -369,21 +366,21 @@ if ($submissions) {
             case 1:
                 $status = html_writer::span(
                     'Read',
-                    'badge bg-success'
+                    'btn p-2 badge bg-success'
                 );
                 break;
 
             case 2:
                 $status = html_writer::span(
                     'Replied',
-                    'badge bg-info'
+                    'btn p-2 badge bg-info'
                 );
                 break;
 
             default:
                 $status = html_writer::span(
                     'Unread',
-                    'badge bg-warning text-dark'
+                    'btn p-2 badge bg-warning text-dark'
                 );
                 break;
         }
@@ -393,7 +390,7 @@ if ($submissions) {
          */
 
         $viewurl = new moodle_url(
-            '/local/stablezhelpers/content/contact/view.php',
+            '/local/stablezhelpers/content/contact-form/submission-view.php',
             [
                 'id' => $submission->id,
             ]
@@ -413,198 +410,82 @@ if ($submissions) {
         );
 
         /*
-         * Mark read/unread.
+         * View link.
+         */
+
+        $actionscell .= html_writer::link(
+            $viewurl,
+            'View',
+            ['class' => 'btn btn-sm btn-primary']
+        );
+
+        /*
+         * Mark read/unread link.
          */
 
         if ((int) $submission->status === 0) {
-            $actionscell .= html_writer::start_tag(
-                'form',
-                [
-                    'method' => 'post',
-                    'action' => $PAGE->url->out(false),
-                    'class' => 'd-inline',
-                ]
-            );
-
-            $actionscell .= html_writer::input_hidden_params(
-                new moodle_url(
-                    $PAGE->url,
-                    [
-                        'page' => $page,
-                        'name' => $name,
-                        'email' => $email,
-                    ]
-                )
-            );
-
-            $actionscell .= html_writer::empty_tag(
-                'input',
-                [
-                    'type' => 'hidden',
-                    'name' => 'action',
-                    'value' => 'read',
-                ]
-            );
-
-            $actionscell .= html_writer::empty_tag(
-                'input',
-                [
-                    'type' => 'hidden',
-                    'name' => 'id',
-                    'value' => $submission->id,
-                ]
-            );
-
-            $actionscell .= html_writer::empty_tag(
-                'input',
-                [
-                    'type' => 'hidden',
-                    'name' => 'sesskey',
-                    'value' => sesskey(),
-                ]
-            );
-
-            $actionscell .= html_writer::tag(
-                'button',
-                'Mark read',
-                [
-                    'type' => 'submit',
-                    'class' => 'btn btn-sm btn-outline-success',
-                ]
-            );
-
-            $actionscell .= html_writer::end_tag('form');
-        } else {
-            $actionscell .= html_writer::start_tag(
-                'form',
-                [
-                    'method' => 'post',
-                    'action' => $PAGE->url->out(false),
-                    'class' => 'd-inline',
-                ]
-            );
-
-            $actionscell .= html_writer::input_hidden_params(
-                new moodle_url(
-                    $PAGE->url,
-                    [
-                        'page' => $page,
-                        'name' => $name,
-                        'email' => $email,
-                    ]
-                )
-            );
-
-            $actionscell .= html_writer::empty_tag(
-                'input',
-                [
-                    'type' => 'hidden',
-                    'name' => 'action',
-                    'value' => 'unread',
-                ]
-            );
-
-            $actionscell .= html_writer::empty_tag(
-                'input',
-                [
-                    'type' => 'hidden',
-                    'name' => 'id',
-                    'value' => $submission->id,
-                ]
-            );
-
-            $actionscell .= html_writer::empty_tag(
-                'input',
-                [
-                    'type' => 'hidden',
-                    'name' => 'sesskey',
-                    'value' => sesskey(),
-                ]
-            );
-
-            $actionscell .= html_writer::tag(
-                'button',
-                'Mark unread',
-                [
-                    'type' => 'submit',
-                    'class' => 'btn btn-sm btn-outline-secondary',
-                ]
-            );
-
-            $actionscell .= html_writer::end_tag('form');
-        }
-
-        /*
-         * Delete form.
-         */
-
-        $actionscell .= html_writer::start_tag(
-            'form',
-            [
-                'method' => 'post',
-                'action' => $PAGE->url->out(false),
-                'class' => 'd-inline',
-            ]
-        );
-
-        $actionscell .= html_writer::input_hidden_params(
-            new moodle_url(
+            $readurl = new moodle_url(
                 $PAGE->url,
                 [
+                    'action' => 'read',
+                    'id' => $submission->id,
                     'page' => $page,
                     'name' => $name,
                     'email' => $email,
+                    'sesskey' => sesskey(),
                 ]
-            )
-        );
+            );
 
-        $actionscell .= html_writer::empty_tag(
-            'input',
+            $actionscell .= html_writer::link(
+                $readurl,
+                'Mark read',
+                ['class' => 'btn btn-sm btn-outline-success']
+            );
+        } else {
+            $unreadurl = new moodle_url(
+                $PAGE->url,
+                [
+                    'action' => 'unread',
+                    'id' => $submission->id,
+                    'page' => $page,
+                    'name' => $name,
+                    'email' => $email,
+                    'sesskey' => sesskey(),
+                ]
+            );
+
+            $actionscell .= html_writer::link(
+                $unreadurl,
+                'Mark unread',
+                ['class' => 'btn btn-sm btn-outline-secondary']
+            );
+        }
+
+        /*
+         * Delete link.
+         */
+
+        $deleteurl = new moodle_url(
+            $PAGE->url,
             [
-                'type' => 'hidden',
-                'name' => 'action',
-                'value' => 'delete',
+                'action' => 'delete',
+                'id' => $submission->id,
+                'confirm' => '1',
+                'page' => $page,
+                'name' => $name,
+                'email' => $email,
+                'sesskey' => sesskey(),
             ]
         );
 
-        $actionscell .= html_writer::empty_tag(
-            'input',
-            [
-                'type' => 'hidden',
-                'name' => 'id',
-                'value' => $submission->id,
-            ]
-        );
-
-        $actionscell .= html_writer::empty_tag(
-            'input',
-            [
-                'type' => 'hidden',
-                'name' => 'confirm',
-                'value' => '1',
-            ]
-        );
-
-        $actionscell .= html_writer::empty_tag(
-            'input',
-            [
-                'type' => 'hidden',
-                'name' => 'sesskey',
-                'value' => sesskey(),
-            ]
-        );
-
-        $actionscell .= html_writer::tag(
-            'button',
+        $actionscell .= html_writer::link(
+            $deleteurl,
             'Delete',
             [
-                'type' => 'submit',
                 'class' => 'btn btn-sm btn-outline-danger',
                 'onclick' => 'return confirm("Are you sure you want to delete this submission?");',
             ]
         );
-
-        $actionscell .= html_writer::end_tag('form');
 
         $actionscell .= html_writer::end_div();
 

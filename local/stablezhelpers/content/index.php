@@ -57,6 +57,14 @@ $currentPageURL = page_manager::get_listing_page_url();
 // Set page title.
 $pagetitle = get_string('contentmanagement', 'local_stablezhelpers');
 
+/**
+ * ========================================================
+ *     Access checks.
+ * ========================================================
+ */
+require_login();
+require_capability('local/stablezhelpers:managecontent', $context);
+
 // Setup page information.
 $PAGE->set_context($context);
 $PAGE->set_url($currentPageURL);
@@ -71,13 +79,6 @@ $PAGE->navbar->add(get_string('contentmanagement', 'local_stablezhelpers'), $cur
 
 // Add page secondary navigation.
 $PAGE->secondarynav->add(get_string('addnewcontent', 'local_stablezhelpers'), page_manager::get_action_page_path());
-
-/**
- * ========================================================
- *     Access checks.
- * ========================================================
- */
-// require_capability('local/stablezhelpers:managecontent', $context);
 
 /**
  * ========================================================

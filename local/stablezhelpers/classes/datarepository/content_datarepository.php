@@ -125,11 +125,36 @@ class content_datarepository {
      * @return object|false Content record object or false if not found
      */
     public static function get_by_id($id, $fields = '*', $strictness = IGNORE_MISSING): object|false {
-        global $DB;
+        global $DB, $CFG;
 
         $data = $DB->get_record(self::$tablename, ['id' => $id], $fields, $strictness);
         if (!$data) {
             return false;
+        }
+        $context =  \context_system::instance();
+        $component = 'local_stablezhelpers';
+
+        if ($data->content) {
+            require_once($CFG->libdir . '/filelib.php');
+            $editor_options = array(
+                'maxfiles' => -1,
+                'maxbytes' => $CFG->maxbytes,
+                'trusttext' => true,
+                'noclean' => true,
+                'context' => $context,
+                'subdirs' => false
+            );
+
+            $text = file_rewrite_pluginfile_urls(
+                $data->content,
+                'pluginfile.php',
+                $context->id,
+                $component,
+                'content',
+                $data->contentitemid,
+                $editor_options
+            );
+            $data->content = $text;
         }
         return $data;
     }

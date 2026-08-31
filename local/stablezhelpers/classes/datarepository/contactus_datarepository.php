@@ -39,7 +39,7 @@ class contactus_datarepository {
      *
      * @var string
      */
-    protected $table = 'local_stablezhelpers_contact';
+    protected $table = 'local_stablezhelpers_contactform';
 
     /**
      * Create a Contact Us submission.

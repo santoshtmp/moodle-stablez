@@ -50,6 +50,7 @@ class pagecontent_edit_form extends \moodleform {
 
         $mform = $this->_form;
         $contentdata = $this->_customdata['content'] ?? null;
+        $returnurl = $this->_customdata['returnurl'] ?? '';
         $foemHeader = ($contentdata) ? 'editcontent' : 'addcontent';
         $context =  \context_system::instance();
 
@@ -124,6 +125,9 @@ class pagecontent_edit_form extends \moodleform {
         $mform->setType('type', PARAM_TEXT);
         $mform->setDefault('type', content_datarepository::DEFAULT_CONTENT_TYPE);
 
+        $mform->addElement('hidden', 'returnurl');
+        $mform->setType('returnurl', PARAM_URL);
+        $mform->setDefault('returnurl', $returnurl);
 
         // ----------------------------------------------------------------------------
         // Buttons.

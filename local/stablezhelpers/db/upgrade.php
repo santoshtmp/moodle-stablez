@@ -198,10 +198,10 @@ function xmldb_local_stablezhelpers_upgrade($oldversion) {
             $dbman->add_index($table, $index);
         }
 
-        // ==================== local_stablezhelpers_contact ====================.
-        $table = new xmldb_table('local_stablezhelpers_contact');
+        // ==================== local_stablezhelpers_contactform ====================.
+        $table = new xmldb_table('local_stablezhelpers_contactform');
 
-        // Adding fields to table local_stablezhelpers_contact.
+        // Adding fields to table local_stablezhelpers_contactform.
         $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
         $table->add_field('userid', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, XMLDB_NOTNULL, null, null);
@@ -213,10 +213,10 @@ function xmldb_local_stablezhelpers_upgrade($oldversion) {
         $table->add_field('timecreated', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
         $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, '0');
 
-        // Adding keys to table local_stablezhelpers_contact.
+        // Adding keys to table local_stablezhelpers_contactform.
         $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
 
-        // Conditionally launch create table for local_stablezhelpers_contact.
+        // Conditionally launch create table for local_stablezhelpers_contactform.
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }

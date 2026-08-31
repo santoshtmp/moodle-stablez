@@ -24,6 +24,7 @@
  */
 
 use core\exception\moodle_exception;
+use core\notification;
 use local_stablezhelpers\datarepository\content_datarepository;
 use local_stablezhelpers\datarepository\usermeta_datarepository;
 use local_stablezhelpers\content\page_manager;
@@ -73,8 +74,8 @@ $strcapability = 'moodle/site:manageblocks';
 
 // Setup page information.
 $title = format_string($content->title);
-
-$PAGE->set_url(page_manager::get_view_page_url());
+$pageurl = page_manager::get_view_page_url();
+$PAGE->set_url($pageurl);
 $PAGE->set_pagelayout('standard');
 $PAGE->set_pagetype('content-view');
 $PAGE->set_subpage((string)$id);
@@ -97,9 +98,11 @@ if (is_siteadmin()) {
         get_string('viewallcontent', 'local_stablezhelpers'),
         page_manager::get_listing_page_url()
     );
+    $editcontenturl = page_manager::get_action_page_url($id);
+    $editcontenturl->param('returnurl', $pageurl->out(false));
     $PAGE->secondarynav->add(
         get_string('editcontent', 'local_stablezhelpers'),
-        page_manager::get_action_page_url($id)
+        $editcontenturl
     );
 }
 /**
@@ -172,5 +175,8 @@ $contents = $OUTPUT->render_from_template($templatename, $template_content);
  * ========================================================
  */
 echo $OUTPUT->header();
+if (!$content->status) {
+    notification::warning('Unpublished content');
+}
 echo $contents;
 echo $OUTPUT->footer();
