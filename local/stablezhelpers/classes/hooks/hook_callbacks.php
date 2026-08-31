@@ -105,7 +105,7 @@ class hook_callbacks {
 
 		// course general_section settings
 		general_section_setting::setting_hideshow();
-		
+
 		// Apply google translate if enable
 		google_translate_handler::google_translate_lang();
 
@@ -125,10 +125,6 @@ class hook_callbacks {
 			return;
 		}
 		$output = "";
-		if (function_exists('theme_stablez_get_custom_js')) {
-			// $output .= theme_stablez_get_custom_js();
-		}
-
 		$hook->add_html($output);
 	}
 
@@ -138,6 +134,15 @@ class hook_callbacks {
 	 * @param \core\hook\after_config $hook
 	 */
 	public static function after_config(\core\hook\after_config $hook): void {
+		global $CFG;
+		if (during_initial_install() || isset($CFG->upgraderunning)) {
+			// Do nothing during installation or upgrade.
+			return;
+		}
+		// $stablez_adminer_secret = get_config('theme_stablez', 'stablez_adminer_secret');
+		// if ($stablez_adminer_secret) {
+		// 	$CFG->local_adminer_secret = $stablez_adminer_secret;
+		// }
 	}
 
 	/**

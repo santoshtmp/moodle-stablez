@@ -25,6 +25,8 @@
 
 namespace local_stablezhelpers\datarepository;
 
+use local_stablezhelpers\content\page_manager;
+
 defined('MOODLE_INTERNAL') || die();
 
 /**
@@ -120,20 +122,27 @@ class content_datarepository {
      * Get content by ID.
      *
      * @param int $id Content ID
-     * @param string $fields Fields to retrieve (default: '*')
-     * @param int $strictness Strictness mode (default: IGNORE_MISSING)
+     * @param bool $dbrawdata dbrawdata
      * @return object|false Content record object or false if not found
      */
-    public static function get_by_id($id, $fields = '*', $strictness = IGNORE_MISSING): object|false {
+    public static function get_by_id($id, $dbrawdata = true): object|false {
         global $DB, $CFG;
 
-        $data = $DB->get_record(self::$tablename, ['id' => $id], $fields, $strictness);
+        $data = $DB->get_record(self::$tablename, ['id' => $id], '*', IGNORE_MISSING);
         if (!$data) {
             return false;
         }
-        $context =  \context_system::instance();
-        $component = 'local_stablezhelpers';
 
+        if ($dbrawdata) {
+            return $data;
+        }
+
+        // Context and component.
+        $context = \context_system::instance();
+        $component = 'local_stablezhelpers';
+        $filearea = 'content';
+
+        // Rewrite embedded editor files.
         if ($data->content) {
             require_once($CFG->libdir . '/filelib.php');
             $editor_options = array(
@@ -144,18 +153,32 @@ class content_datarepository {
                 'context' => $context,
                 'subdirs' => false
             );
-
-            $text = file_rewrite_pluginfile_urls(
+            $data->content = file_rewrite_pluginfile_urls(
                 $data->content,
                 'pluginfile.php',
                 $context->id,
                 $component,
-                'content',
-                $data->contentitemid,
+                $filearea,
+                $data->id,
                 $editor_options
             );
-            $data->content = $text;
         }
+
+        // Format rich text only for display. The repository must return raw content for editors and APIs.
+        if (!empty($data->content)) {
+            $data->content = format_text(
+                $data->content,
+                $data->contentformat ?? FORMAT_HTML,
+                ['context' => $context]
+            );
+        }
+        if (!empty($data->title)) {
+            $data->title = format_string($data->title);
+        }
+        if ($data->image) {
+            $data->image_url = page_manager::get_image_file_url($data);
+        }
+
         return $data;
     }
 
@@ -246,28 +269,68 @@ class content_datarepository {
     }
 
     /**
-     * Delete content and its metadata.
+     * Delete content, its associated files, and metadata.
      *
-     * @param int $id Content ID
-     * @return bool Success or failure
+     * @param int $id Content ID.
+     * @return bool Success or failure.
+     *
+     * @throws \Throwable If deletion fails.
      */
-    public static function delete_with_meta($id): bool {
+    public static function delete_with_meta(int $id): bool {
         global $DB;
 
         $transaction = $DB->start_delegated_transaction();
 
         try {
-            // Delete content metadata first.
+            $context = \context_system::instance();
+            $fs = get_file_storage();
+
+            // ---------------------------------------------------------------------
+            // Delete content editor files.
+            // ---------------------------------------------------------------------
+
+            $fs->delete_area_files(
+                $context->id,
+                'local_stablezhelpers',
+                'content',
+                $id
+            );
+
+            // ---------------------------------------------------------------------
+            // Delete feature image files.
+            // ---------------------------------------------------------------------
+
+            $fs->delete_area_files(
+                $context->id,
+                'local_stablezhelpers',
+                'content_page_image',
+                $id
+            );
+
+            // ---------------------------------------------------------------------
+            // Delete content metadata.
+            // ---------------------------------------------------------------------
+
             $DB->delete_records(self::$meta_tablename, ['contentid' => $id]);
 
-            // Delete content.
+            // ---------------------------------------------------------------------
+            // Delete content record.
+            // ---------------------------------------------------------------------
+
             self::delete($id);
 
+            // ---------------------------------------------------------------------
+            // Commit transaction.
+            // ---------------------------------------------------------------------
+
             $transaction->allow_commit();
+
             return true;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $transaction->rollback($e);
-            return false;
+
+            // Do not silently swallow the exception.
+            throw $e;
         }
     }
 

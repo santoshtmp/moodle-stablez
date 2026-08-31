@@ -49,7 +49,6 @@
                 <FIELD NAME="shortname" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="Short name/slug for pages"/>
                 <FIELD NAME="content" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
                 <FIELD NAME="contentformat" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
-                <FIELD NAME="contentitemid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
                 <FIELD NAME="image" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Feature image file id for content"/>
                 <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="status 0=draft, 1=published"/>
                 <FIELD NAME="parentid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Parent content ID for hierarchy"/>

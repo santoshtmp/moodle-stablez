@@ -129,20 +129,7 @@ $managecontent = has_capability('local/stablezhelpers:managecontent', $context);
 // Get content type label.
 $contenttypelabel = get_string('contenttype_' . $content->contenttype, 'local_stablezhelpers', $content->contenttype);
 
-// Format rich text only for display. The repository must return raw content for editors and APIs.
-if (!empty($content->content)) {
-    $content->content = format_text(
-        $content->content,
-        $content->contentformat ?? FORMAT_HTML,
-        ['context' => $context]
-    );
-}
-if (!empty($content->title)) {
-    $content->title = format_string($content->title);
-}
-if ($content->image) {
-    $content->image_url = page_manager::get_image_file_url($content);
-}
+$content = content_datarepository::get_by_id($id, false);
 
 // Prepare content data.
 $template_content = [
