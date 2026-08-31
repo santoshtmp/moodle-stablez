@@ -91,7 +91,7 @@
             </INDEXES>
         </TABLE>
 
-        <TABLE NAME="local_stablezhelpers_contact" COMMENT="Stores contact form submissions">
+        <TABLE NAME="local_stablezhelpers_contactform" COMMENT="Stores contact form submissions">
             <FIELDS>
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true" COMMENT="Unique identifier for the contact form submission"/>
                 <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Moodle user ID of the submitter; zero for guest submissions"/>

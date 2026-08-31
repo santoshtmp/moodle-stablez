@@ -63,6 +63,7 @@ function local_stablezhelpers_pluginfile($course, $cm, $context, $filearea, $arg
     $stablez_filearea = [
         block_handler::FILEAREA_FIELD_GALLERY,
         'content_page_image',
+        'content'
     ];
     if (
         !in_array($filearea, $stablez_filearea)

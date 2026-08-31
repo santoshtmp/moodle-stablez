@@ -57,6 +57,9 @@ $string['editcustomcleanurl'] = 'Edit Custom Clean URL';
 
 // Status values.
 $string['draft'] = 'Draft';
+$string['status_read'] = 'Read';
+$string['status_unread'] = 'Unread';
+$string['status_replied'] = 'Replied';
 $string['publish'] = 'Publish';
 $string['published'] = 'Published';
 
@@ -69,7 +72,12 @@ $string['readmore'] = 'Read More';
 
 // Content-related.
 $string['shortname'] = 'Short Name';
+$string['shortname_help'] = 'A unique short name for this content. Used for identification.';
 $string['parent'] = 'Parent Content';
+$string['title_help'] = 'Enter the title of this content. This will be displayed as the main heading.';
+$string['content_help'] = 'The main content of this page. You can use the editor to format text, add images, and embed multimedia.';
+$string['image_filemanager_help'] = 'Upload an image to be used as the feature image for this content. Supported formats: JPG, PNG, GIF.';
+$string['status_help'] = 'Check this box to publish this content and make it visible. Unchecked content will remain in draft status.';
 
 // Section titles.
 $string['contentmanagement'] = 'Content Management';
@@ -182,6 +190,7 @@ $string['certificatealreadyissued'] = 'Certificate already issued.';
 $string['contactus'] = 'Contact Us';
 $string['contactus_submission'] = 'Contact Us submission';
 $string['contactus_submission_detail'] = 'Contact Us submission Detail';
+$string['contactus_submissions'] = 'Contact Us Submissions';
 $string['contactus_submissioncount'] = '{$a} contact form submissions';
 $string['contactus_name'] = 'Name';
 $string['contactus_email'] = 'Email';
@@ -202,12 +211,12 @@ $string['stablezhelpers:viewcontactus'] = 'View Contact Us submissions';
 $string['stablezhelpers:deletecontactus'] = 'Delete Contact Us submissions';
 
 // Privacy.
-$string['privacy:metadata:local_stablezhelpers_contact'] = 'Stores Contact Us form submissions.';
-$string['privacy:metadata:local_stablezhelpers_contact:userid'] = 'The Moodle user ID of the person who submitted the form.';
-$string['privacy:metadata:local_stablezhelpers_contact:name'] = 'The name provided in the Contact Us form.';
-$string['privacy:metadata:local_stablezhelpers_contact:email'] = 'The email address provided in the Contact Us form.';
-$string['privacy:metadata:local_stablezhelpers_contact:subject'] = 'The subject provided in the Contact Us form.';
-$string['privacy:metadata:local_stablezhelpers_contact:message'] = 'The message provided in the Contact Us form.';
-$string['privacy:metadata:local_stablezhelpers_contact:other'] = 'Other information provided in the Contact Us form.';
-$string['privacy:metadata:local_stablezhelpers_contact:timecreated'] = 'The time when the Contact Us submission was created.';
-$string['privacy:metadata:local_stablezhelpers_contact:timemodified'] = 'The time when the Contact Us submission was last modified.';
+$string['privacy:metadata:local_stablezhelpers_contactform'] = 'Stores Contact Us form submissions.';
+$string['privacy:metadata:local_stablezhelpers_contactform:userid'] = 'The Moodle user ID of the person who submitted the form.';
+$string['privacy:metadata:local_stablezhelpers_contactform:name'] = 'The name provided in the Contact Us form.';
+$string['privacy:metadata:local_stablezhelpers_contactform:email'] = 'The email address provided in the Contact Us form.';
+$string['privacy:metadata:local_stablezhelpers_contactform:subject'] = 'The subject provided in the Contact Us form.';
+$string['privacy:metadata:local_stablezhelpers_contactform:message'] = 'The message provided in the Contact Us form.';
+$string['privacy:metadata:local_stablezhelpers_contactform:other'] = 'Other information provided in the Contact Us form.';
+$string['privacy:metadata:local_stablezhelpers_contactform:timecreated'] = 'The time when the Contact Us submission was created.';
+$string['privacy:metadata:local_stablezhelpers_contactform:timemodified'] = 'The time when the Contact Us submission was last modified.';

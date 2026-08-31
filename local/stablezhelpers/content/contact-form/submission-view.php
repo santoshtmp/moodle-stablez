@@ -27,14 +27,18 @@ require_once(__DIR__ . '/../../../../config.php');
 
 use local_stablezhelpers\content\contactus_manager;
 
-$id = required_param('id', PARAM_INT);
-
-require_login();
-
-// Check capability.
+/** @var \context $context */
 $context = context_system::instance();
-// require_capability('local/stablezhelpers:viewcontactus', $context);
 
+/**
+ * ========================================================
+ *     Access checks.
+ * ========================================================
+ */
+require_login();
+require_capability('local/stablezhelpers:managecontent', $context);
+
+$id = required_param('id', PARAM_INT);
 $manager = new contactus_manager();
 $submission = $manager->get_submission($id);
 
@@ -48,7 +52,7 @@ if (!$submission) {
 $PAGE->set_context($context);
 $PAGE->set_url(
     new moodle_url(
-        '/local/stablezhelpers/content/contact/view.php',
+        '/local/stablezhelpers/content/contact-form/submission-view.php',
         ['id' => $id]
     )
 );
@@ -148,7 +152,7 @@ if ((int) $submission->status === 0) {
 echo html_writer::start_div('mt-4');
 
 $backurl = new moodle_url(
-    '/local/stablezhelpers/content/contact/submissions.php'
+    '/local/stablezhelpers/content/contact-form/submissions.php'
 );
 
 echo html_writer::link(

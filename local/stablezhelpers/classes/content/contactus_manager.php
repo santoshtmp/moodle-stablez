@@ -27,9 +27,11 @@
 
 namespace local_stablezhelpers\content;
 
+use context_system;
 use html_writer;
 use local_stablezhelpers\datarepository\contactus_datarepository;
 use local_stablezhelpers\local\handler\notify_handler;
+use moodle_url;
 use theme_stablez\local\service\theme_settings_service;
 
 defined('MOODLE_INTERNAL') || die();
@@ -56,13 +58,34 @@ class contactus_manager {
     /**
      * Get Contact Us form data.
      *
-     * @param \moodle_url $formaction Form action.
      * @return array Template data.
      */
     public function export_for_form_template() {
         global $PAGE;
+        $contextsystem = context_system::instance();
+        $submissionsurl = new moodle_url('/local/stablezhelpers/content/contact-form/submissions.php');
+
         $contactdetails = theme_settings_service::get_instance()->contact_details_settings();
         $contactdetails['form_action'] = $PAGE->url->out();
+        $contactdetails['form_submission_list'] = $submissionsurl->out();
+
+        // Add item at secondary nav
+        if (has_capability('moodle/site:config', $contextsystem)) {
+            $node = \navigation_node::create(
+                get_string('contactus_submissions', 'local_stablezhelpers'),
+                $submissionsurl,
+                \navigation_node::TYPE_SETTING,
+                null,
+                'local_stablezhelpers_contact_form_submissions',
+                new \pix_icon('i/settings', '')
+            );
+
+            $node->showinsecondarynavigation = true;
+            $node->display = true;
+
+            $PAGE->secondarynav->add_node($node);
+        }
+
         return $contactdetails;
     }
 

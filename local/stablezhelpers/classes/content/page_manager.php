@@ -222,6 +222,8 @@ class page_manager {
             // Move embedded files into a proper filearea and adjust HTML links to match
             // file_prepare_standard_editor  file_postupdate_standard_editor
             $context =  \context_system::instance();
+            $component = 'local_stablezhelpers';
+
             // Prepare content data.
             $contentrecord = new \stdClass();
             $contentrecord->title = $formdata->title;
@@ -233,7 +235,25 @@ class page_manager {
 
             // Handle content editor.
             if (isset($formdata->content)) {
-                $contentrecord->content = $formdata->content['text'];
+                $editor_options = array(
+                    'maxfiles' => EDITOR_UNLIMITED_FILES,
+                    'maxbytes' => $CFG->maxbytes,
+                    'trusttext' => true,
+                    'noclean' => true,
+                    'context' => $context,
+                    'subdirs' => false
+                );
+
+                // Move embedded files into a proper filearea and adjust HTML links to match
+                $contentrecord->content = file_save_draft_area_files(
+                    $formdata->content['itemid'],
+                    $context->id,
+                    $component,
+                    'content',
+                    $formdata->content['itemid'],
+                    $editor_options,
+                    $formdata->content['text']
+                );
                 $contentrecord->contentformat = $formdata->content['format'];
                 $contentrecord->contentitemid = $formdata->content['itemid'];
             }
@@ -254,7 +274,6 @@ class page_manager {
 
             if ($formdata->image_filemanager) {
                 $image_options = self::get_image_filemanager_options();
-                $component = 'local_stablezhelpers';
                 $filearea = 'content_page_image';
                 $itemid = $newid ?? $id;
                 $draftitemid = $formdata->image_filemanager;
