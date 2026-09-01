@@ -34,13 +34,13 @@ $plugin->component = 'theme_stablez';
 $plugin->version   = 2026082900;
 
 // This is the named version.
-$plugin->release = '5.2.0';
+$plugin->release = '4.5.0';
 
 // This is a stable release.
 $plugin->maturity = MATURITY_STABLE;
 
 // This is the version of Moodle this plugin requires.
-$plugin->requires  = 2026041000;
+$plugin->requires  = 2024100713;
 
 // This is the release of Moodle this plugin requires.
 // $plugin->supported = [404, 502];
