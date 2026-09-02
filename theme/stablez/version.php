@@ -34,7 +34,7 @@ $plugin->component = 'theme_stablez';
 $plugin->version   = 2026082900;
 
 // This is the named version.
-$plugin->release = '4.5.0';
+$plugin->release = '5.2.0';
 
 // This is a stable release.
 $plugin->maturity = MATURITY_STABLE;
